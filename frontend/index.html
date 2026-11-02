@@ -13,6 +13,7 @@
     .badge-simulated { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
     .badge-official { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
     .badge-ai { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    .dropzone-active { border-color: #4f46e5; background-color: #eef2ff; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
@@ -30,7 +31,7 @@
               <span class="text-xl font-bold tracking-tight text-slate-900">HaqSetu <span class="text-blue-600">AI</span></span>
               <span class="text-slate-300">|</span>
               <span class="text-xl font-bold tracking-tight text-indigo-700">Vachan <span class="text-amber-600">Setu</span></span>
-              <span class="text-xs px-2 py-0.5 rounded font-mono badge-simulated">SIMULATED</span>
+              <span class="text-xs px-2 py-0.5 rounded font-mono badge-simulated">LOCAL DEV</span>
               <span class="text-xs px-2 py-0.5 rounded font-mono badge-ai">Sarvam-105B</span>
             </div>
             <p class="text-xs text-slate-500">Citizen-Service Assurance & Statutory Deadline Platform</p>
@@ -62,7 +63,7 @@
           <i class="fa-solid fa-magnifying-glass mr-2"></i>1. HaqGuide (Search & Rights)
         </button>
         <button onclick="switchTab('rejectshield')" id="tab-rejectshield" class="py-3 px-1 border-b-2 font-medium text-slate-600 hover:text-blue-600 flex items-center">
-          <i class="fa-solid fa-shield-halved mr-2 text-indigo-600"></i>2. RejectShield (Verifier & Shortage Audit)
+          <i class="fa-solid fa-shield-halved mr-2 text-indigo-600"></i>2. RejectShield (PDF/Image OCR Verifier)
         </button>
         <button onclick="switchTab('timeline')" id="tab-timeline" class="py-3 px-1 border-b-2 font-medium text-slate-600 hover:text-blue-600 flex items-center">
           <i class="fa-solid fa-timeline mr-2"></i>3. Vachan Setu (Service Tracker)
@@ -122,7 +123,7 @@
       </div>
     </div>
 
-    <!-- ================= TAB 2: REJECTSHIELD (COMPLETE VERIFIER & SHORTAGE AUDIT) ================= -->
+    <!-- ================= TAB 2: REJECTSHIELD (PDF/IMAGE VERIFIER & SHORTAGE AUDIT) ================= -->
     <div id="content-rejectshield" class="hidden space-y-6">
 
       <!-- Scheme Selector & Active Checklist Bar -->
@@ -130,13 +131,13 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-3 border-b border-slate-100">
           <div>
             <h2 class="text-xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-shield-halved text-indigo-600 mr-2"></i>RejectShield: Comprehensive Application & Document Verifier
+              <i class="fa-solid fa-shield-halved text-indigo-600 mr-2"></i>RejectShield: File-Based Document & Anomaly Verifier
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Select your target scheme to load its statutory document checklist, detect missing documents (shortages), and perform cross-document consistency verification.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Upload real PDFs, JPGs, or PNG files. RejectShield runs OCR, extracts entities, detects missing/pending documents for the scheme, and highlights cross-document anomalies.</p>
           </div>
           
           <div class="flex items-center space-x-2">
-            <label class="text-xs font-bold text-slate-600">Active Scheme:</label>
+            <label class="text-xs font-bold text-slate-600">Target Scheme:</label>
             <select id="selectedSchemeId" onchange="onSchemeChange()" class="text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 rounded-lg px-3 py-2 focus:ring-1 focus:ring-indigo-500">
               <option value="S05" selected>🎓 National Scholarship Portal (Post-Matric Scholarship)</option>
               <option value="S13">📜 Income Certificate (State e-District)</option>
@@ -146,7 +147,29 @@
           </div>
         </div>
 
-        <!-- Official Required Documents Checklist Accordion / Summary -->
+        <!-- Multi-File Drag-and-Drop Ingestion Area -->
+        <div id="dragDropArea" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"
+          class="border-2 border-dashed border-indigo-200 bg-indigo-50/40 rounded-2xl p-6 text-center hover:border-indigo-400 transition cursor-pointer"
+          onclick="document.getElementById('multiFileInput').click()">
+          <input type="file" id="multiFileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" class="hidden" onchange="handleFileInputChange(event)">
+          <div class="flex flex-col items-center justify-center space-y-2">
+            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shadow-xs">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-slate-800">Drag & Drop Document Files (PDF, JPG, PNG) or <span class="text-indigo-600 underline">Browse Files</span></p>
+              <p class="text-xs text-slate-500 mt-0.5">Upload Aadhaar card, Income certificate, Caste certificate, Marksheets, Fee receipts (Scanned images or PDFs supported via Tesseract OCR)</p>
+            </div>
+            <div class="flex gap-2 text-[10px] text-slate-400 pt-1 font-mono">
+              <span class="bg-white px-2 py-0.5 rounded border">.PDF</span>
+              <span class="bg-white px-2 py-0.5 rounded border">.JPG / .JPEG</span>
+              <span class="bg-white px-2 py-0.5 rounded border">.PNG</span>
+              <span class="bg-white px-2 py-0.5 rounded border">.TXT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Required Documents Checklist Bar -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
@@ -155,7 +178,7 @@
             <span id="docCountBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-mono font-medium">0 Documents</span>
           </div>
 
-          <!-- Dynamic Checklist Chips with Add buttons -->
+          <!-- Dynamic Checklist Chips with Add/Upload buttons -->
           <div id="checklistItemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 mt-3">
             <!-- Injected required document chips -->
           </div>
@@ -164,14 +187,14 @@
         <!-- Document Management Actions Toolbar -->
         <div class="flex flex-wrap justify-between items-center pt-2 gap-2">
           <div class="flex flex-wrap gap-2">
-            <button onclick="openAddDocModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs shadow-xs flex items-center transition">
-              <i class="fa-solid fa-plus mr-1.5"></i>Add Document
+            <button onclick="document.getElementById('multiFileInput').click()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs shadow-xs flex items-center transition">
+              <i class="fa-solid fa-file-arrow-up mr-1.5"></i>Upload Files (PDF / Image)
             </button>
             <button onclick="loadPreset('scholarship_with_shortage_and_discrepancy')" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold rounded-lg text-xs border border-amber-300 flex items-center transition">
-              <i class="fa-solid fa-triangle-exclamation mr-1.5 text-amber-600"></i>⚡ Load Scholarship with Shortage & Name Mismatch
+              <i class="fa-solid fa-triangle-exclamation mr-1.5 text-amber-600"></i>⚡ Sample: Missing 3 Documents + Name Anomaly
             </button>
             <button onclick="loadPreset('scholarship_complete_and_verified')" class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold rounded-lg text-xs border border-emerald-300 flex items-center transition">
-              <i class="fa-solid fa-circle-check mr-1.5 text-emerald-600"></i>⚡ Load 100% Complete & Verified Packet
+              <i class="fa-solid fa-circle-check mr-1.5 text-emerald-600"></i>⚡ Sample: 100% Complete & Verified Packet
             </button>
           </div>
 
@@ -180,19 +203,31 @@
               Clear All
             </button>
             <button onclick="runFullVerification()" id="btnRunVerification" class="px-5 py-2 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-lg text-xs shadow transition flex items-center">
-              <i class="fa-solid fa-shield-virus mr-2 text-amber-400"></i>Verify Shortage & Consistency
+              <i class="fa-solid fa-shield-virus mr-2 text-amber-400"></i>Verify Anomalies & Shortage
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Active Submitted Documents Cards Container -->
+      <!-- Uploading / OCR Processing Spinner Banner -->
+      <div id="ocrProcessingBanner" class="hidden p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-indigo-900 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <i class="fa-solid fa-circle-notch fa-spin text-xl text-indigo-600"></i>
+          <div>
+            <span class="text-xs font-bold block" id="ocrProcessingTitle">Running Tesseract OCR & PyMuPDF entity extraction...</span>
+            <span class="text-[11px] text-indigo-600" id="ocrProcessingSubtitle">Parsing PDF pages, scanned image layers, and classifying fields...</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold bg-white px-2 py-1 rounded border border-indigo-200">Tesseract OCR 5.4</span>
+      </div>
+
+      <!-- Active Ingested Document Cards Grid -->
       <div>
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
-            <i class="fa-solid fa-folder-open mr-1.5 text-slate-400"></i>Uploaded Document Packet (<span id="uploadedCount">0</span> Documents Present)
+            <i class="fa-solid fa-folder-open mr-1.5 text-slate-400"></i>Ingested Documents Packet (<span id="uploadedCount">0</span> Files Analyzed)
           </h3>
-          <span class="text-xs text-slate-400">You can edit contents or upload .txt / images directly</span>
+          <span class="text-xs text-slate-400">Files are OCR-scanned and classified automatically</span>
         </div>
 
         <div id="uploadedDocsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -208,11 +243,11 @@
           <!-- Injected RAG report -->
         </div>
 
-        <!-- Document Shortage & Completeness Box -->
+        <!-- Document Shortage & Pending Checklist Box -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center pb-2 border-b border-slate-100">
             <h3 class="text-md font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-boxes-stacked text-amber-500 mr-2"></i>1. Document Completeness & Shortage Audit
+              <i class="fa-solid fa-boxes-stacked text-amber-500 mr-2"></i>1. Scheme Document Shortage & Pending Check
             </h3>
             <span id="shortageBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full font-mono"></span>
           </div>
@@ -222,14 +257,14 @@
           </div>
         </div>
 
-        <!-- Cross-Document Consistency Matrix -->
+        <!-- Cross-Document Consistency & Anomaly Matrix -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex justify-between items-center pb-2 border-b border-slate-100">
             <div>
               <h3 class="text-md font-bold text-slate-900 flex items-center">
-                <i class="fa-solid fa-diagram-project text-indigo-600 mr-2"></i>2. Cross-Document Consistency Matrix
+                <i class="fa-solid fa-diagram-project text-indigo-600 mr-2"></i>2. Cross-Document Consistency & Anomaly Matrix
               </h3>
-              <p class="text-xs text-slate-500">Compares applicant name, DOB, father's name, category, and income across all submitted documents.</p>
+              <p class="text-xs text-slate-500">Compares applicant name, DOB, father's name, category, and income across all ingested files.</p>
             </div>
             <span class="text-xs px-2 py-0.5 rounded font-mono badge-ai">ai_inferred</span>
           </div>
@@ -238,11 +273,11 @@
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
                 <tr>
-                  <th class="p-3">Verified Entity</th>
-                  <th class="p-3">Document A</th>
-                  <th class="p-3">Document B</th>
-                  <th class="p-3">Consistency Status</th>
-                  <th class="p-3">Verification Finding & Legal Observation</th>
+                  <th class="p-3">Verified Field</th>
+                  <th class="p-3">Document A Source</th>
+                  <th class="p-3">Document B Source</th>
+                  <th class="p-3">Anomaly / Match Status</th>
+                  <th class="p-3">Analysis & Regulatory Finding</th>
                 </tr>
               </thead>
               <tbody id="matrixBody" class="divide-y divide-slate-100">
@@ -256,7 +291,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
             <h4 class="font-bold text-slate-900 text-sm flex items-center">
-              <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i>Specific Rejection Objections Prevented
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i>Specific Rejection Anomalies Flagged
             </h4>
             <div id="findingsList" class="space-y-2 text-xs">
               <!-- Injected Findings -->
@@ -266,7 +301,7 @@
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
             <div>
               <h4 class="font-bold text-slate-900 text-sm flex items-center">
-                <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-2"></i>Sarvam-105B Citizen Remediation Guidance
+                <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-2"></i>Sarvam-105B AI Remediation Guidance
               </h4>
               <p class="text-[11px] text-slate-400 mt-0.5">Bilingual explanation in English and सरल हिंदी</p>
               <div id="aiSummaryBox" class="mt-3 text-xs text-slate-700 leading-relaxed bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
@@ -452,38 +487,8 @@
     </div>
   </div>
 
-  <!-- Add Document Modal -->
-  <div id="addDocModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
-        <h3 class="font-bold text-slate-900 text-md">Add Document to Application Packet</h3>
-        <button onclick="closeAddDocModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="font-semibold text-slate-700">Document Type / Name</label>
-          <select id="modalDocType" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
-            <option value="caste_certificate">Caste / Category Certificate (OBC/SC/ST)</option>
-            <option value="previous_marksheet">Previous Year Academic Marksheet</option>
-            <option value="fee_receipt_admission">College Fee Receipt & Admission Letter</option>
-            <option value="bank_passbook">Bank Account Passbook (Aadhaar Linked)</option>
-            <option value="domicile_certificate">Domicile / Residence Certificate</option>
-            <option value="income_certificate">Income Certificate</option>
-            <option value="aadhaar_card">Aadhaar Identity Card</option>
-            <option value="custom_document">Custom Supporting Document</option>
-          </select>
-        </div>
-        <div>
-          <label class="font-semibold text-slate-700">Paste Text Content or Description</label>
-          <textarea id="modalDocContent" rows="5" class="w-full mt-1 p-2 border border-slate-200 rounded-lg font-mono text-xs" placeholder="Paste extracted text or type document details..."></textarea>
-        </div>
-      </div>
-      <div class="pt-2 flex justify-end gap-2">
-        <button onclick="closeAddDocModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold">Cancel</button>
-        <button onclick="confirmAddDocFromModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow">Add to Packet</button>
-      </div>
-    </div>
-  </div>
+  <!-- Hidden Individual File Input for quick row upload -->
+  <input type="file" id="singleDocFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" class="hidden" onchange="onSingleDocFileSelected(event)">
 
   <!-- Scripts -->
   <script>
@@ -494,6 +499,7 @@
     // RejectShield State
     let activeSchemeDocs = null;
     let submittedDocs = {};
+    let pendingUploadDocId = null;
 
     function switchTab(tabId) {
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
@@ -578,7 +584,6 @@
       const container = document.getElementById('matchResults');
       let html = '';
 
-      // Profile extraction summary
       const p = data.parsed_profile || {};
       const profileBadges = Object.entries(p).map(([k, v]) => `
         <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
@@ -594,7 +599,6 @@
         </div>
       `;
 
-      // AI Rationale banner
       if (data.ai_rationale) {
         html += `
           <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 border border-blue-200 p-4 rounded-xl shadow-xs">
@@ -609,7 +613,6 @@
         `;
       }
 
-      // Scheme combination alert
       if (data.combinations && data.combinations.length > 0) {
         data.combinations.forEach(c => {
           html += `
@@ -624,7 +627,6 @@
         });
       }
 
-      // Ranked Match Cards
       data.matches.forEach((m, idx) => {
         let signalClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
         let signalLabel = 'Likely Eligible';
@@ -653,7 +655,7 @@
                 <p class="text-xs text-slate-500 mt-0.5">${m.department} • ${m.state} • Official SLA: <strong>${m.time_limit_days} days</strong> (${m.is_statutory ? 'Statutory Guarantee' : 'Illustrative Charter'})</p>
               </div>
               <button onclick="handoffToRejectShield('${m.scheme_id}', '${m.name}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs shadow-xs transition flex items-center">
-                <i class="fa-solid fa-shield-halved mr-1.5"></i>Audit Documents on RejectShield →
+                <i class="fa-solid fa-shield-halved mr-1.5"></i>Upload & Audit Documents on RejectShield →
               </button>
             </div>
 
@@ -693,10 +695,9 @@
         sel.value = 'S02';
       }
       onSchemeChange();
-      loadPreset('scholarship_with_shortage_and_discrepancy');
     }
 
-    // --- TAB 2: REJECTSHIELD (FULL VERIFIER & SHORTAGE SYSTEM) ---
+    // --- TAB 2: REJECTSHIELD (PDF, IMAGE, & OCR FILE INPUTS) ---
 
     async function onSchemeChange() {
       const schemeId = document.getElementById('selectedSchemeId').value;
@@ -729,7 +730,9 @@
             </div>
             ${isPresent 
               ? `<span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded font-mono">Present</span>` 
-              : `<button onclick="quickAddDoc('${item.id}', '${item.name}')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded border border-indigo-200 shrink-0">+ Add</button>`
+              : `<button onclick="triggerUploadForDoc('${item.id}')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded border border-indigo-200 shrink-0 flex items-center">
+                   <i class="fa-solid fa-paperclip mr-1"></i>Upload File
+                 </button>`
             }
           </div>
         `;
@@ -746,8 +749,8 @@
       if (docEntries.length === 0) {
         grid.innerHTML = `
           <div class="col-span-full py-8 text-center text-slate-400 bg-white border border-dashed border-slate-200 rounded-xl">
-            <i class="fa-regular fa-folder-open text-2xl mb-2 text-slate-300"></i>
-            <p class="text-xs">No documents uploaded in this packet yet. Click <strong>"+ Add Document"</strong> or load a preset above.</p>
+            <i class="fa-solid fa-file-pdf text-2xl mb-2 text-slate-300"></i>
+            <p class="text-xs">No documents uploaded in this packet yet. Upload a PDF, JPG, or PNG above or load sample documents.</p>
           </div>
         `;
         return;
@@ -757,16 +760,19 @@
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-2">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
-              <i class="fa-regular fa-file-lines text-indigo-600 mr-1.5"></i>${formatDocName(docKey)}
+              <i class="fa-solid fa-file-invoice text-indigo-600 mr-1.5"></i>${formatDocName(docKey)}
             </span>
             <button onclick="removeDoc('${docKey}')" class="text-slate-400 hover:text-red-600 text-xs">
               <i class="fa-regular fa-trash-can"></i>
             </button>
           </div>
-          <textarea onchange="updateDocContent('${docKey}', this.value)" rows="6" class="w-full text-xs font-mono p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-indigo-500 leading-relaxed">${content}</textarea>
+          <div class="bg-slate-50 p-2 rounded border border-slate-200">
+            <span class="text-[10px] uppercase font-mono font-semibold text-slate-400 block mb-1">OCR Extracted Text Preview</span>
+            <textarea onchange="updateDocContent('${docKey}', this.value)" rows="5" class="w-full text-xs font-mono p-1.5 bg-transparent border-0 focus:ring-0 leading-relaxed">${content}</textarea>
+          </div>
           <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1">
-            <span>Length: ${content.length} chars</span>
-            <span class="font-mono text-emerald-600">Extracted</span>
+            <span>Size: ${content.length} chars</span>
+            <span class="font-mono text-emerald-600 font-bold"><i class="fa-solid fa-check mr-1"></i>OCR Parsed</span>
           </div>
         </div>
       `).join('');
@@ -791,28 +797,109 @@
       renderSchemeChecklistBar();
     }
 
-    function quickAddDoc(docId, docName) {
-      openAddDocModal(docId);
+    // --- REAL FILE UPLOAD HANDLING (PDF, JPG, PNG) ---
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('dragDropArea').classList.add('dropzone-active');
     }
 
-    function openAddDocModal(prefillDocId) {
-      document.getElementById('addDocModal').classList.remove('hidden');
-      if (prefillDocId) {
-        document.getElementById('modalDocType').value = prefillDocId;
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('dragDropArea').classList.remove('dropzone-active');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('dragDropArea').classList.remove('dropzone-active');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        processUploadedFiles(e.dataTransfer.files);
       }
-      document.getElementById('modalDocContent').value = '';
     }
 
-    function closeAddDocModal() {
-      document.getElementById('addDocModal').classList.add('hidden');
+    function handleFileInputChange(e) {
+      if (e.target.files && e.target.files.length > 0) {
+        processUploadedFiles(e.target.files);
+      }
     }
 
-    function confirmAddDocFromModal() {
-      const type = document.getElementById('modalDocType').value;
-      const text = document.getElementById('modalDocContent').value.trim() || `OFFICIAL DOCUMENT: ${type.toUpperCase()}\nApplicant Name: Ravi Kumar\nFather's Name: Suresh Kumar\nDate: 01/11/2026\nStatus: Certified`;
-      submittedDocs[type] = text;
-      closeAddDocModal();
-      renderSchemeChecklistBar();
+    function triggerUploadForDoc(docId) {
+      pendingUploadDocId = docId;
+      document.getElementById('singleDocFileInput').click();
+    }
+
+    async function onSingleDocFileSelected(e) {
+      if (!e.target.files || e.target.files.length === 0) return;
+      const file = e.target.files[0];
+      const docType = pendingUploadDocId;
+      pendingUploadDocId = null;
+
+      showOcrSpinner(file.name);
+
+      const formData = new FormData();
+      formData.append('file', file);
+      if (docType) formData.append('doc_type', docType);
+
+      try {
+        const res = await fetch('/api/rejectshield/upload-file', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        submittedDocs[data.doc_type] = data.extracted_text;
+        renderSchemeChecklistBar();
+      } catch (err) {
+        alert("Error scanning file with OCR: " + err);
+      } finally {
+        hideOcrSpinner();
+      }
+    }
+
+    async function processUploadedFiles(fileList) {
+      const schemeId = document.getElementById('selectedSchemeId').value;
+      showOcrSpinner(`${fileList.length} file(s)`);
+
+      const formData = new FormData();
+      formData.append('scheme_id', schemeId);
+      for (let i = 0; i < fileList.length; i++) {
+        formData.append('files', fileList[i]);
+      }
+
+      try {
+        const res = await fetch('/api/rejectshield/upload-batch', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await res.json();
+
+        // Populate submittedDocs from batch result
+        if (result.uploaded_files_meta) {
+          result.uploaded_files_meta.forEach(m => {
+            if (result.extracted_entities && result.extracted_entities[m.doc_type]) {
+              submittedDocs[m.doc_type] = result.extracted_entities[m.doc_type]._raw_preview || m.preview;
+            } else {
+              submittedDocs[m.doc_type] = m.preview;
+            }
+          });
+        }
+
+        renderSchemeChecklistBar();
+        renderVerificationResults(result);
+      } catch (err) {
+        alert("Error processing file batch: " + err);
+      } finally {
+        hideOcrSpinner();
+      }
+    }
+
+    function showOcrSpinner(label) {
+      const banner = document.getElementById('ocrProcessingBanner');
+      document.getElementById('ocrProcessingTitle').textContent = `Running OCR & PyMuPDF extraction on ${label}...`;
+      banner.classList.remove('hidden');
+    }
+
+    function hideOcrSpinner() {
+      document.getElementById('ocrProcessingBanner').classList.add('hidden');
     }
 
     async function loadPreset(presetKey) {
@@ -834,12 +921,12 @@
     async function runFullVerification() {
       const schemeId = document.getElementById('selectedSchemeId').value;
       if (Object.keys(submittedDocs).length === 0) {
-        alert("Please upload or add at least one document to run verification.");
+        alert("Please upload at least one PDF or Image document before running verification.");
         return;
       }
 
       const btn = document.getElementById('btnRunVerification');
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying Shortage & Consistency...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying Anomalies & Shortages...`;
 
       try {
         const res = await fetch('/api/rejectshield/verify', {
@@ -855,7 +942,7 @@
       } catch (e) {
         alert("Error verifying application: " + e);
       } finally {
-        btn.innerHTML = `<i class="fa-solid fa-shield-virus mr-2 text-amber-400"></i>Verify Shortage & Consistency`;
+        btn.innerHTML = `<i class="fa-solid fa-shield-virus mr-2 text-amber-400"></i>Verify Anomalies & Shortage`;
       }
     }
 
@@ -878,7 +965,7 @@
             <div>
               <span class="text-xs uppercase font-mono font-bold tracking-wider opacity-75">RejectShield Verification Verdict</span>
               <h3 class="text-xl font-bold">${data.readiness_label}</h3>
-              <p class="text-xs opacity-85 mt-0.5">Scheme: <strong>${data.scheme_name}</strong> • ${data.uploaded_docs_count} Documents Ingested • ${data.shortage_count} Shortage(s) Flagged</p>
+              <p class="text-xs opacity-85 mt-0.5">Scheme: <strong>${data.scheme_name}</strong> • ${data.uploaded_docs_count} Files Analyzed • ${data.shortage_count} Pending Documents Flagged</p>
             </div>
           </div>
           <div class="text-right">
@@ -889,13 +976,13 @@
         </div>
       `;
 
-      // 2. Shortage Box
+      // 2. Shortage / Pending Documents Box
       const shortageBadge = document.getElementById('shortageBadge');
       const shortageContainer = document.getElementById('shortageDetailsContainer');
 
       if (data.shortage_count === 0) {
         shortageBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full font-mono bg-emerald-100 text-emerald-800';
-        shortageBadge.textContent = 'NO SHORTAGE (All Mandatory Docs Present)';
+        shortageBadge.textContent = 'NO SHORTAGE (All Mandatory Documents Attached)';
         shortageContainer.innerHTML = `
           <div class="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-800 flex items-center">
             <i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-sm"></i>
@@ -904,9 +991,9 @@
         `;
       } else {
         shortageBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full font-mono bg-red-100 text-red-800';
-        shortageBadge.textContent = `CRITICAL: ${data.shortage_count} MANDATORY DOCUMENT(S) MISSING`;
+        shortageBadge.textContent = `ALERT: ${data.shortage_count} MANDATORY DOCUMENT(S) PENDING`;
         shortageContainer.innerHTML = `
-          <p class="text-xs text-slate-600">The following documents are legally required for this scheme. Submitting without them will result in an immediate rejection or deficiency memo from the department:</p>
+          <p class="text-xs text-slate-600">The following documents are missing from your uploaded file package. Submitting without them will result in an immediate objection memo from the department:</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             ${data.shortage_list.map(s => `
               <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs flex justify-between items-start">
@@ -915,8 +1002,8 @@
                   <p class="text-[11px] text-red-700 mt-0.5"><strong>Purpose:</strong> ${s.purpose}</p>
                   <p class="text-[10px] text-slate-500 mt-0.5">Issuing Authority: ${s.authority}</p>
                 </div>
-                <button onclick="quickAddDoc('${s.id}', '${s.name}')" class="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold shrink-0 ml-2 shadow-xs">
-                  + Upload Now
+                <button onclick="triggerUploadForDoc('${s.id}')" class="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold shrink-0 ml-2 shadow-xs flex items-center">
+                  <i class="fa-solid fa-paperclip mr-1"></i>Upload PDF/JPG
                 </button>
               </div>
             `).join('')}
@@ -924,17 +1011,17 @@
         `;
       }
 
-      // 3. Matrix
+      // 3. Consistency Matrix
       const matrixBody = document.getElementById('matrixBody');
       if (data.consistency_matrix.length === 0) {
-        matrixBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Upload at least two documents containing identity fields to compare pairwise consistency.</td></tr>`;
+        matrixBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Upload at least two files containing identity or certificate fields to compare pairwise consistency.</td></tr>`;
       } else {
         matrixBody.innerHTML = data.consistency_matrix.map(row => {
           let statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">Exact Match</span>';
           if (row.status === 'abbreviation_variation') {
-            statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Abbreviation Variation</span>';
+            statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Abbreviation Anomaly</span>';
           } else if (row.status === 'mismatch' || row.status === 'minor_spelling_variation') {
-            statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800">Discrepancy</span>';
+            statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800">Critical Anomaly</span>';
           }
           return `
             <tr class="hover:bg-slate-50">

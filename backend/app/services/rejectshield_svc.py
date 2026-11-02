@@ -1,4 +1,5 @@
 import difflib
+import os
 import re
 from typing import Dict, List, Any, Optional
 from ai_engine.ocr import extract_text
@@ -122,15 +123,20 @@ class RejectShieldVerifier:
         extracted_entities = {}
         for doc_key, raw_content in submitted_documents.items():
             try:
-                # If content is a filepath, extract
-                if len(raw_content) < 300 and ("." in raw_content or "/" in raw_content or "\\" in raw_content):
+                # If content is an existing file path, extract text from it; otherwise it's already extracted text
+                if isinstance(raw_content, str) and len(raw_content) < 400 and os.path.exists(raw_content) and os.path.isfile(raw_content):
                     text = extract_text(raw_content)
                 else:
                     text = raw_content
 
                 fields = extract_fields(text)
+                if not fields.get("dob") and fields.get("date_of_birth"):
+                    fields["dob"] = fields["date_of_birth"]
+                if not fields.get("father_name") and fields.get("father"):
+                    fields["father_name"] = fields["father"]
                 fields["_doc_type"] = doc_key
-                fields["_raw_preview"] = text[:200]
+                fields["_raw_preview"] = text[:300]
+                fields["_raw_text"] = text
                 extracted_entities[doc_key] = fields
             except Exception as e:
                 extracted_entities[doc_key] = {

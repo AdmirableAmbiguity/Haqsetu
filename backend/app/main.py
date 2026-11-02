@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+import re
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -14,12 +15,13 @@ from backend.app.services.timeline_engine import timeline_engine
 from backend.app.services.escalation_svc import escalation_svc
 from backend.app.services.notice_svc import notice_svc
 from backend.app.services.analytics_svc import analytics_svc
+from ai_engine.ocr import extract_text_from_bytes
 from ai_engine.haqguide import generate_checklist as get_checklist
 
 app = FastAPI(
     title="HaqSetu AI + Vachan Setu",
     description="Citizen-Service Assurance Platform for Indian Government Schemes",
-    version="1.1.0"
+    version="1.2.0"
 )
 
 app.add_middleware(
@@ -31,6 +33,27 @@ app.add_middleware(
 )
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
+
+def classify_doc_content(text: str, filename: str = "") -> str:
+    """Auto-detect document type from OCR extracted text or filename."""
+    combined = (filename + " " + text).lower()
+    if any(k in combined for k in ["aadhaar", "uidai", "unique identification", "aadhar"]):
+        return "aadhaar_card"
+    if any(k in combined for k in ["income certificate", "aay praman", "tahsildar", "tehsildar", "annual family income"]):
+        return "income_certificate"
+    if any(k in combined for k in ["caste certificate", "jati praman", "obc", "scheduled caste", "scheduled tribe", "backward class"]):
+        return "caste_certificate"
+    if any(k in combined for k in ["marksheet", "mark sheet", "intermediate", "high school", "board of high school", "roll no", "division"]):
+        return "previous_marksheet"
+    if any(k in combined for k in ["fee receipt", "admission letter", "tuition fee", "bonafide", "university of", "college of"]):
+        return "fee_receipt_admission"
+    if any(k in combined for k in ["passbook", "bank of", "state bank", "account number", "ifsc", "savings account"]):
+        return "bank_passbook"
+    if any(k in combined for k in ["domicile", "niwas", "resident certificate", "permanent resident"]):
+        return "domicile_certificate"
+    if any(k in combined for k in ["application form", "scholarship application", "online application"]):
+        return "application"
+    return "custom_document"
 
 # --- Request Models ---
 class MatchRequest(BaseModel):
@@ -74,8 +97,9 @@ def health():
     return {
         "status": "healthy",
         "app": "HaqSetu AI + Vachan Setu",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "sarvam_ai_active": bool(os.environ.get("SARVAM_API_KEY")),
+        "tesseract_ocr_active": True,
         "simulated_today": str(timeline_engine.simulated_today)
     }
 
@@ -96,16 +120,76 @@ def get_service_checklist(req: ChecklistRequest):
         docs = registry.get_scheme_docs(req.service_name)
         return {"service": req.service_name, "checklist": docs}
 
-# --- REJECTSHIELD VERIFIER APIS ---
+# --- REJECTSHIELD VERIFIER & OCR FILE UPLOAD APIS ---
 
 @app.get("/api/rejectshield/checklist")
 def get_scheme_document_checklist(scheme_id: str = "S05"):
     """Returns official required document checklist for the selected scheme."""
     return registry.get_scheme_docs(scheme_id)
 
+@app.post("/api/rejectshield/upload-file")
+async def upload_single_file(file: UploadFile = File(...), doc_type: Optional[str] = Form(None)):
+    """
+    Ingests and OCR-extracts a single file (PDF, PNG, JPG, JPEG, TXT).
+    Returns extracted text and auto-detected document classification.
+    """
+    contents = await file.read()
+    extracted_text = extract_text_from_bytes(contents, file.filename)
+    
+    assigned_type = doc_type if doc_type and doc_type != "auto" else classify_doc_content(extracted_text, file.filename)
+
+    return {
+        "filename": file.filename,
+        "file_size": len(contents),
+        "doc_type": assigned_type,
+        "extracted_text": extracted_text,
+        "preview": extracted_text[:250]
+    }
+
+@app.post("/api/rejectshield/upload-batch")
+async def upload_batch_and_verify(
+    scheme_id: str = Form("S05"),
+    files: List[UploadFile] = File(...)
+):
+    """
+    Uploads multiple files (PDFs, Images, TXTs), runs OCR on each,
+    maps them to scheme requirements, and immediately executes full verification:
+    detecting anomalies and pending / missing documents.
+    """
+    submitted_docs = {}
+    file_metadata = []
+
+    for f in files:
+        contents = await f.read()
+        extracted_text = extract_text_from_bytes(contents, f.filename)
+        classified_type = classify_doc_content(extracted_text, f.filename)
+        
+        # If type collision, append counter
+        target_key = classified_type
+        counter = 1
+        while target_key in submitted_docs:
+            counter += 1
+            target_key = f"{classified_type}_{counter}"
+
+        submitted_docs[target_key] = extracted_text
+        file_metadata.append({
+            "filename": f.filename,
+            "doc_type": target_key,
+            "size": len(contents),
+            "preview": extracted_text[:120]
+        })
+
+    # Run complete verification
+    verification_result = rejectshield_verifier.verify_application_package(
+        scheme_id_or_name=scheme_id,
+        submitted_documents=submitted_docs
+    )
+    verification_result["uploaded_files_meta"] = file_metadata
+    return verification_result
+
 @app.post("/api/rejectshield/verify")
 def verify_application_package(req: VerifyPackageRequest):
-    """Runs complete RejectShield verifier: shortage check + cross-document consistency."""
+    """Runs complete RejectShield verifier on submitted text/documents."""
     return rejectshield_verifier.verify_application_package(
         scheme_id_or_name=req.scheme_id or "S05",
         submitted_documents=req.documents
