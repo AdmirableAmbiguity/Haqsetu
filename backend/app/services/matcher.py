@@ -81,152 +81,14 @@ class EligibilityMatcher:
         return profile
 
     def match(self, query: str, user_profile: Dict[str, Any] = None, use_ai: bool = True) -> Dict[str, Any]:
-        """Matches citizen need to schemes with scoring, criteria checks, and rationale."""
-        extracted = self.extract_profile_rules(query)
-        profile = {**extracted, **(user_profile or {})}
+        """Matches citizen need to schemes using intelligent routing and intent classification."""
+        from ai_engine.query_router import query_router
 
-        schemes = registry.get_all_schemes()
-        results = []
-        tokens = set(re.findall(r'\w+', query.lower()))
+        route_res = query_router.route(query=query, profile_override=user_profile)
 
-        for s in schemes:
-            name = s.get("name", "").lower()
-            desc = s.get("eligibility_summary", "").lower()
-            dept = s.get("department", "").lower()
-            tags = [t.lower() for t in s.get("tags", [])]
-
-            score = 0
-            # Token match
-            matched_words = tokens.intersection(set(re.findall(r'\w+', f"{name} {desc} {dept} {' '.join(tags)}")))
-            score += len(matched_words) * 12
-
-            # Domain bonuses
-            if "scholarship" in tokens and "scholarship" in name:
-                score += 50
-            if "income" in tokens and "income" in name:
-                score += 50
-            if "ration" in tokens and "ration" in name:
-                score += 50
-            if "pension" in tokens and "pension" in name:
-                score += 50
-            if "kisan" in tokens and ("kisan" in name or "farmer" in desc):
-                score += 50
-
-            criteria_met = []
-            criteria_unmet = []
-            criteria_unknown = []
-
-            # Check criteria
-            if "annual_income" in profile:
-                max_income = s.get("max_income")
-                if max_income:
-                    if profile["annual_income"] <= max_income:
-                        criteria_met.append(f"Income ₹{profile['annual_income']:,} is within limit of ₹{max_income:,}")
-                        score += 20
-                    else:
-                        criteria_unmet.append(f"Income ₹{profile['annual_income']:,} exceeds limit of ₹{max_income:,}")
-                        score -= 30
-            else:
-                if s.get("max_income"):
-                    criteria_unknown.append(f"Annual household income (limit: ₹{s['max_income']:,})")
-
-            if "category" in profile:
-                allowed_cats = s.get("allowed_categories", [])
-                if allowed_cats:
-                    if profile["category"] in allowed_cats:
-                        criteria_met.append(f"Social category {profile['category']} qualifies")
-                        score += 15
-                    else:
-                        criteria_unmet.append(f"Social category {profile['category']} not covered")
-                        score -= 20
-            else:
-                if s.get("allowed_categories"):
-                    criteria_unknown.append(f"Social category (Target: {', '.join(s['allowed_categories'])})")
-
-            if "occupation" in profile:
-                req_occ = s.get("target_occupation")
-                if req_occ:
-                    if profile["occupation"].lower() == req_occ.lower():
-                        criteria_met.append(f"Occupation '{profile['occupation']}' directly aligns")
-                        score += 25
-                    else:
-                        criteria_unmet.append(f"Requires occupation: {req_occ}")
-
-            if "state" in profile:
-                s_state = s.get("state")
-                if s_state and s_state != "All India" and s_state != "Central":
-                    if profile["state"].lower() == s_state.lower():
-                        criteria_met.append(f"Domicile matches {s_state}")
-                        score += 20
-                    else:
-                        criteria_unmet.append(f"Specific to {s_state}; citizen state is {profile['state']}")
-                        score -= 40
-
-            # Signal determination
-            if criteria_unmet:
-                signal = "likely_not_eligible"
-            elif len(criteria_met) >= 2 and len(criteria_unknown) == 0:
-                signal = "likely_eligible"
-            elif criteria_unknown:
-                signal = "needs_clarification"
-            else:
-                signal = "possibly_eligible"
-
-            results.append({
-                "scheme_id": s.get("scheme_id", s.get("id")),
-                "name": s.get("name"),
-                "department": s.get("department", "State / Central Government"),
-                "state": s.get("state", "All India"),
-                "score": max(0, score),
-                "signal": signal,
-                "criteria_met": criteria_met,
-                "criteria_unmet": criteria_unmet,
-                "criteria_unknown": criteria_unknown,
-                "verification_state": s.get("verification_state", "needs_review"),
-                "source_basis": s.get("source_basis", "State citizen service charter"),
-                "time_limit_days": s.get("time_limit_days", 15),
-                "is_statutory": s.get("is_statutory", False),
-                "fee": s.get("fee", 0),
-                "summary": s.get("eligibility_summary", "")
-            })
-
-        results.sort(key=lambda x: x["score"], reverse=True)
-        top_matches = results[:4]
-
-        # Generate follow-up questions
-        follow_ups = []
-        if "annual_income" not in profile:
-            follow_ups.append("What is your approximate total annual family income?")
-        if "category" not in profile:
-            follow_ups.append("Which social category do you belong to (General, OBC, SC, ST, EWS)?")
-        if "state" not in profile:
-            follow_ups.append("Which Indian State / UT do you reside in?")
-
-        # AI enhancement via Sarvam-105B (if requested & key available)
-        ai_rationale = ""
-        if use_ai and top_matches:
-            try:
-                top = top_matches[0]
-                prompt = (
-                    f"Citizen asked: '{query}'\n"
-                    f"Top matched scheme: {top['name']} ({top['department']}).\n"
-                    f"Criteria met: {top['criteria_met']}\n"
-                    f"Criteria unknown: {top['criteria_unknown']}\n"
-                    f"Signal: {top['signal']}\n"
-                    "Provide a warm, reassuring 2-sentence explanation in simple English and Hindi "
-                    "clarifying why this scheme fits and what they should verify first."
-                )
-                ai_rationale = sarvam_client.chat(
-                    messages=[{"role": "user", "content": prompt}],
-                    system_prompt="You are HaqGuide, an empathetic citizen assistance AI. Always be concise and honest.",
-                    temperature=0.3,
-                    max_tokens=256
-                )
-            except Exception as e:
-                ai_rationale = f"Based on your query, {top_matches[0]['name']} is the primary matching public service."
-
-        # Detect scheme combinations (e.g. Income Certificate + UP Scholarship)
+        # Detect scheme combinations (e.g. Income Certificate + UP Scholarship) if matches present
         combinations = []
+        top_matches = route_res.get("matches", [])
         top_ids = [m["name"].lower() for m in top_matches]
         if any("scholarship" in n for n in top_ids) and any("income" in n for n in top_ids):
             combinations.append({
@@ -237,10 +99,16 @@ class EligibilityMatcher:
 
         return {
             "query": query,
-            "parsed_profile": profile,
+            "section": route_res.get("section", "haqguide"),
+            "intent": route_res.get("intent", "GENERAL_GOVERNMENT_QUERY"),
+            "response": route_res.get("response", ""),
+            "ai_rationale": route_res.get("response", ""),
+            "parsed_profile": route_res.get("parsed_profile", user_profile or {}),
             "matches": top_matches,
-            "follow_up_questions": follow_ups[:3],
-            "ai_rationale": ai_rationale,
+            "structured_guide": route_res.get("structured_guide"),
+            "active_scheme": route_res.get("active_scheme"),
+            "required_documents": route_res.get("required_documents"),
+            "follow_up_questions": route_res.get("follow_ups", []),
             "combinations": combinations,
             "data_origin": "ai_inferred"
         }

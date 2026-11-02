@@ -363,66 +363,258 @@
   <!-- Main Citizen Services Content Area -->
   <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none" tabindex="-1">
 
-    <!-- ================= TAB 1: HAQGUIDE ================= -->
+    <!-- ================= TAB 1: HAQGUIDE (THREE INTELLIGENT QUERY SECTIONS) ================= -->
     <div id="content-haqguide" class="space-y-6">
 
-      <!-- Search Card: Flat, Solid White, Thin 1px Border, 4px Radius -->
-      <div class="gov-card border-l-4 border-l-[#004b87] p-6 sm:p-7">
+      <!-- UX4G Three-Section Mode Switcher -->
+      <div class="bg-white p-3 rounded border border-slate-200 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Query Mode:</span>
+          <button type="button" id="subtab-haqguide" onclick="switchSubSection('haqguide')" 
+            class="px-3.5 py-1.5 text-xs font-bold rounded border transition flex items-center gap-1.5 bg-[#004b87] text-white border-[#003366]">
+            <i class="fa-solid fa-compass" aria-hidden="true"></i>
+            <span>1. HaqGuide Citizen Assistant</span>
+          </button>
+          <button type="button" id="subtab-scheme-finder" onclick="switchSubSection('scheme-finder')" 
+            class="px-3.5 py-1.5 text-xs font-bold rounded border transition flex items-center gap-1.5 bg-white text-slate-700 border-slate-300 hover:bg-slate-50">
+            <i class="fa-solid fa-magnifying-glass-chart" aria-hidden="true"></i>
+            <span>2. Scheme Finder (Eligibility)</span>
+          </button>
+          <button type="button" id="subtab-scheme-expert" onclick="switchSubSection('scheme-expert')" 
+            class="px-3.5 py-1.5 text-xs font-bold rounded border transition flex items-center gap-1.5 bg-white text-slate-700 border-slate-300 hover:bg-slate-50">
+            <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+            <span>3. Scheme Expert (Deep Dive)</span>
+          </button>
+        </div>
+        <button type="button" onclick="resetActiveSession()" 
+          class="text-xs text-slate-500 hover:text-red-700 font-semibold px-2.5 py-1 rounded border border-slate-200 hover:border-red-200 transition flex items-center gap-1">
+          <i class="fa-solid fa-arrow-rotate-right" aria-hidden="true"></i>
+          <span>Reset Session</span>
+        </button>
+      </div>
+
+      <!-- SECTION 1 PANEL: HAQGUIDE GENERAL ASSISTANT -->
+      <div id="panel-haqguide" class="gov-card border-l-4 border-l-[#004b87] p-6 sm:p-7 space-y-4">
         <div class="max-w-3xl">
           <div class="flex items-center gap-2 mb-1">
             <span class="bg-[#f1f5f9] text-[#004b87] border border-[#cbd5e1] text-xs px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
-              Service Discovery &amp; Entitlement Check
+              HaqGuide General Assistant
             </span>
-            <span class="text-xs text-slate-500 font-medium">Right to Public Services Act (RTSA)</span>
+            <span class="text-xs text-slate-500 font-medium">Certificates, Portals, Procedures &amp; Statutory Deadlines</span>
           </div>
 
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[#111827] mt-2">
-            Search Welfare Scheme or Certificate Requirement
+            Ask Any Government Service or Certificate Question
           </h1>
           <p class="text-[#4b5563] text-sm mt-1 leading-relaxed">
-            Search for government scholarships, caste certificates, pensions, or agricultural subsidies. 
-            The statutory engine extracts your criteria constraints, reviews official guidelines, and provides plain-language bilingual guidance powered by Sarvam-105B.
+            Get factual step-by-step guidance on Domicile, Income, Caste, Birth certificates, Aadhaar updates, and RTSA statutory rights. Zero irrelevant welfare scheme recommendations.
           </p>
           
           <!-- Search Form Input with Voice Input -->
           <div class="mt-5 flex flex-col sm:flex-row gap-2">
             <div class="relative flex-1">
-              <label for="matcherQuery" class="sr-only">Describe your public service or scholarship need</label>
+              <label for="matcherQuery" class="sr-only">Describe your public service or certificate need</label>
               <input id="matcherQuery" type="text" 
-                placeholder="e.g. Post-matric scholarship for OBC college student family income 1.5 lakh in UP..." 
-                value="Post-matric scholarship for OBC college student family income 1.5 lakh in UP" 
+                placeholder="e.g. How can I apply for a domicile certificate in Uttar Pradesh?" 
+                value="How can I apply for a domicile certificate in Uttar Pradesh?" 
                 class="w-full pl-3.5 pr-10 py-2.5 rounded bg-white border border-[#9ca3af] text-[#111827] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004b87] text-sm font-medium">
               <button type="button" onclick="toggleVoiceInput()" class="absolute right-3 top-2.5 text-[#64748b] hover:text-[#004b87] p-1" aria-label="Use voice search in Hindi or English">
                 <i class="fa-solid fa-microphone text-base" aria-hidden="true"></i>
               </button>
             </div>
-            <button type="button" onclick="runMatch()" id="btnMatch" 
+            <button type="button" onclick="runHaqGuideQuery()" id="btnMatch" 
               class="px-5 py-2.5 bg-[#004b87] hover:bg-[#003366] text-white font-bold rounded border border-[#003366] transition flex items-center justify-center gap-2 text-sm shrink-0 min-h-[42px]">
-              <span>Find Services</span>
+              <span>Get Guidance</span>
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
 
-          <!-- Quick Search Chips (Flat, No Emojis) -->
+          <!-- Quick Search Chips for Section 1 -->
           <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
-            <span class="text-slate-500 font-medium">Suggested queries:</span>
-            <button type="button" onclick="setQuery('Post-matric scholarship for OBC college student family income 1.5 lakh in UP')" 
+            <span class="text-slate-500 font-medium">Frequently Asked:</span>
+            <button type="button" onclick="setHaqGuideQuery('How can I apply for a domicile certificate in Uttar Pradesh?')" 
               class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
-              OBC Post-Matric Scholarship
+              Domicile Certificate (UP)
             </button>
-            <button type="button" onclick="setQuery('My family needs an income certificate for a scholarship in Uttar Pradesh')" 
+            <button type="button" onclick="setHaqGuideQuery('What is the difference between an income certificate and a domicile certificate?')" 
               class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
-              Income Certificate
+              Income vs Domicile Certificate
             </button>
-            <button type="button" onclick="setQuery('Kisan credit card loan for small farmer with 2 acres land')" 
+            <button type="button" onclick="setHaqGuideQuery('How do I update my Aadhaar mobile number?')" 
               class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
-              PM-KISAN / Kisan Credit
+              Aadhaar Mobile Update
+            </button>
+            <button type="button" onclick="setHaqGuideQuery('My scholarship application has been pending for 45 days.')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Pending Application Status
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Match Results Area -->
+      <!-- SECTION 2 PANEL: SCHEME FINDER -->
+      <div id="panel-scheme-finder" class="hidden gov-card border-l-4 border-l-[#d9531e] p-6 sm:p-7 space-y-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="bg-[#fff7ed] text-[#d9531e] border border-[#fed7aa] text-xs px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              Scheme Finder
+            </span>
+            <span class="text-xs text-slate-500 font-medium">Personalized Eligibility &amp; Entitlement Discovery</span>
+          </div>
+
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-[#111827] mt-2">
+            Discover Government Schemes Matching Your Profile
+          </h2>
+          <p class="text-[#4b5563] text-sm mt-1 leading-relaxed">
+            Enter your demographic attributes or search need. The engine evaluates verified criteria across active scholarships, farmer programs, pensions, and enterprise subsidies.
+          </p>
+
+          <!-- Citizen Profile Filter Form -->
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded border border-slate-200 text-xs">
+            <div>
+              <label for="sfState" class="block font-bold text-slate-700 uppercase tracking-wider mb-1">State / UT</label>
+              <select id="sfState" class="w-full bg-white border border-slate-300 rounded px-2.5 py-2 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#004b87]">
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="All India">All India / Central</option>
+              </select>
+            </div>
+            <div>
+              <label for="sfCategory" class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Social Category</label>
+              <select id="sfCategory" class="w-full bg-white border border-slate-300 rounded px-2.5 py-2 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#004b87]">
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="General">General</option>
+                <option value="EWS">EWS</option>
+              </select>
+            </div>
+            <div>
+              <label for="sfIncome" class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Annual Family Income (₹)</label>
+              <input id="sfIncome" type="number" value="150000" placeholder="e.g. 150000" 
+                class="w-full bg-white border border-slate-300 rounded px-2.5 py-2 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#004b87]">
+            </div>
+            <div>
+              <label for="sfOccupation" class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Occupation / Role</label>
+              <select id="sfOccupation" class="w-full bg-white border border-slate-300 rounded px-2.5 py-2 font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#004b87]">
+                <option value="Student">Student (College / School)</option>
+                <option value="Farmer">Farmer / Agriculture</option>
+                <option value="Artisan">Artisan / Traditional Craftsman</option>
+                <option value="Laborer">Daily Wage Laborer</option>
+                <option value="General">Other / General</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Scheme Query Input -->
+          <div class="mt-3 flex flex-col sm:flex-row gap-2">
+            <input id="sfQuery" type="text" 
+              placeholder="e.g. Find scholarships for B.Tech engineering students..." 
+              value="I am a B.Tech student from UP with family income of ₹1.5 lakh. Find scholarships for me." 
+              class="flex-1 pl-3.5 pr-3 py-2.5 rounded bg-white border border-[#9ca3af] text-[#111827] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#d9531e] text-sm font-medium">
+            <button type="button" onclick="runSchemeFinderSearch()" id="btnSchemeFinder" 
+              class="px-5 py-2.5 bg-[#d9531e] hover:bg-[#b84214] text-white font-bold rounded border border-[#b84214] transition flex items-center justify-center gap-2 text-sm shrink-0 min-h-[42px]">
+              <span>Match Schemes</span>
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate-500 font-medium">Suggested Searches:</span>
+            <button type="button" onclick="setSchemeFinderQuery('I am a B.Tech student from UP with family income of ₹1.5 lakh. Find scholarships for me.')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#d9531e] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Student Scholarships
+            </button>
+            <button type="button" onclick="setSchemeFinderQuery('Tell me about the latest government benefits available for farmers.')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#d9531e] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Farmer Benefits &amp; Subsidies
+            </button>
+            <button type="button" onclick="setSchemeFinderQuery('I am not eligible for PM-KISAN. Are there any alternatives?')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#d9531e] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              PM-KISAN Alternatives
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3 PANEL: SCHEME EXPERT -->
+      <div id="panel-scheme-expert" class="hidden gov-card border-l-4 border-l-[#2e7d32] p-6 sm:p-7 space-y-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="bg-[#f0fdf4] text-[#2e7d32] border border-[#bbf7d0] text-xs px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              Scheme Expert Intelligence
+            </span>
+            <span class="text-xs text-slate-500 font-medium">Deep-Dive Q&amp;A on Specific Schemes with Conversational Memory</span>
+          </div>
+
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-[#111827] mt-2">
+            Ask Detailed Inquiries About a Specific Government Scheme
+          </h2>
+          <p class="text-[#4b5563] text-sm mt-1 leading-relaxed">
+            Select a scheme to explore specific rules, landholding limits, document requirements, and common rejection pitfalls. Maintains context across multi-turn questions.
+          </p>
+
+          <!-- Scheme Selection Bar -->
+          <div class="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-50 p-4 rounded border border-slate-200">
+            <div class="shrink-0 sm:w-80">
+              <label for="expertSchemeSelect" class="block font-bold text-slate-700 uppercase tracking-wider text-xs mb-1">Target Scheme:</label>
+              <select id="expertSchemeSelect" onchange="onExpertSchemeChange()" 
+                class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#2e7d32]">
+                <option value="S01">PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)</option>
+                <option value="S05">National Scholarship Portal (Post-Matric)</option>
+                <option value="S02">Ayushman Bharat PM-JAY (Golden Card)</option>
+                <option value="S10">PM Vishwakarma Scheme</option>
+                <option value="S03">PMAY-Gramin (Housing Assistance)</option>
+                <option value="S07">PM Ujjwala Yojana</option>
+                <option value="S09">Sukanya Samriddhi Yojana</option>
+                <option value="S12">Atal Pension Yojana</option>
+                <option value="S13">Income Certificate Service</option>
+              </select>
+            </div>
+
+            <div class="flex-1">
+              <label for="expertQuery" class="block font-bold text-slate-700 uppercase tracking-wider text-xs mb-1">Your Question About This Scheme:</label>
+              <div class="flex gap-2">
+                <input id="expertQuery" type="text" 
+                  placeholder="e.g. Explain the PM-KISAN scheme or what are the landholding limits?" 
+                  value="Explain the PM-KISAN scheme." 
+                  class="flex-1 pl-3.5 pr-3 py-2 rounded bg-white border border-[#9ca3af] text-[#111827] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2e7d32] text-sm font-medium">
+                <button type="button" onclick="runSchemeExpertQuery()" id="btnExpertAsk" 
+                  class="px-4 py-2 bg-[#2e7d32] hover:bg-[#1b5e20] text-white font-bold rounded border border-[#1b5e20] transition flex items-center justify-center gap-2 text-xs sm:text-sm shrink-0">
+                  <span>Ask Expert</span>
+                  <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate-500 font-medium">Quick Questions:</span>
+            <button type="button" onclick="setExpertQuery('Explain the PM-KISAN scheme.')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#2e7d32] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Explain Scheme Overview
+            </button>
+            <button type="button" onclick="setExpertQuery('What documents do I need for this scheme?')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#2e7d32] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Required Documents
+            </button>
+            <button type="button" onclick="setExpertQuery('What are the landholding or income limits?')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#2e7d32] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Eligibility Limits
+            </button>
+            <button type="button" onclick="setExpertQuery('What are the most common rejection pitfalls?')" 
+              class="bg-white hover:bg-slate-100 hover:text-[#2e7d32] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Common Rejection Pitfalls
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match / Intelligence Results Area (Common to all 3 sections) -->
       <div id="matchResults" class="space-y-4" aria-live="polite">
         <!-- Results or skeleton injected here -->
       </div>
@@ -974,24 +1166,78 @@
       }
     }
 
-    // --- TAB 1: HAQGUIDE SEARCH ---
-    async function runMatch() {
-      const q = document.getElementById('matcherQuery').value;
-      if (!q.trim()) return;
-      const btn = document.getElementById('btnMatch');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Analyzing Profile...`;
+    // --- THREE INTELLIGENT QUERY SECTIONS STATE & FUNCTIONS ---
+    let currentSessionId = 'sess_' + Date.now();
+    let activeSubSection = 'haqguide';
 
-      // Show skeleton loader
+    function switchSubSection(sec) {
+      activeSubSection = sec;
+      const subtabs = ['haqguide', 'scheme-finder', 'scheme-expert'];
+      subtabs.forEach(s => {
+        const btn = document.getElementById(`subtab-${s}`);
+        const panel = document.getElementById(`panel-${s}`);
+        if (s === sec) {
+          if (btn) {
+            btn.className = 'px-3.5 py-1.5 text-xs font-bold rounded border transition flex items-center gap-1.5 bg-[#004b87] text-white border-[#003366]';
+          }
+          if (panel) panel.classList.remove('hidden');
+        } else {
+          if (btn) {
+            btn.className = 'px-3.5 py-1.5 text-xs font-bold rounded border transition flex items-center gap-1.5 bg-white text-slate-700 border-slate-300 hover:bg-slate-50';
+          }
+          if (panel) panel.classList.add('hidden');
+        }
+      });
+    }
+
+    function setHaqGuideQuery(q) {
+      const el = document.getElementById('matcherQuery');
+      if (el) el.value = q;
+      switchSubSection('haqguide');
+      runHaqGuideQuery();
+    }
+
+    function setSchemeFinderQuery(q) {
+      const el = document.getElementById('sfQuery');
+      if (el) el.value = q;
+      switchSubSection('scheme-finder');
+      runSchemeFinderSearch();
+    }
+
+    function setExpertQuery(q) {
+      const el = document.getElementById('expertQuery');
+      if (el) el.value = q;
+      switchSubSection('scheme-expert');
+      runSchemeExpertQuery();
+    }
+
+    async function resetActiveSession() {
+      try {
+        await fetch('/api/session/reset', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({session_id: currentSessionId})
+        });
+      } catch (e) {
+        console.warn('Session reset error:', e);
+      }
+      currentSessionId = 'sess_' + Date.now();
+      showToast('Session memory cleared. Fresh context started.', 'info');
+      const container = document.getElementById('matchResults');
+      if (container) container.innerHTML = '';
+    }
+
+    function showSkeletonLoading() {
       const container = document.getElementById('matchResults');
       if (container) {
         container.innerHTML = `
           <div class="space-y-4" aria-busy="true" aria-live="polite">
-            <div class="bg-white p-6 rounded border border-slate-200 space-y-3">
+            <div class="bg-white p-5 rounded border border-slate-200 space-y-3">
               <div class="skeleton h-5 w-48"></div>
               <div class="skeleton h-4 w-3/4"></div>
+              <div class="skeleton h-4 w-1/2"></div>
             </div>
-            <div class="bg-white p-6 rounded border border-slate-200 space-y-4">
+            <div class="bg-white p-5 rounded border border-slate-200 space-y-4">
               <div class="flex justify-between items-center">
                 <div class="skeleton h-6 w-64"></div>
                 <div class="skeleton h-8 w-28 rounded"></div>
@@ -1001,123 +1247,430 @@
           </div>
         `;
       }
+    }
+
+    // SECTION 1: HAQGUIDE QUERY
+    async function runHaqGuideQuery() {
+      const q = document.getElementById('matcherQuery').value.trim();
+      if (!q) return;
+      const btn = document.getElementById('btnMatch');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Processing...`;
+      }
+      showSkeletonLoading();
 
       try {
-        const res = await fetch('/api/match', {
+        const res = await fetch('/api/haqguide/chat', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({query: q, use_ai: true})
+          body: JSON.stringify({
+            query: q,
+            session_id: currentSessionId,
+            section: 'haqguide'
+          })
         });
         const data = await res.json();
         renderMatches(data);
       } catch (e) {
-        showToast("Error matching services. Please try again or refine your query.", "error");
+        showToast('Error getting citizen guidance. Please try again.', 'error');
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<span>Find Services</span><i class="fa-solid fa-arrow-right ml-2"></i>`;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Get Guidance</span><i class="fa-solid fa-arrow-right ml-2"></i>`;
+        }
       }
     }
 
+    // SECTION 2: SCHEME FINDER SEARCH
+    async function runSchemeFinderSearch() {
+      const q = document.getElementById('sfQuery').value.trim();
+      const state = document.getElementById('sfState').value;
+      const category = document.getElementById('sfCategory').value;
+      const income = parseInt(document.getElementById('sfIncome').value) || 0;
+      const occupation = document.getElementById('sfOccupation').value;
+
+      const btn = document.getElementById('btnSchemeFinder');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Evaluating...`;
+      }
+      showSkeletonLoading();
+
+      try {
+        const res = await fetch('/api/scheme-finder/search', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            query: q || 'Find matching welfare schemes',
+            session_id: currentSessionId,
+            profile: {
+              state: state,
+              category: category,
+              annual_income: income,
+              occupation: occupation
+            }
+          })
+        });
+        const data = await res.json();
+        renderMatches(data);
+      } catch (e) {
+        showToast('Error finding schemes. Please try again.', 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Match Schemes</span><i class="fa-solid fa-magnifying-glass ml-2"></i>`;
+        }
+      }
+    }
+
+    // SECTION 3: SCHEME EXPERT QUERY
+    async function runSchemeExpertQuery() {
+      const q = document.getElementById('expertQuery').value.trim();
+      const schemeId = document.getElementById('expertSchemeSelect').value;
+      if (!q) return;
+
+      const btn = document.getElementById('btnExpertAsk');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Consulting...`;
+      }
+      showSkeletonLoading();
+
+      try {
+        const res = await fetch('/api/scheme-expert/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            query: q,
+            session_id: currentSessionId,
+            scheme_id: schemeId
+          })
+        });
+        const data = await res.json();
+        renderMatches(data);
+      } catch (e) {
+        showToast('Error querying Scheme Expert.', 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Ask Expert</span><i class="fa-solid fa-paper-plane ml-1"></i>`;
+        }
+      }
+    }
+
+    function onExpertSchemeChange() {
+      const schemeSel = document.getElementById('expertSchemeSelect');
+      const schemeText = schemeSel.options[schemeSel.selectedIndex].text;
+      document.getElementById('expertQuery').value = `Explain the ${schemeText} scheme.`;
+      runSchemeExpertQuery();
+    }
+
+    // Backward-compatible runMatch
+    async function runMatch() {
+      if (activeSubSection === 'scheme-finder') {
+        return runSchemeFinderSearch();
+      } else if (activeSubSection === 'scheme-expert') {
+        return runSchemeExpertQuery();
+      }
+      return runHaqGuideQuery();
+    }
+
+    // --- ENHANCED RENDERER FOR ALL THREE SECTIONS ---
     function renderMatches(data) {
       const container = document.getElementById('matchResults');
+      if (!container) return;
       let html = '';
 
       const p = data.parsed_profile || {};
       const profileBadges = Object.entries(p).map(([k, v]) => `
-        <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+        <span class="bg-[#f0f4f8] text-[#004b87] border border-[#cbd5e1] px-2.5 py-0.5 rounded text-xs font-semibold">
           <strong>${k}:</strong> ${v}
         </span>
       `).join('');
 
+      // Top Status Bar
+      const intentLabel = data.intent || 'GOVERNMENT_QUERY';
+      const sectionLabel = data.section === 'scheme_finder' ? 'Scheme Finder' : (data.section === 'scheme_expert' ? 'Scheme Expert' : 'HaqGuide Assistant');
       html += `
-        <div class="bg-white p-4 rounded border border-slate-200 flex flex-wrap items-center gap-2">
-          <span class="text-xs font-bold text-slate-500 uppercase">Extracted Profile:</span>
-          ${profileBadges || '<span class="text-xs text-slate-400">No profile constraints detected</span>'}
-          <span class="ml-auto text-xs px-2 py-0.5 rounded font-mono badge-ai">ai_inferred</span>
+        <div class="bg-white p-3.5 rounded border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-bold text-slate-600 uppercase tracking-wider">Active Mode:</span>
+            <span class="bg-[#004b87] text-white font-bold px-2.5 py-0.5 rounded">${sectionLabel}</span>
+            <span class="bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded font-mono">${intentLabel}</span>
+          </div>
+          <div class="flex items-center gap-2 ml-auto">
+            ${profileBadges}
+            <span class="px-2 py-0.5 rounded font-mono text-[11px] bg-slate-100 text-slate-600 border border-slate-200">Sarvam-105B</span>
+          </div>
         </div>
       `;
 
-      if (data.ai_rationale) {
+      // 1. Render Structured Government Guide (For Certificates, Procedures & Services)
+      if (data.structured_guide) {
+        const g = data.structured_guide;
+        const stepsHtml = (g.steps || []).map((step, idx) => `
+          <li class="flex items-start text-xs text-slate-800 leading-relaxed">
+            <span class="w-5 h-5 rounded bg-[#004b87] text-white font-bold flex items-center justify-center shrink-0 mr-2.5 mt-0.5 text-[11px]">${idx + 1}</span>
+            <span>${step}</span>
+          </li>
+        `).join('');
+
+        const docsHtml = (g.documents || []).map(doc => `
+          <tr class="border-b border-slate-200 text-xs">
+            <td class="py-2 px-3 font-semibold text-slate-900">${doc.name}</td>
+            <td class="py-2 px-3">
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold ${doc.mandatory ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+                ${doc.mandatory ? 'Mandatory' : 'Optional'}
+              </span>
+            </td>
+            <td class="py-2 px-3 text-slate-600">${doc.purpose || '-'}</td>
+          </tr>
+        `).join('');
+
+        const pitfallsHtml = (g.rejection_pitfalls || []).map(pit => `
+          <li class="flex items-start text-xs text-amber-900 leading-relaxed">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600 mr-2 mt-0.5 text-xs shrink-0"></i>
+            <span>${pit}</span>
+          </li>
+        `).join('');
+
         html += `
-          <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 border border-blue-200 p-4 rounded shadow-xs">
-            <div class="flex items-start">
-              <i class="fa-solid fa-robot text-blue-600 mt-1 mr-3 text-lg"></i>
+          <div class="gov-card border-l-4 border-l-[#004b87] p-5 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-slate-200">
               <div>
-                <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">HaqGuide Plain Language Explanation (Sarvam-105B)</h4>
-                <p class="text-sm text-slate-800 mt-1 leading-relaxed">${data.ai_rationale}</p>
+                <span class="text-[11px] uppercase tracking-wider font-bold text-[#d9531e]">Official Citizen Service Charter</span>
+                <h3 class="text-lg sm:text-xl font-bold text-[#111827] mt-0.5">${g.title}</h3>
+                <p class="text-xs text-slate-600 mt-0.5">
+                  <strong>Department:</strong> ${g.department} • 
+                  <strong>Statutory SLA:</strong> <span class="text-[#004b87] font-bold">${g.sla_days || '15 Days'}</span> • 
+                  <strong>Fee:</strong> ${g.fee || '₹15'}
+                </p>
               </div>
+              ${g.portal_url ? `
+                <a href="${g.portal_url}" target="_blank" rel="noopener noreferrer" 
+                  class="px-3.5 py-1.5 bg-[#004b87] hover:bg-[#003366] text-white text-xs font-bold rounded border border-[#003366] transition inline-flex items-center gap-1.5 shrink-0">
+                  <span>Open Official Portal</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+              ` : ''}
             </div>
+
+            <!-- Steps Section -->
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-[#004b87]"></i>Step-by-Step Application Procedure
+              </h4>
+              <ul class="space-y-2 bg-slate-50 p-3.5 rounded border border-slate-200">
+                ${stepsHtml}
+              </ul>
+            </div>
+
+            <!-- Documents Checklist Table -->
+            ${docsHtml ? `
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-1.5">
+                  <i class="fa-solid fa-folder-open text-[#004b87]"></i>Required Documents Checklist
+                </h4>
+                <div class="overflow-x-auto rounded border border-slate-200">
+                  <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-100 text-slate-700 text-xs uppercase font-bold border-b border-slate-200">
+                      <tr>
+                        <th class="py-2 px-3">Document Name</th>
+                        <th class="py-2 px-3">Requirement</th>
+                        <th class="py-2 px-3">Purpose / Verification Basis</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                      ${docsHtml}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Rejection Pitfalls Alert -->
+            ${pitfallsHtml ? `
+              <div class="bg-amber-50 border border-amber-200 p-3.5 rounded space-y-1.5">
+                <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-shield-virus text-amber-700"></i>Common Rejection Pitfalls to Prevent Administrative Delays
+                </h4>
+                <ul class="space-y-1.5">
+                  ${pitfallsHtml}
+                </ul>
+              </div>
+            ` : ''}
           </div>
         `;
       }
 
+      // 2. Render Text Response (Conversational or Comparison Matrix)
+      if (data.response && !data.structured_guide) {
+        // Convert markdown headings and bold to html
+        let formattedText = data.response
+          .replace(/### (.*?)
+/g, '<h3 class="text-base font-bold text-slate-900 mt-2 mb-1.5">$1</h3>')
+          .replace(/#### (.*?)
+/g, '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mt-2 mb-1">$1</h4>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+
+        html += `
+          <div class="bg-white p-5 rounded border border-slate-200 space-y-2 text-sm text-slate-800 leading-relaxed shadow-xs">
+            <div class="flex items-center gap-2 pb-2 border-b border-slate-100 text-xs font-bold text-[#004b87] uppercase tracking-wider">
+              <i class="fa-solid fa-comments"></i>HaqGuide Advisory Response
+            </div>
+            <div class="prose max-w-none text-xs sm:text-sm text-slate-800">${formattedText}</div>
+          </div>
+        `;
+      }
+
+      // 3. Render Scheme Expert Focus Banner (When in Scheme Expert mode)
+      if (data.active_scheme) {
+        const s = data.active_scheme;
+        html += `
+          <div class="gov-card border-l-4 border-l-[#2e7d32] p-4 bg-emerald-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <span class="text-[11px] font-bold text-[#2e7d32] uppercase tracking-wider">Active Scheme Under Examination</span>
+              <h3 class="text-base font-bold text-slate-900">${s.name}</h3>
+              <p class="text-xs text-slate-600">${s.department} • Statutory SLA: ${s.time_limit_days || 15} Days</p>
+            </div>
+            <button onclick="handoffToRejectShield('${s.id}', '${s.name}')" 
+              class="px-4 py-2 bg-[#004b87] hover:bg-[#003366] text-white font-bold rounded text-xs transition flex items-center gap-1.5 shrink-0">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Audit Documents on RejectShield →</span>
+            </button>
+          </div>
+        `;
+      }
+
+      // 4. Render Scheme Matches (ONLY when matches array has elements)
+      if (data.matches && data.matches.length > 0) {
+        html += `
+          <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-[#004b87]"></i>Verified Scheme Matches (${data.matches.length})
+              </h3>
+              <span class="text-xs text-slate-500 font-medium">Ranked by eligibility fit</span>
+            </div>
+        `;
+
+        data.matches.forEach((m, idx) => {
+          let signalClass = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+          let signalLabel = 'Likely Eligible';
+          if (m.signal === 'needs_clarification') {
+            signalClass = 'bg-amber-50 text-amber-800 border-amber-300';
+            signalLabel = 'Needs Clarification';
+          } else if (m.signal === 'likely_not_eligible') {
+            signalClass = 'bg-red-50 text-red-800 border-red-300';
+            signalLabel = 'Likely Ineligible';
+          }
+
+          const criteriaMetHtml = (m.criteria_met || []).map(c => `<li class="flex items-center text-emerald-700 text-xs"><i class="fa-solid fa-check mr-1.5 text-[10px]"></i>${c}</li>`).join('');
+          const criteriaUnmetHtml = (m.criteria_unmet || []).map(c => `<li class="flex items-center text-red-600 text-xs"><i class="fa-solid fa-xmark mr-1.5 text-[10px]"></i>${c}</li>`).join('');
+          const criteriaUnknownHtml = (m.criteria_unknown || []).map(c => `<li class="flex items-center text-slate-500 text-xs"><i class="fa-regular fa-circle-question mr-1.5 text-[10px]"></i>${c}</li>`).join('');
+
+          html += `
+            <div class="bg-white p-5 rounded border border-slate-200 shadow-xs hover:border-[#004b87] transition space-y-3">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-400 font-mono">#${idx + 1}</span>
+                    <h4 class="text-base font-bold text-slate-900">${m.name}</h4>
+                    <span class="text-xs px-2.5 py-0.5 rounded border font-bold ${signalClass}">${signalLabel}</span>
+                    <span class="text-xs px-2 py-0.5 rounded font-mono ${m.verification_state === 'verified' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-slate-100 text-slate-700 border border-slate-200'}">${m.verification_state || 'verified'}</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-1">${m.department} • ${m.state} • SLA: <strong>${m.time_limit_days || 15} days</strong></p>
+                </div>
+                <button onclick="handoffToRejectShield('${m.scheme_id}', '${m.name}')" 
+                  class="px-3.5 py-1.5 bg-[#004b87] hover:bg-[#003366] text-white font-bold rounded text-xs transition flex items-center gap-1.5 shrink-0">
+                  <i class="fa-solid fa-shield-halved"></i>Audit on RejectShield →
+                </button>
+              </div>
+
+              <p class="text-xs text-slate-600 leading-relaxed">${m.summary}</p>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 bg-slate-50 p-3 rounded border border-slate-200 text-xs">
+                <div>
+                  <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Criteria Met</span>
+                  <ul class="space-y-1">${criteriaMetHtml || '<li class="text-slate-400">None detected</li>'}</ul>
+                </div>
+                <div>
+                  <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">To Verify</span>
+                  <ul class="space-y-1">${criteriaUnknownHtml || '<li class="text-slate-400">All required info verified</li>'}</ul>
+                </div>
+                <div>
+                  <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Roadblocks</span>
+                  <ul class="space-y-1">${criteriaUnmetHtml || '<li class="text-emerald-700 font-medium">No exclusions flagged</li>'}</ul>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+      } else if (data.section === 'scheme_finder' && (!data.matches || data.matches.length === 0)) {
+        html += `
+          <div class="bg-white p-6 rounded border border-slate-200 text-center space-y-2">
+            <i class="fa-solid fa-magnifying-glass text-3xl text-slate-300"></i>
+            <h4 class="text-sm font-bold text-slate-700">No Schemes Match Your Exact Filter Constraints</h4>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">
+              Try adjusting your annual income ceiling, selecting 'All India / Central' as State, or broadening your query keywords.
+            </p>
+          </div>
+        `;
+      }
+
+      // 5. Render Combinations if present
       if (data.combinations && data.combinations.length > 0) {
         data.combinations.forEach(c => {
           html += `
-            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
-              <h4 class="text-sm font-bold text-amber-900 flex items-center">
-                <i class="fa-solid fa-link mr-2"></i>${c.combination_name}
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded text-xs space-y-1">
+              <h4 class="font-bold text-amber-900 flex items-center gap-1.5">
+                <i class="fa-solid fa-link"></i>${c.combination_name}
               </h4>
-              <p class="text-xs text-amber-800 mt-1">${c.reason}</p>
-              <div class="mt-2 text-xs text-slate-700 font-medium">Recommended order: ${c.step_order.join(' → ')}</div>
+              <p class="text-amber-800">${c.reason}</p>
+              <div class="text-slate-700 font-medium mt-1">Recommended Order: <strong>${c.step_order.join(' → ')}</strong></div>
             </div>
           `;
         });
       }
 
-      data.matches.forEach((m, idx) => {
-        let signalClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-        let signalLabel = 'Likely Eligible';
-        if (m.signal === 'needs_clarification') {
-          signalClass = 'bg-amber-50 text-amber-700 border-amber-200';
-          signalLabel = 'Needs Clarification';
-        } else if (m.signal === 'likely_not_eligible') {
-          signalClass = 'bg-red-50 text-red-700 border-red-200';
-          signalLabel = 'Likely Ineligible';
-        }
-
-        const criteriaMetHtml = m.criteria_met.map(c => `<li class="flex items-center text-emerald-700"><i class="fa-solid fa-check mr-1.5 text-xs"></i>${c}</li>`).join('');
-        const criteriaUnmetHtml = m.criteria_unmet.map(c => `<li class="flex items-center text-red-600"><i class="fa-solid fa-xmark mr-1.5 text-xs"></i>${c}</li>`).join('');
-        const criteriaUnknownHtml = m.criteria_unknown.map(c => `<li class="flex items-center text-slate-500"><i class="fa-regular fa-circle-question mr-1.5 text-xs"></i>${c}</li>`).join('');
+      // 6. Interactive Follow-up Question Chips
+      if (data.follow_up_questions && data.follow_up_questions.length > 0) {
+        const chipsHtml = data.follow_up_questions.map(q => `
+          <button type="button" onclick="handleFollowUpClick('${q.replace(/'/g, "\'")}')" 
+            class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-slate-300 px-3 py-1.5 rounded text-xs text-slate-700 font-medium transition text-left flex items-center gap-1.5">
+            <i class="fa-solid fa-question text-[10px] text-[#004b87]"></i>
+            <span>${q}</span>
+          </button>
+        `).join('');
 
         html += `
-          <div class="bg-white p-5 rounded border border-slate-200 shadow-xs hover:border-blue-300 transition space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="text-xs font-bold text-slate-400">#${idx + 1}</span>
-                  <h3 class="text-lg font-bold text-slate-900">${m.name}</h3>
-                  <span class="text-xs px-2.5 py-0.5 rounded-full border font-semibold ${signalClass}">${signalLabel}</span>
-                  <span class="text-xs px-2 py-0.5 rounded ${m.verification_state === 'verified' ? 'badge-official' : 'badge-simulated'} font-mono">${m.verification_state}</span>
-                </div>
-                <p class="text-xs text-slate-500 mt-0.5">${m.department} • ${m.state} • Official SLA: <strong>${m.time_limit_days} days</strong> (${m.is_statutory ? 'Statutory Guarantee' : 'Illustrative Charter'})</p>
-              </div>
-              <button onclick="handoffToRejectShield('${m.scheme_id}', '${m.name}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs shadow-xs transition flex items-center">
-                <i class="fa-solid fa-shield-halved mr-1.5"></i>Upload & Audit Documents on RejectShield →
-              </button>
-            </div>
-
-            <p class="text-xs text-slate-600">${m.summary}</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 p-3 rounded border border-slate-100 text-xs">
-              <div>
-                <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Criteria Met</span>
-                <ul class="space-y-1">${criteriaMetHtml || '<li class="text-slate-400">None detected</li>'}</ul>
-              </div>
-              <div>
-                <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Criteria To Verify</span>
-                <ul class="space-y-1">${criteriaUnknownHtml || '<li class="text-slate-400">All required info provided</li>'}</ul>
-              </div>
-              <div>
-                <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Potential Roadblocks</span>
-                <ul class="space-y-1">${criteriaUnmetHtml || '<li class="text-emerald-600">No exclusions flagged</li>'}</ul>
-              </div>
+          <div class="bg-slate-50 p-3.5 rounded border border-slate-200 space-y-2">
+            <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block">Recommended Next Inquiries:</span>
+            <div class="flex flex-wrap gap-2">
+              ${chipsHtml}
             </div>
           </div>
         `;
-      });
+      }
 
       container.innerHTML = html;
+    }
+
+    function handleFollowUpClick(q) {
+      if (activeSubSection === 'scheme-finder') {
+        document.getElementById('sfQuery').value = q;
+        runSchemeFinderSearch();
+      } else if (activeSubSection === 'scheme-expert') {
+        document.getElementById('expertQuery').value = q;
+        runSchemeExpertQuery();
+      } else {
+        document.getElementById('matcherQuery').value = q;
+        runHaqGuideQuery();
+      }
     }
 
     function handoffToRejectShield(schemeId, schemeName) {
@@ -1879,8 +2432,25 @@ You are required to submit rectification within 15 days, failing which the appli
       recognition.start();
     }
 
+    // Load Scheme Expert Catalog
+    async function loadSchemeExpertCatalog() {
+      try {
+        const res = await fetch('/api/schemes/catalog');
+        const catalog = await res.json();
+        const sel = document.getElementById('expertSchemeSelect');
+        if (sel && catalog.length > 0) {
+          sel.innerHTML = catalog.map(s => `
+            <option value="${s.id}">${s.name} (${s.department || s.category})</option>
+          `).join('');
+        }
+      } catch (e) {
+        console.warn("Could not load dynamic scheme catalog:", e);
+      }
+    }
+
     // Auto-trigger default match on page load
     window.onload = () => {
+      loadSchemeExpertCatalog();
       runMatch();
     };
   

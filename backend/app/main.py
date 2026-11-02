@@ -61,6 +61,26 @@ class MatchRequest(BaseModel):
     profile: Optional[Dict[str, Any]] = None
     use_ai: Optional[bool] = True
 
+class UnifiedChatRequest(BaseModel):
+    query: str
+    session_id: Optional[str] = None
+    section: Optional[str] = "haqguide"
+    profile: Optional[Dict[str, Any]] = None
+    scheme: Optional[str] = None
+
+class SchemeFinderRequest(BaseModel):
+    query: Optional[str] = ""
+    session_id: Optional[str] = None
+    profile: Optional[Dict[str, Any]] = None
+
+class SchemeExpertRequest(BaseModel):
+    query: str
+    scheme_id: Optional[str] = None
+    session_id: Optional[str] = None
+
+class SessionResetRequest(BaseModel):
+    session_id: str
+
 class ChecklistRequest(BaseModel):
     service_name: str
     language: Optional[str] = "English"
@@ -110,6 +130,60 @@ def get_schemes():
 @app.post("/api/match")
 def match_service(req: MatchRequest):
     return matcher.match(query=req.query, user_profile=req.profile, use_ai=req.use_ai)
+
+@app.post("/api/haqguide/chat")
+def haqguide_chat(req: UnifiedChatRequest):
+    from ai_engine.query_router import query_router
+    return query_router.route(
+        query=req.query,
+        session_id=req.session_id,
+        section_override=req.section,
+        profile_override=req.profile,
+        scheme_override=req.scheme
+    )
+
+@app.post("/api/scheme-finder/search")
+def scheme_finder_search(req: SchemeFinderRequest):
+    from ai_engine.query_router import query_router
+    return query_router.route(
+        query=req.query or "Find eligible schemes",
+        session_id=req.session_id,
+        section_override="scheme_finder",
+        profile_override=req.profile
+    )
+
+@app.post("/api/scheme-expert/chat")
+def scheme_expert_chat(req: SchemeExpertRequest):
+    from ai_engine.query_router import query_router
+    return query_router.route(
+        query=req.query,
+        session_id=req.session_id,
+        section_override="scheme_expert",
+        scheme_override=req.scheme_id
+    )
+
+@app.get("/api/schemes/catalog")
+def get_schemes_catalog():
+    schemes = registry.get_all_schemes()
+    catalog = []
+    for s in schemes:
+        catalog.append({
+            "id": s.get("scheme_id") or s.get("id"),
+            "name": s.get("name"),
+            "department": s.get("department"),
+            "state": s.get("state", "All India"),
+            "category": s.get("category", "General"),
+            "summary": s.get("eligibility_summary", ""),
+            "max_income": s.get("max_income"),
+            "time_limit_days": s.get("time_limit_days", 15)
+        })
+    return catalog
+
+@app.post("/api/session/reset")
+def reset_session(req: SessionResetRequest):
+    from ai_engine.conversation_memory import conversation_memory
+    sess = conversation_memory.reset_session(req.session_id)
+    return {"status": "reset", "session_id": sess.session_id}
 
 @app.post("/api/checklist")
 def get_service_checklist(req: ChecklistRequest):
