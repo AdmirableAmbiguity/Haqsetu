@@ -206,16 +206,46 @@ class IntentClassifier:
         return None
 
     def _extract_state(self, q: str) -> Optional[str]:
+        # Comprehensive list of Indian States & UTs with common abbreviations and spelling variants
         states = [
+            ("uttarakhand", "Uttarakhand"), ("uttrakhand", "Uttarakhand"), ("uttaranchal", "Uttarakhand"), ("uk", "Uttarakhand"),
             ("uttar pradesh", "Uttar Pradesh"), ("up", "Uttar Pradesh"),
-            ("bihar", "Bihar"), ("madhya pradesh", "Madhya Pradesh"), ("mp", "Madhya Pradesh"),
-            ("rajasthan", "Rajasthan"), ("maharashtra", "Maharashtra"), ("delhi", "Delhi"),
-            ("haryana", "Haryana"), ("punjab", "Punjab"), ("gujarat", "Gujarat"),
-            ("karnataka", "Karnataka"), ("tamil nadu", "Tamil Nadu"), ("west bengal", "West Bengal")
+            ("bihar", "Bihar"),
+            ("madhya pradesh", "Madhya Pradesh"), ("mp", "Madhya Pradesh"),
+            ("rajasthan", "Rajasthan"), ("raj", "Rajasthan"),
+            ("maharashtra", "Maharashtra"), ("maha", "Maharashtra"), ("mh", "Maharashtra"),
+            ("delhi", "Delhi"), ("nct of delhi", "Delhi"), ("new delhi", "Delhi"),
+            ("haryana", "Haryana"), ("hr", "Haryana"),
+            ("punjab", "Punjab"), ("pb", "Punjab"),
+            ("gujarat", "Gujarat"), ("guj", "Gujarat"),
+            ("karnataka", "Karnataka"), ("kar", "Karnataka"),
+            ("tamil nadu", "Tamil Nadu"), ("tamilnadu", "Tamil Nadu"), ("tn", "Tamil Nadu"),
+            ("west bengal", "West Bengal"), ("bengal", "West Bengal"), ("wb", "West Bengal"), ("paschim banga", "West Bengal"),
+            ("kerala", "Kerala"), ("kl", "Kerala"),
+            ("odisha", "Odisha"), ("orissa", "Odisha"), ("od", "Odisha"),
+            ("andhra pradesh", "Andhra Pradesh"), ("andhra", "Andhra Pradesh"), ("ap", "Andhra Pradesh"),
+            ("telangana", "Telangana"), ("ts", "Telangana"), ("tg", "Telangana"),
+            ("jharkhand", "Jharkhand"), ("jh", "Jharkhand"),
+            ("chhattisgarh", "Chhattisgarh"), ("chattisgarh", "Chhattisgarh"), ("cg", "Chhattisgarh"),
+            ("himachal pradesh", "Himachal Pradesh"), ("himachal", "Himachal Pradesh"), ("hp", "Himachal Pradesh"),
+            ("assam", "Assam"), ("as", "Assam"),
+            ("jammu and kashmir", "Jammu & Kashmir"), ("jammu & kashmir", "Jammu & Kashmir"), ("j&k", "Jammu & Kashmir"), ("jk", "Jammu & Kashmir"), ("kashmir", "Jammu & Kashmir"),
+            ("goa", "Goa"),
+            ("tripura", "Tripura"),
+            ("manipur", "Manipur"),
+            ("meghalaya", "Meghalaya"),
+            ("mizoram", "Mizoram"),
+            ("nagaland", "Nagaland"),
+            ("sikkim", "Sikkim"),
+            ("arunachal pradesh", "Arunachal Pradesh"),
+            ("chandigarh", "Chandigarh"),
+            ("puducherry", "Puducherry"), ("pondicherry", "Puducherry"),
+            ("ladakh", "Ladakh")
         ]
+        q_clean = q.lower()
         for key, state_name in states:
-            # Word boundary check
-            if re.search(r'\b' + re.escape(key) + r'\b', q):
+            # Word boundary check to prevent false positives on substrings
+            if re.search(r'\b' + re.escape(key) + r'\b', q_clean):
                 return state_name
         return None
 

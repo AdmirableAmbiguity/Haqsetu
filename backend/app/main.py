@@ -39,7 +39,15 @@ def classify_doc_content(text: str, filename: str = "") -> str:
     combined = (filename + " " + text).lower()
     if any(k in combined for k in ["aadhaar", "uidai", "unique identification", "aadhar"]):
         return "aadhaar_card"
-    if any(k in combined for k in ["income certificate", "aay praman", "tahsildar", "tehsildar", "annual family income"]):
+    if any(k in combined for k in ["death certificate", "mrityu praman", "deceased husband", "cause of death"]):
+        return "death_certificate"
+    if any(k in combined for k in ["birth certificate", "janam praman", "age proof", "date of birth certificate", "voter id", "epic"]):
+        return "birth_certificate"
+    if any(k in combined for k in ["disability", "udid", "divyang", "handicap", "medical board certificate"]):
+        return "disability_certificate"
+    if any(k in combined for k in ["khatauni", "jamabandi", "khasra", "land record", "cultivable land", "land ownership"]):
+        return "land_ownership_records"
+    if any(k in combined for k in ["income certificate", "aay praman", "tahsildar", "tehsildar", "annual family income", "salary slip", "income affidavit"]):
         return "income_certificate"
     if any(k in combined for k in ["caste certificate", "jati praman", "obc", "scheduled caste", "scheduled tribe", "backward class"]):
         return "caste_certificate"
@@ -51,6 +59,10 @@ def classify_doc_content(text: str, filename: str = "") -> str:
         return "bank_passbook"
     if any(k in combined for k in ["domicile", "niwas", "resident certificate", "permanent resident"]):
         return "domicile_certificate"
+    if any(k in combined for k in ["ration", "rashan", "bpl", "antyodaya", "secc", "food and civil"]):
+        return "ration_bpl_card"
+    if any(k in combined for k in ["artisan", "vishwakarma", "trade declaration", "craftsperson"]):
+        return "artisan_trade_proof"
     if any(k in combined for k in ["application form", "scholarship application", "online application"]):
         return "application"
     return "custom_document"

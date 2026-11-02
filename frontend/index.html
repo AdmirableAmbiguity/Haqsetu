@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>myHaqSetu | Citizen Rights Assurance &amp; Statutory Services Portal</title>
+  <title>HaqSetu | Citizen Rights Assurance &amp; Statutory Public Services Portal</title>
   
-  <!-- UX4G Design System (MeitY & NeGD, Government of India) -->
+  <!-- UX4G Design System (Government of India) -->
   <link rel="stylesheet" href="https://cdn.ux4g.gov.in/UX4G@3.0.18/index.css">
   
   <!-- Utility Stylesheet (Tailwind CSS) & FontAwesome Solid Icons -->
@@ -183,7 +183,7 @@
           GOVERNMENT OF INDIA / भारत सरकार
         </span>
         <span class="text-slate-400 hidden sm:inline">|</span>
-        <span class="text-slate-600 hidden sm:inline">Ministry of Electronics &amp; Information Technology (MeitY)</span>
+        <span class="text-slate-600 hidden sm:inline">Citizen Rights &amp; Statutory Public Services Assurance Portal</span>
       </div>
       <div class="flex items-center space-x-2 sm:space-x-3 text-xs">
         <label for="globalLanguageSelect" class="sr-only">Platform Language</label>
@@ -232,7 +232,7 @@
               <span class="text-xl font-bold tracking-tight text-[#003366]">
                 Vachan <span class="text-[#d9531e]">Setu</span>
               </span>
-              <span class="text-[11px] px-2 py-0.5 rounded font-mono font-bold badge-ai">Sarvam-105B</span>
+              <span class="text-[11px] px-2 py-0.5 rounded font-mono font-bold badge-official">Official Rule Engine</span>
               <span class="text-[11px] px-2 py-0.5 rounded font-mono font-semibold badge-simulated hidden sm:inline">LOCAL DEV</span>
             </div>
             <p class="text-xs text-[#4b5563] font-medium">Unique Citizen Identity, Document Assurance &amp; Statutory Deadlines Portal</p>
@@ -357,10 +357,10 @@
           Citizen Digital Services &amp; Statutory Assurance
         </span>
         <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white mt-1.5">
-          Welcome to myHaqSetu Resident Services
+          Welcome to HaqSetu Resident Citizen Services
         </h2>
         <p class="text-xs sm:text-sm text-slate-200">
-          Deterministic statutory timelines, pre-submission document deficiency verification, and Sarvam-105B bilingual administrative guidance.
+          Deterministic statutory timelines, pre-submission document deficiency verification, and multilingual administrative guidance.
         </p>
       </div>
       <div class="flex items-center gap-2 shrink-0">
@@ -650,15 +650,37 @@
             </p>
           </div>
           
-          <div class="flex items-center space-x-2 shrink-0">
-            <label for="selectedSchemeId" class="text-xs font-bold text-[#374151] uppercase tracking-wider">Target Scheme:</label>
-            <select id="selectedSchemeId" onchange="onSchemeChange()" 
-              class="text-xs sm:text-sm font-semibold bg-white border border-[#9ca3af] text-[#111827] rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#004b87]">
-              <option value="S05" selected>National Scholarship Portal (Post-Matric)</option>
-              <option value="S13">Income Certificate (State e-District)</option>
-              <option value="S01">PM-KISAN (Kisan Samman Nidhi)</option>
-              <option value="S02">Ayushman Bharat PM-JAY (Golden Card)</option>
-            </select>
+          <div class="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+            <div class="flex items-center gap-1.5">
+              <label for="selectedSchemeId" class="text-xs font-bold text-[#374151] uppercase tracking-wider shrink-0">Target Scheme:</label>
+              <select id="selectedSchemeId" onchange="onSchemeChange()" 
+                class="text-xs sm:text-sm font-semibold bg-white border border-[#9ca3af] text-[#111827] rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#004b87] max-w-[280px]">
+                <option value="S05" selected>National Scholarship Portal (Post-Matric)</option>
+                <option value="S13">Income Certificate (State e-District)</option>
+                <option value="S01">PM-KISAN (Kisan Samman Nidhi)</option>
+                <option value="S02">Ayushman Bharat PM-JAY (Golden Card)</option>
+                <option value="S03">PMAY-Gramin (Housing Assistance)</option>
+                <option value="S04">NSAP - Old Age Pension</option>
+                <option value="S06">PM Matru Vandana Yojana (PMMVY)</option>
+                <option value="S07">PM Ujjwala Yojana (PMUY)</option>
+                <option value="S08">MGNREGA Job Card</option>
+                <option value="S09">Sukanya Samriddhi Yojana</option>
+                <option value="S10">PM Vishwakarma Scheme</option>
+                <option value="S11">Stand-Up India Scheme</option>
+                <option value="S12">Atal Pension Yojana</option>
+              </select>
+            </div>
+            
+            <div class="flex items-center gap-1 bg-[#f1f5f9] p-1 rounded border border-[#cbd5e1]">
+              <input type="text" id="customSchemeInput" placeholder="Or enter any custom scheme name..." 
+                class="text-xs bg-white border border-[#cbd5e1] text-[#111827] rounded px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#004b87] w-48 sm:w-60"
+                onkeydown="if(event.key === 'Enter') applyCustomSchemeName()">
+              <button type="button" onclick="applyCustomSchemeName()" 
+                class="px-2.5 py-1 bg-[#004b87] hover:bg-[#003366] text-white rounded text-xs font-bold transition flex items-center gap-1 shrink-0"
+                title="Audit custom scheme">
+                <i class="fa-solid fa-arrow-right"></i> Set
+              </button>
+            </div>
           </div>
         </div>
 
@@ -817,7 +839,7 @@
           <div class="gov-card p-5 space-y-3 flex flex-col justify-between">
             <div>
               <h4 class="font-bold text-[#111827] text-sm flex items-center">
-                <i class="fa-solid fa-wand-magic-sparkles text-[#004b87] mr-2" aria-hidden="true"></i>Sarvam-105B AI Remediation Guidance
+                <i class="fa-solid fa-wand-magic-sparkles text-[#004b87] mr-2" aria-hidden="true"></i>Administrative Remediation Guidance
               </h4>
               <p class="text-xs text-slate-500 mt-0.5">Bilingual explanation in English and सरल हिंदी</p>
               <div id="aiSummaryBox" class="mt-2 text-xs text-[#1e293b] leading-relaxed bg-[#f8fafc] p-3 rounded border border-[#cbd5e1]">
@@ -891,7 +913,7 @@
         <div class="flex flex-wrap justify-between items-center pb-2.5 border-b border-[#e2e8f0] gap-2">
           <div>
             <h3 class="font-bold text-[#111827] text-base flex items-center">
-              <i class="fa-solid fa-file-signature text-[#004b87] mr-2" aria-hidden="true"></i>Sarvam-105B AI Drafted Letter
+              <i class="fa-solid fa-file-signature text-[#004b87] mr-2" aria-hidden="true"></i>Statutory Administrative Draft Letter
             </h3>
             <span id="letterMeta" class="text-xs text-slate-500 font-mono"></span>
           </div>
@@ -907,7 +929,7 @@
 
         <div class="bg-[#fffbeb] border border-[#fde68a] p-3 rounded text-xs text-[#92400e] flex items-start gap-2">
           <i class="fa-solid fa-circle-info text-[#b45309] mt-0.5" aria-hidden="true"></i>
-          <span><strong>Citizen Verification Notice:</strong> This draft was generated by Sarvam AI based on statutory rules. Review and confirm facts before dispatching to the department.</span>
+          <span><strong>Citizen Verification Notice:</strong> This draft was generated automatically based on statutory rules. Review and confirm all facts before dispatching to the department.</span>
         </div>
 
         <textarea id="letterBody" rows="16" class="w-full text-xs font-mono p-3 bg-[#f8fafc] border border-[#cbd5e1] rounded focus:outline-none focus:ring-2 focus:ring-[#004b87] leading-relaxed"></textarea>
@@ -978,7 +1000,7 @@
               </select>
             </div>
             <div>
-              <label for="noticeLanguageSelect" class="text-xs font-bold text-[#374151] block mb-1">Explanation &amp; Reply Language (Sarvam AI)</label>
+              <label for="noticeLanguageSelect" class="text-xs font-bold text-[#374151] block mb-1">Explanation &amp; Reply Language</label>
               <select id="noticeLanguageSelect" class="w-full text-xs p-2.5 bg-[#f8fafc] border border-[#cbd5e1] rounded focus:ring-2 focus:ring-[#004b87]">
                 <option value="Hindi" selected>हिन्दी (Hindi)</option>
                 <option value="English">English</option>
@@ -997,7 +1019,7 @@
           </div>
 
           <div class="flex flex-col sm:flex-row justify-between items-center gap-2 pt-2">
-            <span class="text-xs text-slate-500">100% Local Optical Character Recognition + Sarvam-105B Legal Parsing</span>
+            <span class="text-xs text-slate-500">High-Efficiency Optical Character Recognition + Legal Administrative Parsing</span>
             <button type="button" onclick="uploadAndDecodeNotice()" id="btnUploadNotice" class="w-full sm:w-auto px-5 py-2.5 bg-[#004b87] hover:bg-[#003366] text-white rounded text-xs font-bold border border-[#003366] transition flex items-center justify-center gap-2">
               <i class="fa-solid fa-wand-magic-sparkles"></i> OCR Scan &amp; Decode Notice
             </button>
@@ -1009,7 +1031,7 @@
           <label for="noticeInput" class="text-xs font-bold text-[#374151] uppercase tracking-wider block">Paste Official Rejection / Deficiency Memo</label>
           <textarea id="noticeInput" rows="6" class="w-full text-xs font-mono p-3 bg-[#f8fafc] border border-[#cbd5e1] rounded focus:outline-none focus:ring-2 focus:ring-[#004b87]" placeholder="Paste the text of the government notice or rejection slip..."></textarea>
           <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
-            <span class="text-xs text-slate-500">Powered by Sarvam-105B Indian Language Simplification</span>
+            <span class="text-xs text-slate-500">Automated Indian Language Administrative Simplification</span>
             <button type="button" onclick="runNoticeDecode()" id="btnDecode" class="w-full sm:w-auto px-5 py-2.5 bg-[#004b87] hover:bg-[#003366] text-white rounded text-xs font-bold border border-[#003366] transition">
               Decode Pasted Notice &amp; Draft Letter
             </button>
@@ -1096,10 +1118,10 @@
             <div class="w-7 h-7 rounded bg-[#004b87] flex items-center justify-center text-white" aria-hidden="true">
               <i class="fa-solid fa-fingerprint text-[#ff9933] text-sm"></i>
             </div>
-            <span class="text-white font-bold text-base">myHaqSetu | Vachan Setu</span>
+            <span class="text-white font-bold text-base">HaqSetu &amp; Vachan Setu</span>
           </div>
           <p class="text-slate-300 text-xs leading-relaxed max-w-md">
-            Digital Identity &amp; Statutory Citizen Assurance Platform. Designed in accordance with official UX4G Design Guidelines (MeitY) and myAadhaar (UIDAI) portal patterns.
+            Digital Identity &amp; Statutory Citizen Assurance Platform. Designed in accordance with official Government of India UX4G Design Guidelines and National Public Portal standards.
           </p>
           <div class="text-[11px] text-[#ff9933] font-mono">
             <i class="fa-solid fa-check-double mr-1"></i>GIGW &amp; WCAG 2.1 AA Compliant
@@ -1122,7 +1144,7 @@
         </div>
       </div>
       <div class="pt-5 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-slate-400">
-        <span>© 2026 myHaqSetu AI &amp; Vachan Setu — Powered by Sarvam-105B</span>
+        <span>&copy; 2026 HaqSetu &amp; Vachan Setu &bull; Official Citizen Rights Assurance Platform</span>
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-[#10b981] inline-block" aria-hidden="true"></span>
           <span class="text-slate-300">All Statutory Endpoints Operational</span>
@@ -1492,7 +1514,7 @@
           </div>
           <div class="flex items-center gap-2 ml-auto">
             ${profileBadges}
-            <span class="px-2 py-0.5 rounded font-mono text-[11px] bg-slate-100 text-slate-600 border border-slate-200">Sarvam-105B</span>
+            <span class="px-2 py-0.5 rounded font-mono text-[11px] bg-slate-100 text-slate-600 border border-slate-200">Verified Rule Engine</span>
           </div>
         </div>
       `;
@@ -1764,17 +1786,76 @@
 
     function handoffToRejectShield(schemeId, schemeName) {
       switchTab('rejectshield');
+      const targetVal = schemeId || schemeName;
+      const targetLabel = schemeName || schemeId;
+      setRejectShieldScheme(targetVal, targetLabel);
+    }
+
+    function setRejectShieldScheme(val, label) {
       const sel = document.getElementById('selectedSchemeId');
-      if (schemeId === 'S05' || schemeName.toLowerCase().includes('scholarship')) {
-        sel.value = 'S05';
-      } else if (schemeId === 'S13' || schemeName.toLowerCase().includes('income')) {
-        sel.value = 'S13';
-      } else if (schemeId === 'S01' || schemeName.toLowerCase().includes('kisan')) {
-        sel.value = 'S01';
-      } else if (schemeId === 'S02' || schemeName.toLowerCase().includes('ayushman')) {
-        sel.value = 'S02';
+      const customInput = document.getElementById('customSchemeInput');
+      if (!sel) return;
+
+      let found = false;
+      const cleanVal = (val || '').trim();
+      const cleanLabel = (label || '').trim();
+
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value.toLowerCase() === cleanVal.toLowerCase() || 
+            sel.options[i].text.toLowerCase().includes(cleanLabel.toLowerCase()) ||
+            cleanLabel.toLowerCase().includes(sel.options[i].value.toLowerCase())) {
+          sel.selectedIndex = i;
+          found = true;
+          break;
+        }
       }
+
+      if (!found) {
+        // Dynamically add and select the custom scheme
+        const opt = document.createElement('option');
+        opt.value = cleanVal || cleanLabel;
+        opt.text = `${cleanLabel} (Custom Scheme)`;
+        opt.selected = true;
+        sel.add(opt, 0);
+      }
+
+      if (customInput) customInput.value = cleanLabel;
       onSchemeChange();
+      showToast(`RejectShield configured for: ${cleanLabel}. Upload your documents to verify.`, 'info');
+
+      setTimeout(() => {
+        const dropEl = document.getElementById('dragDropArea');
+        if (dropEl) dropEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+    }
+
+    function applyCustomSchemeName() {
+      const input = document.getElementById('customSchemeInput');
+      const val = (input?.value || '').trim();
+      if (!val) {
+        showToast("Please enter a scheme name first.", "warning");
+        return;
+      }
+      setRejectShieldScheme(val, val);
+    }
+
+    async function loadRejectShieldSchemes() {
+      try {
+        const res = await fetch('/api/schemes/catalog');
+        const catalog = await res.json();
+        const sel = document.getElementById('selectedSchemeId');
+        if (sel && catalog.length > 0) {
+          const currentVal = sel.value || 'S05';
+          sel.innerHTML = catalog.map(s => `
+            <option value="${s.id}" ${s.id === currentVal ? 'selected' : ''}>${s.name} (${s.department || s.category})</option>
+          `).join('');
+          if (!sel.value && catalog.some(s => s.id === 'S05')) {
+            sel.value = 'S05';
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load dynamic RejectShield catalog:", e);
+      }
     }
 
     // --- TAB 2: REJECTSHIELD (PDF, IMAGE, & OCR FILE INPUTS) ---
@@ -1782,7 +1863,7 @@
     async function onSchemeChange() {
       const schemeId = document.getElementById('selectedSchemeId').value;
       try {
-        const res = await fetch(`/api/rejectshield/checklist?scheme_id=${schemeId}`);
+        const res = await fetch(`/api/rejectshield/checklist?scheme_id=${encodeURIComponent(schemeId)}`);
         activeSchemeDocs = await res.json();
         renderSchemeChecklistBar();
       } catch (e) {
@@ -2128,7 +2209,7 @@
         </div>
       `).join('');
 
-      // 5. Sarvam AI summary
+      // 5. Remediation summary
       document.getElementById('aiSummaryBox').innerHTML = data.ai_summary ? data.ai_summary.replace(/\n/g, '<br>') : '';
     }
 
@@ -2241,7 +2322,7 @@
         <div class="pt-2 flex justify-between items-center border-t border-slate-100">
           <span class="text-xs text-slate-400">Tamper-evident hash: <code class="bg-slate-100 px-1 py-0.5 rounded">${c.events[0]?.hash || 'e89d12a'}</code></span>
           <button onclick="triggerEscalation('${c.case_id}')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold rounded-lg shadow-xs">
-            Generate Grievance / RTI Letter via Sarvam AI →
+            Generate Grievance / RTI Administrative Letter →
           </button>
         </div>
       `;
@@ -2325,8 +2406,8 @@
       panel.classList.remove('hidden');
       panel.scrollIntoView({ behavior: 'smooth' });
 
-      document.getElementById('letterMeta').textContent = `Drafting ${type.toUpperCase()} for ${caseId} via Sarvam-105B...`;
-      document.getElementById('letterBody').value = "Consulting Sarvam AI legal drafting engine...";
+      document.getElementById('letterMeta').textContent = `Drafting ${type.toUpperCase()} for ${caseId} via Administrative Drafting Engine...`;
+      document.getElementById('letterBody').value = "Drafting official administrative response letter...";
 
       try {
         const res = await fetch('/api/letters/generate', {
@@ -2338,7 +2419,7 @@
         document.getElementById('letterMeta').textContent = `Case: ${caseId} | Type: ${type.toUpperCase()}`;
         document.getElementById('letterBody').value = data.generated_letter;
       } catch (e) {
-        showToast("Error generating draft letter with Sarvam AI: " + e, "error");
+        showToast("Error generating draft letter: " + e, "error");
       }
     }
 
@@ -2413,7 +2494,7 @@
 
       const btn = document.getElementById('btnUploadNotice');
       const originalHTML = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Running 100% OCR & Sarvam-105B...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Running 100% OCR & Administrative Decode...`;
       btn.disabled = true;
 
       const service = document.getElementById('noticeServiceSelect').value || "Administrative Document";
@@ -2466,7 +2547,7 @@ You are required to submit rectification within 15 days, failing which the appli
 
       const btn = document.getElementById('btnDecode');
       const orig = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Decoding with Sarvam-105B...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Decoding Administrative Notice...`;
       btn.disabled = true;
 
       const language = document.getElementById('noticeLanguageSelect')?.value || window.currentLanguage || "Hindi";
@@ -2713,6 +2794,7 @@ You are required to submit rectification within 15 days, failing which the appli
     // Auto-trigger default match on page load
     window.onload = () => {
       loadSchemeExpertCatalog();
+      loadRejectShieldSchemes();
       runMatch();
     };
   

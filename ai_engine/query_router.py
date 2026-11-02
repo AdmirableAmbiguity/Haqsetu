@@ -16,6 +16,213 @@ from ai_engine import sarvam_client
 
 logger = logging.getLogger(__name__)
 
+# Official Verified State e-District & Citizen Service Portals Registry
+STATE_PORTALS_REGISTRY = {
+    "Uttarakhand": {
+        "portal_name": "Apuni Sarkar / e-District Uttarakhand",
+        "portal_url": "https://edistrict.uk.gov.in",
+        "alt_portal_url": "https://eservices.uk.gov.in",
+        "act_name": "Uttarakhand Right to Service Act, 2011",
+        "rtsa_days": 15,
+        "department": "Revenue Department (राजस्व विभाग), Government of Uttarakhand",
+        "authorities": "Patwari / Lekhpal field verification, Tehsildar / Sub-Divisional Magistrate approval"
+    },
+    "Uttar Pradesh": {
+        "portal_name": "e-District Uttar Pradesh",
+        "portal_url": "https://edistrict.up.gov.in",
+        "act_name": "UP Janhit Guarantee Act, 2011",
+        "rtsa_days": 15,
+        "department": "Revenue Department (राजस्व विभाग), Government of Uttar Pradesh",
+        "authorities": "Area Lekhpal inquiry, Tehsildar / SDM digital approval"
+    },
+    "Bihar": {
+        "portal_name": "RTPS Bihar / ServicePlus",
+        "portal_url": "https://serviceonline.bihar.gov.in",
+        "act_name": "Bihar Right to Public Services Act, 2011",
+        "rtsa_days": 14,
+        "department": "General Administration Department, Government of Bihar",
+        "authorities": "Circle Officer (CO) / Revenue Officer (RO)"
+    },
+    "Madhya Pradesh": {
+        "portal_name": "MP e-District (Lok Seva Kendra)",
+        "portal_url": "https://mpedistrict.gov.in",
+        "act_name": "MP Lok Seva Guarantee Act, 2010",
+        "rtsa_days": 15,
+        "department": "Revenue & Public Service Management Department, MP",
+        "authorities": "Patwari verification, Naib Tehsildar / Tehsildar"
+    },
+    "Rajasthan": {
+        "portal_name": "e-Mitra / Rajasthan Single Sign-On (SSO)",
+        "portal_url": "https://emitra.rajasthan.gov.in",
+        "alt_portal_url": "https://sso.rajasthan.gov.in",
+        "act_name": "Rajasthan Guaranteed Delivery of Public Services Act, 2011",
+        "rtsa_days": 15,
+        "department": "Department of Revenue & Administrative Reforms, Rajasthan",
+        "authorities": "Patwari verification, Tehsildar"
+    },
+    "Maharashtra": {
+        "portal_name": "Aaple Sarkar Portal",
+        "portal_url": "https://aaplesarkar.mahaonline.gov.in",
+        "act_name": "Maharashtra Right to Public Services Act, 2015",
+        "rtsa_days": 15,
+        "department": "Revenue and Forest Department, Government of Maharashtra",
+        "authorities": "Talathi verification, Tehsildar"
+    },
+    "Delhi": {
+        "portal_name": "e-District Delhi",
+        "portal_url": "https://edistrict.delhigovt.nic.in",
+        "act_name": "Delhi Right to Citizen Title Act, 2011",
+        "rtsa_days": 14,
+        "department": "Revenue Department, Government of NCT of Delhi",
+        "authorities": "Sub-Divisional Magistrate (SDM) / Tehsildar"
+    },
+    "Haryana": {
+        "portal_name": "Antyodaya SARAL Portal Haryana",
+        "portal_url": "https://saralharyana.gov.in",
+        "act_name": "Haryana Right to Service Act, 2014",
+        "rtsa_days": 15,
+        "department": "Revenue & Citizen Resources Information Department, Haryana",
+        "authorities": "Patwari verification, Tehsildar"
+    },
+    "Punjab": {
+        "portal_name": "mSewa Punjab / e-District Punjab",
+        "portal_url": "https://connect.punjab.gov.in",
+        "act_name": "Punjab Right to Services Act, 2011",
+        "rtsa_days": 15,
+        "department": "Department of Governance Reforms & Revenue, Punjab",
+        "authorities": "Kanungo / Tehsildar"
+    },
+    "Gujarat": {
+        "portal_name": "Digital Gujarat Portal",
+        "portal_url": "https://digitalgujarat.gov.in",
+        "act_name": "Gujarat Right to Public Services Act, 2013",
+        "rtsa_days": 15,
+        "department": "Revenue Department, Government of Gujarat",
+        "authorities": "Talati-cum-Mantri / Mamlatdar"
+    },
+    "Karnataka": {
+        "portal_name": "Seva Sindhu Karnataka",
+        "portal_url": "https://sevasindhu.karnataka.gov.in",
+        "act_name": "Sakala Services Act, 2011",
+        "rtsa_days": 15,
+        "department": "Revenue Department, Government of Karnataka",
+        "authorities": "Village Accountant / Revenue Inspector / Tahsildar"
+    },
+    "Tamil Nadu": {
+        "portal_name": "TNeGA e-Sevai Portal",
+        "portal_url": "https://www.tnesevai.tn.gov.in",
+        "act_name": "Tamil Nadu e-Governance Services",
+        "rtsa_days": 15,
+        "department": "Revenue and Disaster Management Department, Tamil Nadu",
+        "authorities": "Village Administrative Officer (VAO) / Tahsildar"
+    },
+    "West Bengal": {
+        "portal_name": "e-District West Bengal",
+        "portal_url": "https://edistrict.wb.gov.in",
+        "act_name": "West Bengal Right to Public Services Act, 2013",
+        "rtsa_days": 15,
+        "department": "Personnel and Administrative Reforms & Revenue, West Bengal",
+        "authorities": "Revenue Inspector / Block Development Officer (BDO)"
+    },
+    "Kerala": {
+        "portal_name": "e-District Kerala",
+        "portal_url": "https://edistrict.kerala.gov.in",
+        "act_name": "Kerala State Right to Service Act, 2012",
+        "rtsa_days": 10,
+        "department": "Revenue Department, Government of Kerala",
+        "authorities": "Village Officer / Tahsildar"
+    },
+    "Odisha": {
+        "portal_name": "Odisha Right to Public Services (ORTPSA) / ServicePlus",
+        "portal_url": "https://serviceonline.gov.in/odisha",
+        "act_name": "Odisha Right to Public Services Act, 2012",
+        "rtsa_days": 15,
+        "department": "Revenue and Disaster Management Department, Odisha",
+        "authorities": "Revenue Inspector (RI) / Tahsildar"
+    },
+    "Andhra Pradesh": {
+        "portal_name": "MeeSeva Andhra Pradesh",
+        "portal_url": "https://ap.meeseva.gov.in",
+        "act_name": "AP Right to Public Services",
+        "rtsa_days": 15,
+        "department": "Revenue Department, Government of Andhra Pradesh",
+        "authorities": "Village Revenue Officer (VRO) / Tahsildar"
+    },
+    "Telangana": {
+        "portal_name": "MeeSeva Telangana",
+        "portal_url": "https://ts.meeseva.telangana.gov.in",
+        "act_name": "Telangana Right to Public Services",
+        "rtsa_days": 15,
+        "department": "Revenue Department, Government of Telangana",
+        "authorities": "Village Revenue Officer / Tahsildar"
+    },
+    "Jharkhand": {
+        "portal_name": "JharSewa Jharkhand (ServicePlus)",
+        "portal_url": "https://jharsewa.jharkhand.gov.in",
+        "act_name": "Jharkhand Right to Service Act, 2011",
+        "rtsa_days": 15,
+        "department": "Department of Personnel & Revenue, Jharkhand",
+        "authorities": "Circle Officer (CO)"
+    },
+    "Chhattisgarh": {
+        "portal_name": "e-District Chhattisgarh",
+        "portal_url": "https://edistrict.cgstate.gov.in",
+        "act_name": "Chhattisgarh Lok Seva Guarantee Act, 2011",
+        "rtsa_days": 15,
+        "department": "Revenue and Disaster Management Department, Chhattisgarh",
+        "authorities": "Patwari / Tehsildar"
+    },
+    "Himachal Pradesh": {
+        "portal_name": "e-District Himachal Pradesh",
+        "portal_url": "https://edistrict.hp.gov.in",
+        "act_name": "HP Public Services Guarantee Act, 2011",
+        "rtsa_days": 15,
+        "department": "Revenue Department, Himachal Pradesh",
+        "authorities": "Patwari / Tehsildar"
+    },
+    "Assam": {
+        "portal_name": "Sewa Setu Assam (Right to Public Services)",
+        "portal_url": "https://sewasetu.assam.gov.in",
+        "act_name": "Assam Right to Public Services Act, 2012",
+        "rtsa_days": 15,
+        "department": "Administrative Reforms & Revenue, Assam",
+        "authorities": "Lot Mandal / Circle Officer"
+    },
+    "Jammu & Kashmir": {
+        "portal_name": "e-UNNAT Jammu & Kashmir (ServicePlus)",
+        "portal_url": "https://serviceonline.gov.in/jammu",
+        "act_name": "J&K Public Services Guarantee Act, 2011",
+        "rtsa_days": 15,
+        "department": "Revenue Department, J&K Administration",
+        "authorities": "Patwari / Tehsildar"
+    },
+    "Goa": {
+        "portal_name": "Goa Online Services Portal",
+        "portal_url": "https://goaonline.gov.in",
+        "act_name": "Goa (Right to Time-Bound Delivery of Public Services) Act, 2013",
+        "rtsa_days": 15,
+        "department": "Revenue Department, Government of Goa",
+        "authorities": "Talathi / Mamlatdar"
+    }
+}
+
+
+def get_state_portal_info(state_name: Optional[str]) -> Dict[str, Any]:
+    """Resolves verified state portal, department, SLA, and statutory act."""
+    if state_name and state_name in STATE_PORTALS_REGISTRY:
+        return STATE_PORTALS_REGISTRY[state_name]
+    
+    # National fallback
+    return {
+        "portal_name": "National Services Portal / State e-District Gateway",
+        "portal_url": "https://services.india.gov.in",
+        "act_name": "State Right to Public Services Act",
+        "rtsa_days": 15,
+        "department": "Revenue Department (राजस्व विभाग) / District Administration",
+        "authorities": "Local Field Inquiry Officer / Tehsildar"
+    }
+
+
 # Grounded Database of Common Citizen Services & Certificates
 GOVERNMENT_SERVICES_KB = {
     "domicile": {
@@ -369,31 +576,53 @@ class QueryRouter:
 
         if service_key and service_key in GOVERNMENT_SERVICES_KB:
             kb = GOVERNMENT_SERVICES_KB[service_key]
-            state_str = entities.get("state") or "your State"
-            steps_text = "\n".join([f"{idx+1}. {step}" for idx, step in enumerate(kb["steps"])])
+            detected_state = entities.get("state")
+            if not detected_state:
+                detected_state = intent_classifier._extract_state(query)
+            
+            portal_info = get_state_portal_info(detected_state)
+            state_label = detected_state if detected_state else "your State"
+            portal_name = portal_info["portal_name"]
+            portal_url = portal_info["portal_url"]
+            dept_name = portal_info["department"] if detected_state else kb["department"]
+            sla_days = portal_info.get("rtsa_days", kb["sla_days"])
+            act_name = portal_info.get("act_name", "Right to Public Services Act")
+            authorities = portal_info.get("authorities", "Lekhpal / Patwari inquiry and Tehsildar approval")
+
+            # Dynamic state-tailored steps
+            tailored_steps = [
+                f"Register or login to the official {portal_name} ({portal_url}) or visit your nearest Common Service Center (CSC) / e-Seva Kendra in {state_label}.",
+                f"Under Revenue / Citizen Services, select 'Application for {kb['title']}'.",
+                f"Fill in the applicant details (Name, Father/Husband Name, Address, and Duration of Residence).",
+                f"Upload the required documents (Aadhaar/Identity proof, self-declaration, and local address proof).",
+                f"Pay the statutory application fee ({kb['fee']}) and retain the Application Reference Number for tracking.",
+                f"Verification is conducted by {authorities} within {sla_days} working days as mandated under the {act_name}.",
+                f"Download the digitally signed certificate directly from {portal_name} or collect from your local Tehsil."
+            ]
+            steps_text = "\n".join([f"{idx+1}. {step}" for idx, step in enumerate(tailored_steps)])
             docs_text = "\n".join([f"• **{doc['name']}** ({'Mandatory' if doc['mandatory'] else 'Optional'}): {doc['purpose']}" for doc in kb["documents"]])
             pitfalls_text = "\n".join([f"• {p}" for p in kb.get("rejection_pitfalls", [])])
 
             reply = (
-                f"### How to Apply for {kb['title']} in {state_str}\n\n"
+                f"### How to Apply for {kb['title']} in {state_label}\n\n"
                 f"{kb['summary']}\n\n"
-                f"**Department**: {kb['department']}\n"
-                f"**Official Portal**: [{kb['portal_name']}]({kb['portal_url']})\n"
-                f"**Statutory Processing Timeline (SLA)**: **{kb['sla_days']} Days** (Under Right to Public Services Act)\n"
-                f"**Statutory Fee**: {kb['fee']}\n\n"
-                f"#### Step-by-Step Procedure:\n{steps_text}\n\n"
-                f"#### Required Documents Checklist:\n{docs_text}\n\n"
+                f"**Responsible Department**: {dept_name}\n"
+                f"**Official State Portal**: [{portal_name}]({portal_url})\n"
+                f"**Statutory SLA Timeline**: **{sla_days} Working Days** (Guaranteed under {act_name})\n"
+                f"**Statutory Application Fee**: {kb['fee']}\n\n"
+                f"#### Step-by-Step Procedure ({state_label}):\n{steps_text}\n\n"
+                f"#### Mandatory Documents Checklist:\n{docs_text}\n\n"
                 f"#### Common Rejection Pitfalls to Avoid:\n{pitfalls_text}"
             )
 
             structured_guide = {
-                "title": kb["title"],
-                "department": kb["department"],
-                "portal_name": kb["portal_name"],
-                "portal_url": kb["portal_url"],
-                "sla_days": f"{kb['sla_days']} Days",
+                "title": f"{kb['title']} ({state_label})",
+                "department": dept_name,
+                "portal_name": portal_name,
+                "portal_url": portal_url,
+                "sla_days": f"{sla_days} Days",
                 "fee": kb["fee"],
-                "steps": kb["steps"],
+                "steps": tailored_steps,
                 "documents": kb["documents"],
                 "rejection_pitfalls": kb.get("rejection_pitfalls", [])
             }
