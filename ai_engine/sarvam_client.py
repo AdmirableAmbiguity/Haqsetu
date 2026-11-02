@@ -24,12 +24,7 @@ DEFAULT_MODEL = "sarvam-105b-conversations"
 def _get_client():
     global _client
     if _client is None:
-        api_key = os.environ.get("SARVAM_API_KEY")
-        if not api_key:
-            raise EnvironmentError(
-                "SARVAM_API_KEY environment variable is not set. "
-                "Get your key at https://dashboard.sarvam.ai"
-            )
+        api_key = os.environ.get("SARVAM_API_KEY") or "sk_dwlnlpua_lms1lJhcnSxkZIGEB8WD9819"
         _client = SarvamAI(api_subscription_key=api_key)
     return _client
 

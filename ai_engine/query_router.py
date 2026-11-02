@@ -553,9 +553,18 @@ class QueryRouter:
             if any(k in tokens for k in ["health", "hospital", "ayushman", "medical"]) and "ayushman" in content_str:
                 score += 50
                 is_relevant = True
-            if any(k in tokens for k in ["pension", "old age", "vridha"]) and "pension" in content_str:
+            if any(k in tokens for k in ["old age", "vridha", "senior citizen", "elderly"]) and "old age" in name:
                 score += 50
                 is_relevant = True
+            elif "pension" in tokens and "pension" in content_str and not any(k in tokens for k in ["widow", "vidhwa", "disability", "divyang"]):
+                score += 40
+                is_relevant = True
+
+            # Negative penalties for mismatched specific categories
+            if any(k in tokens for k in ["widow", "vidhwa", "destitute"]) and "old age" in name:
+                score -= 60
+            if any(k in tokens for k in ["disability", "divyang", "handicap"]) and "old age" in name:
+                score -= 60
             if any(k in tokens for k in ["artisan", "vishwakarma", "craftsman"]) and "vishwakarma" in content_str:
                 score += 50
                 is_relevant = True
@@ -645,6 +654,22 @@ class QueryRouter:
 
         results.sort(key=lambda x: x["score"], reverse=True)
         top_matches = results[:4]
+
+        # Intelligent AI Live Scheme Discovery Fallback
+        # Only triggered if existing catalog matching yields 0 or insufficient results
+        if len(top_matches) == 0:
+            try:
+                from ai_engine.ai_scheme_discovery import ai_scheme_discovery
+                discovered = ai_scheme_discovery.discover_schemes(query=query, user_profile=user_profile)
+                if discovered:
+                    existing_names = {m["name"].lower() for m in top_matches}
+                    for d in discovered:
+                        if d["name"].lower() not in existing_names:
+                            top_matches.append(d)
+                            existing_names.add(d["name"].lower())
+                    top_matches = top_matches[:4]
+            except Exception as e:
+                logger.warning(f"Live scheme discovery fallback error: {e}")
 
         # Generate follow-up questions for missing profile
         follow_ups = []
