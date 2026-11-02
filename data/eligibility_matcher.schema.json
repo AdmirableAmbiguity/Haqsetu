@@ -1,0 +1,453 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://haqsetu.example/schemas/eligibility_matcher_dataset.schema.json",
+  "title": "HaqSetu Eligibility Matcher Dataset",
+  "type": "object",
+  "description": "Synthetic citizen-query examples and expected explainable scheme rankings. Scores are relevance labels, not approval probabilities.",
+  "required": [
+    "dataset_name",
+    "schema_version",
+    "dataset_version",
+    "created_at",
+    "default_pilot_scope",
+    "data_integrity_notice",
+    "schema",
+    "source_registry",
+    "scheme_catalog",
+    "records"
+  ],
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "description": "Data provenance metadata. confidence_score measures source/annotation confidence, not probability of citizen approval.",
+      "required": [
+        "label",
+        "source",
+        "reference_source_ids",
+        "created_at",
+        "last_rule_check",
+        "confidence_score",
+        "dataset_version",
+        "review_status"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": [
+            "SYNTHETIC",
+            "REAL_PUBLIC_AGGREGATE",
+            "REAL_CONSENTED_ANONYMIZED"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "reference_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "last_rule_check": {
+          "type": "string",
+          "format": "date"
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "dataset_version": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "input": {
+      "type": "object",
+      "description": "Synthetic original user text and nullable normalized facts. Missing values must remain null/unknown.",
+      "required": [
+        "text_en",
+        "text_hi",
+        "state",
+        "district",
+        "area_type",
+        "age_years",
+        "gender_for_scheme_rule",
+        "household_context",
+        "occupation",
+        "landholding",
+        "education",
+        "scheme_need_tags",
+        "unknowns"
+      ],
+      "properties": {
+        "text_en": {
+          "type": "string"
+        },
+        "text_hi": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "district": {
+          "type": "string"
+        },
+        "area_type": {
+          "type": "string",
+          "enum": [
+            "rural",
+            "urban",
+            "peri_urban",
+            "unknown"
+          ]
+        },
+        "age_years": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "gender_for_scheme_rule": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Use only for scheme rules that legitimately require it; do not infer from names."
+        },
+        "household_context": {
+          "type": "object"
+        },
+        "occupation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "landholding": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "education": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "scheme_need_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidate_match": {
+      "type": "object",
+      "required": [
+        "scheme_id",
+        "scheme_name",
+        "rank",
+        "match_status",
+        "match_score",
+        "rationale",
+        "matched_criteria",
+        "unverified_or_missing_criteria",
+        "hard_exclusions",
+        "next_checks",
+        "official_source_ids",
+        "rule_verification_state"
+      ],
+      "properties": {
+        "scheme_id": {
+          "type": "string"
+        },
+        "scheme_name": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "match_status": {
+          "type": "string",
+          "enum": [
+            "likely_match",
+            "possible_match",
+            "needs_more_information",
+            "ineligible",
+            "needs_current_rule_check"
+          ]
+        },
+        "match_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Synthetic ranking score, not a probability."
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "matched_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unverified_or_missing_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hard_exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "official_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rule_verification_state": {
+          "type": "string",
+          "enum": [
+            "verified_for_demo",
+            "conditional_database_check",
+            "needs_current_rule_check"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "metadata",
+        "input",
+        "expected_output",
+        "ground_truth"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadata"
+        },
+        "input": {
+          "$ref": "#/$defs/input"
+        },
+        "expected_output": {
+          "type": "object",
+          "required": [
+            "ranked_matches",
+            "combination_recommendations",
+            "follow_up_questions",
+            "abstain_reason"
+          ],
+          "properties": {
+            "ranked_matches": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/candidate_match"
+              }
+            },
+            "combination_recommendations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "combination_id",
+                  "scheme_ids",
+                  "purpose",
+                  "guardrail"
+                ],
+                "properties": {
+                  "combination_id": {
+                    "type": "string"
+                  },
+                  "scheme_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "purpose": {
+                    "type": "string"
+                  },
+                  "guardrail": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "follow_up_questions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "abstain_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "ground_truth": {
+          "type": "object",
+          "required": [
+            "relevant_scheme_ids",
+            "known_ineligible_scheme_ids",
+            "label_basis",
+            "adjudication_state"
+          ],
+          "properties": {
+            "relevant_scheme_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "known_ineligible_scheme_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "label_basis": {
+              "type": "string"
+            },
+            "adjudication_state": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "dataset_name": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "dataset_version": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "default_pilot_scope": {
+      "type": "object"
+    },
+    "data_integrity_notice": {
+      "type": "string"
+    },
+    "schema": {
+      "type": "object"
+    },
+    "source_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "title",
+          "publisher",
+          "url",
+          "source_type",
+          "facts_used",
+          "last_checked",
+          "freshness_note",
+          "licensing"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source_type": {
+            "type": "string"
+          },
+          "facts_used": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_checked": {
+            "type": "string",
+            "format": "date"
+          },
+          "freshness_note": {
+            "type": "string"
+          },
+          "licensing": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "scheme_catalog": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    }
+  },
+  "additionalProperties": false
+}

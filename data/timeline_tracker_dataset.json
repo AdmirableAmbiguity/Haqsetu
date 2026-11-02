@@ -1,0 +1,1653 @@
+{
+  "dataset_info": {
+    "name": "vachan_setu_timeline_tracker_synthetic",
+    "description": "Seed dataset for deadline calculation, status-freshness and risk classification, with grievance pathways.",
+    "version": "0.1.0",
+    "created": "2026-11-02",
+    "data_origin_summary": "100% synthetic. No real citizen data. No record is a real application.",
+    "licensing": {
+      "synthetic_content": "Authored for the HaqSetu/Vachan project; license per project policy.",
+      "official_sources": "If you add real data from data.gov.in, check each dataset's licence (many use Government Open Data License - India, GODL-India, which requires attribution). For scheme text from ministry portals, cite the portal and date and check reuse terms. Do not scrape or train on private/personal grievance data."
+    },
+    "known_limitations": [
+      "Scheme criteria are paraphrased summaries, not verified against current notifications.",
+      "Milestone durations are illustrative, not statutory, unless flagged statutory_candidate and then still needs human verification.",
+      "12 records is a seed set for schema design and smoke tests, not enough to train a model; use for few-shot, evaluation, or as a template for scaling."
+    ],
+    "as_of_date": "2026-11-02"
+  },
+  "schema": {
+    "records[].timeline_id": "Unique ID (T###).",
+    "records[].scheme_id / scheme_name": "Links to scheme_catalog in the eligibility dataset.",
+    "records[].jurisdiction": "state, district, office_level.",
+    "records[].scenario_type": "Slice label for the test case.",
+    "records[].citizen_input_text": "What the citizen says about their application.",
+    "records[].application": "Reference number (synthetic), submission_date, channel.",
+    "records[].rule_ref": "Rule used for calculation: rule_id, rule_version, deadline_basis (illustrative_synthetic | statutory_candidate), day_count_method, holidays_excluded, verification_state, note.",
+    "records[].milestones[]": "milestone_id, name, stage, expected_offset_days, expected_date (derived), actual_date (citizen-entered or null), status (pending | completed_on_time | completed_late | overdue_unconfirmed), status_source.",
+    "records[].events_log[]": "Dated events with source (citizen_entered | official_integration | portal_check).",
+    "records[].as_of_date": "Evaluation date; all derived values are relative to it.",
+    "records[].expected_output": "Gold labels: final_due_date, days_remaining, deadline_state (on_track | approaching [<=7 days] | overdue | paused_awaiting_citizen | completed_on_time | completed_late), status_freshness (fresh | stale [>14 days] | no_status_data | not_applicable when completed), risk_level, risk_factors, recommended_next_action, status_disclaimer.",
+    "records[].grievance_pathway[]": "Ordered escalation levels: authority_type, action, channel, earliest.",
+    "records[].metadata": "Same fields as the eligibility dataset, plus notes."
+  },
+  "records": [
+    {
+      "timeline_id": "T001",
+      "scheme_id": "S13",
+      "scheme_name": "Income Certificate (State e-District service)",
+      "jurisdiction": {
+        "state": "Uttar Pradesh",
+        "district": "Lucknow",
+        "office_level": "Tehsil"
+      },
+      "scenario_type": "approaching_deadline",
+      "citizen_input_text": "Applied for income certificate 20 Oct for scholarship; haven't heard anything.",
+      "application": {
+        "reference_number": "SYN-T001-20261020",
+        "submission_date": "2026-10-20",
+        "channel": "online_portal"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S13-UT-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T001-M1",
+          "name": "Application acknowledged",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-10-20",
+          "actual_date": "2026-10-20",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T001-M2",
+          "name": "Field/office verification",
+          "stage": "verification",
+          "expected_offset_days": 7,
+          "expected_date": "2026-10-27",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T001-M3",
+          "name": "Certificate issued",
+          "stage": "decision",
+          "expected_offset_days": 15,
+          "expected_date": "2026-11-04",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-10-20",
+          "event": "milestone_recorded: Application acknowledged",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-04",
+        "days_remaining": 2,
+        "deadline_state": "approaching",
+        "status_freshness": "fresh",
+        "risk_level": "medium",
+        "risk_factors": [
+          "days_to_final_due=2",
+          "1_intermediate_milestone(s)_past_expected_date_without_record"
+        ],
+        "recommended_next_action": "Check official status before the due date; keep acknowledgement ready; set reminder.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: UP IGRS (Jansunwai)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T002",
+      "scheme_id": "S05",
+      "scheme_name": "National Scholarship Portal (pre/post-matric schemes)",
+      "jurisdiction": {
+        "state": "Kerala",
+        "district": "Malappuram",
+        "office_level": "Institute + state nodal"
+      },
+      "scenario_type": "approaching_stale",
+      "citizen_input_text": "Submitted scholarship on 10 Sept; institute verified; nothing since.",
+      "application": {
+        "reference_number": "SYN-T002-20260910",
+        "submission_date": "2026-09-10",
+        "channel": "online_portal"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S05-KE-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T002-M1",
+          "name": "Application submitted & acknowledged",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-09-10",
+          "actual_date": "2026-09-10",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T002-M2",
+          "name": "Institute-level verification",
+          "stage": "verification",
+          "expected_offset_days": 15,
+          "expected_date": "2026-09-25",
+          "actual_date": "2026-09-25",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T002-M3",
+          "name": "Nodal-officer verification",
+          "stage": "verification",
+          "expected_offset_days": 30,
+          "expected_date": "2026-10-10",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T002-M4",
+          "name": "Sanction / disbursal",
+          "stage": "decision",
+          "expected_offset_days": 60,
+          "expected_date": "2026-11-09",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-09-10",
+          "event": "milestone_recorded: Application submitted & acknowledged",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-09-25",
+          "event": "milestone_recorded: Institute-level verification",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-09",
+        "days_remaining": 7,
+        "deadline_state": "approaching",
+        "status_freshness": "stale",
+        "risk_level": "high",
+        "risk_factors": [
+          "days_to_final_due=7",
+          "status_stale",
+          "1_intermediate_milestone(s)_past_expected_date_without_record"
+        ],
+        "recommended_next_action": "Check official status before the due date; keep acknowledgement ready; set reminder.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://scholarships.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T003",
+      "scheme_id": "S04",
+      "scheme_name": "NSAP - Indira Gandhi National Old Age Pension",
+      "jurisdiction": {
+        "state": "Bihar",
+        "district": "Gaya",
+        "office_level": "Block"
+      },
+      "scenario_type": "overdue",
+      "citizen_input_text": "Applied for old age pension in July through block office; no sanction letter yet.",
+      "application": {
+        "reference_number": "SYN-T003-20260715",
+        "submission_date": "2026-07-15",
+        "channel": "assisted_service_centre"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S04-BI-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T003-M1",
+          "name": "Application received",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-07-15",
+          "actual_date": "2026-07-15",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T003-M2",
+          "name": "Local verification (Panchayat/Block)",
+          "stage": "verification",
+          "expected_offset_days": 30,
+          "expected_date": "2026-08-14",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T003-M3",
+          "name": "Sanction order",
+          "stage": "decision",
+          "expected_offset_days": 60,
+          "expected_date": "2026-09-13",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T003-M4",
+          "name": "First pension payment",
+          "stage": "payment",
+          "expected_offset_days": 90,
+          "expected_date": "2026-10-13",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-07-15",
+          "event": "milestone_recorded: Application received",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-10-13",
+        "days_remaining": -20,
+        "deadline_state": "overdue",
+        "status_freshness": "stale",
+        "risk_level": "high",
+        "risk_factors": [
+          "days_to_final_due=-20",
+          "status_stale",
+          "2_intermediate_milestone(s)_past_expected_date_without_record"
+        ],
+        "recommended_next_action": "Escalate: send status inquiry (level 1) now; if no reply, move to level 2 with application reference and dates.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://nsap.nic.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": "Assisted-mode submission; citizen is elderly and low digital literacy."
+      }
+    },
+    {
+      "timeline_id": "T004",
+      "scheme_id": "S03",
+      "scheme_name": "PMAY-Gramin",
+      "jurisdiction": {
+        "state": "Odisha",
+        "district": "Kandhamal",
+        "office_level": "Gram Panchayat/Block"
+      },
+      "scenario_type": "on_track",
+      "citizen_input_text": "Registered for rural housing on 1 Oct; verification done.",
+      "application": {
+        "reference_number": "SYN-T004-20261001",
+        "submission_date": "2026-10-01",
+        "channel": "gram_panchayat"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S03-OD-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T004-M1",
+          "name": "Registration/acknowledgement",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-10-01",
+          "actual_date": "2026-10-01",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T004-M2",
+          "name": "Beneficiary verification",
+          "stage": "verification",
+          "expected_offset_days": 30,
+          "expected_date": "2026-10-31",
+          "actual_date": "2026-10-29",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T004-M3",
+          "name": "Sanction order",
+          "stage": "decision",
+          "expected_offset_days": 45,
+          "expected_date": "2026-11-15",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T004-M4",
+          "name": "First instalment",
+          "stage": "payment",
+          "expected_offset_days": 60,
+          "expected_date": "2026-11-30",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-10-01",
+          "event": "milestone_recorded: Registration/acknowledgement",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-10-29",
+          "event": "milestone_recorded: Beneficiary verification",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-30",
+        "days_remaining": 28,
+        "deadline_state": "on_track",
+        "status_freshness": "fresh",
+        "risk_level": "low",
+        "risk_factors": [
+          "days_to_final_due=28"
+        ],
+        "recommended_next_action": "No action needed; verify status at next milestone date.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://pmayg.nic.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T005",
+      "scheme_id": "S06",
+      "scheme_name": "PM Matru Vandana Yojana (PMMVY)",
+      "jurisdiction": {
+        "state": "Maharashtra",
+        "district": "Nashik",
+        "office_level": "Anganwadi/Block"
+      },
+      "scenario_type": "completed_late",
+      "citizen_input_text": "Registered for maternity benefit 1 Aug; instalment came on 4 Sept.",
+      "application": {
+        "reference_number": "SYN-T005-20260801",
+        "submission_date": "2026-08-01",
+        "channel": "anganwadi_centre"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S06-MA-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T005-M1",
+          "name": "Registration",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-08-01",
+          "actual_date": "2026-08-01",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T005-M2",
+          "name": "Verification",
+          "stage": "verification",
+          "expected_offset_days": 21,
+          "expected_date": "2026-08-22",
+          "actual_date": "2026-08-20",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T005-M3",
+          "name": "First instalment credited",
+          "stage": "payment",
+          "expected_offset_days": 30,
+          "expected_date": "2026-08-31",
+          "actual_date": "2026-09-04",
+          "status": "completed_late",
+          "status_source": "citizen_entered"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-08-01",
+          "event": "milestone_recorded: Registration",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-08-20",
+          "event": "milestone_recorded: Verification",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-09-04",
+          "event": "milestone_recorded: First instalment credited",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-08-31",
+        "days_remaining": -63,
+        "deadline_state": "completed_late",
+        "status_freshness": "not_applicable",
+        "risk_level": "closed_late",
+        "risk_factors": [
+          "days_to_final_due=-63",
+          "status_not_applicable"
+        ],
+        "recommended_next_action": "Record outcome; optionally submit feedback about the delay.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: Aaple Sarkar",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://wcd.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T006",
+      "scheme_id": "S07",
+      "scheme_name": "PM Ujjwala Yojana (PMUY)",
+      "jurisdiction": {
+        "state": "Assam",
+        "district": "Kamrup",
+        "office_level": "Distributor"
+      },
+      "scenario_type": "on_track",
+      "citizen_input_text": "Applied for LPG connection 28 Oct, got receipt.",
+      "application": {
+        "reference_number": "SYN-T006-20261028",
+        "submission_date": "2026-10-28",
+        "channel": "distributor_office"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S07-AS-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T006-M1",
+          "name": "Application received",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-10-28",
+          "actual_date": "2026-10-28",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T006-M2",
+          "name": "KYC verification",
+          "stage": "verification",
+          "expected_offset_days": 7,
+          "expected_date": "2026-11-04",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T006-M3",
+          "name": "LPG connection released",
+          "stage": "decision",
+          "expected_offset_days": 14,
+          "expected_date": "2026-11-11",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-10-28",
+          "event": "milestone_recorded: Application received",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-11",
+        "days_remaining": 9,
+        "deadline_state": "on_track",
+        "status_freshness": "fresh",
+        "risk_level": "low",
+        "risk_factors": [
+          "days_to_final_due=9"
+        ],
+        "recommended_next_action": "No action needed; verify status at next milestone date.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://pmuy.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T007",
+      "scheme_id": "S02",
+      "scheme_name": "Ayushman Bharat PM-JAY",
+      "jurisdiction": {
+        "state": "Jharkhand",
+        "district": "Ranchi",
+        "office_level": "District"
+      },
+      "scenario_type": "completed_on_time",
+      "citizen_input_text": "Enrolled for health cover 15 Oct; card received 20 Oct.",
+      "application": {
+        "reference_number": "SYN-T007-20261015",
+        "submission_date": "2026-10-15",
+        "channel": "csc"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S02-JH-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T007-M1",
+          "name": "Eligibility check/enrolment",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-10-15",
+          "actual_date": "2026-10-15",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T007-M2",
+          "name": "E-card issued",
+          "stage": "decision",
+          "expected_offset_days": 7,
+          "expected_date": "2026-10-22",
+          "actual_date": "2026-10-20",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-10-15",
+          "event": "milestone_recorded: Eligibility check/enrolment",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-10-20",
+          "event": "milestone_recorded: E-card issued",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-10-22",
+        "days_remaining": -11,
+        "deadline_state": "completed_on_time",
+        "status_freshness": "not_applicable",
+        "risk_level": "none",
+        "risk_factors": [
+          "days_to_final_due=-11",
+          "status_not_applicable"
+        ],
+        "recommended_next_action": "Save receipt/outcome in evidence locker.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://pmjay.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T008",
+      "scheme_id": "S10",
+      "scheme_name": "PM Vishwakarma",
+      "jurisdiction": {
+        "state": "Rajasthan",
+        "district": "Jodhpur",
+        "office_level": "Gram Panchayat/ULB"
+      },
+      "scenario_type": "on_track_but_milestone_gap",
+      "citizen_input_text": "Registered 1 Sept; nobody has visited for verification.",
+      "application": {
+        "reference_number": "SYN-T008-20260901",
+        "submission_date": "2026-09-01",
+        "channel": "csc"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S10-RA-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T008-M1",
+          "name": "Registration",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-09-01",
+          "actual_date": "2026-09-01",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T008-M2",
+          "name": "Local verification",
+          "stage": "verification",
+          "expected_offset_days": 30,
+          "expected_date": "2026-10-01",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T008-M3",
+          "name": "District-level approval",
+          "stage": "verification",
+          "expected_offset_days": 60,
+          "expected_date": "2026-10-31",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T008-M4",
+          "name": "Certificate / ID issued",
+          "stage": "decision",
+          "expected_offset_days": 90,
+          "expected_date": "2026-11-30",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-09-01",
+          "event": "milestone_recorded: Registration",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-30",
+        "days_remaining": 28,
+        "deadline_state": "on_track",
+        "status_freshness": "stale",
+        "risk_level": "medium",
+        "risk_factors": [
+          "days_to_final_due=28",
+          "status_stale",
+          "2_intermediate_milestone(s)_past_expected_date_without_record"
+        ],
+        "recommended_next_action": "An earlier milestone has no recorded completion; make a status inquiry at level 1.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: Rajasthan Sampark",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://pmvishwakarma.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T009",
+      "scheme_id": "S08",
+      "scheme_name": "MGNREGA",
+      "jurisdiction": {
+        "state": "West Bengal",
+        "district": "Purulia",
+        "office_level": "Gram Panchayat"
+      },
+      "scenario_type": "overdue_statutory_candidate",
+      "citizen_input_text": "Applied for job card 10 Oct; Panchayat has not issued it.",
+      "application": {
+        "reference_number": "SYN-T009-20261010",
+        "submission_date": "2026-10-10",
+        "channel": "gram_panchayat"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S08-WE-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "statutory_candidate",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "needs_review",
+        "note": "Resembles a provision of the scheme's governing law but must be verified against the current official text."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T009-M1",
+          "name": "Job-card application acknowledged",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-10-10",
+          "actual_date": "2026-10-10",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T009-M2",
+          "name": "Job card issued",
+          "stage": "decision",
+          "expected_offset_days": 15,
+          "expected_date": "2026-10-25",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-10-10",
+          "event": "milestone_recorded: Job-card application acknowledged",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-10-25",
+        "days_remaining": -8,
+        "deadline_state": "overdue",
+        "status_freshness": "stale",
+        "risk_level": "high",
+        "risk_factors": [
+          "days_to_final_due=-8",
+          "status_stale"
+        ],
+        "recommended_next_action": "Escalate: send status inquiry (level 1) now; if no reply, move to level 2 with application reference and dates.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://nrega.nic.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": "Deadline resembles a statutory job-card provision; needs human verification before being used as authoritative."
+      }
+    },
+    {
+      "timeline_id": "T010",
+      "scheme_id": "S01",
+      "scheme_name": "PM-KISAN",
+      "jurisdiction": {
+        "state": "Gujarat",
+        "district": "Surat",
+        "office_level": "State agriculture dept"
+      },
+      "scenario_type": "on_track_stale",
+      "citizen_input_text": "Registered for PM-KISAN 20 Sept; state verification done 18 Oct.",
+      "application": {
+        "reference_number": "SYN-T010-20260920",
+        "submission_date": "2026-09-20",
+        "channel": "online_portal"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S01-GU-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T010-M1",
+          "name": "Registration",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-09-20",
+          "actual_date": "2026-09-20",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T010-M2",
+          "name": "State verification",
+          "stage": "verification",
+          "expected_offset_days": 30,
+          "expected_date": "2026-10-20",
+          "actual_date": "2026-10-18",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T010-M3",
+          "name": "First instalment",
+          "stage": "payment",
+          "expected_offset_days": 60,
+          "expected_date": "2026-11-19",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-09-20",
+          "event": "milestone_recorded: Registration",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-10-18",
+          "event": "milestone_recorded: State verification",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-19",
+        "days_remaining": 17,
+        "deadline_state": "on_track",
+        "status_freshness": "stale",
+        "risk_level": "low",
+        "risk_factors": [
+          "days_to_final_due=17",
+          "status_stale"
+        ],
+        "recommended_next_action": "No action needed; verify status at next milestone date.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://pmkisan.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": null
+      }
+    },
+    {
+      "timeline_id": "T011",
+      "scheme_id": "S11",
+      "scheme_name": "Stand-Up India",
+      "jurisdiction": {
+        "state": "Tamil Nadu",
+        "district": "Madurai",
+        "office_level": "Bank branch"
+      },
+      "scenario_type": "deficiency_notice",
+      "citizen_input_text": "Bank asked for a detailed project report on 12 Oct; I haven't submitted yet.",
+      "application": {
+        "reference_number": "SYN-T011-20260925",
+        "submission_date": "2026-09-25",
+        "channel": "bank_branch"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S11-TA-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T011-M1",
+          "name": "Loan application lodged",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-09-25",
+          "actual_date": "2026-09-25",
+          "status": "completed_on_time",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T011-M2",
+          "name": "Bank appraisal",
+          "stage": "verification",
+          "expected_offset_days": 15,
+          "expected_date": "2026-10-10",
+          "actual_date": "2026-10-12",
+          "status": "completed_late",
+          "status_source": "citizen_entered"
+        },
+        {
+          "milestone_id": "T011-M3",
+          "name": "Loan decision / disbursal",
+          "stage": "decision",
+          "expected_offset_days": 45,
+          "expected_date": "2026-11-09",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-09-25",
+          "event": "milestone_recorded: Loan application lodged",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-10-12",
+          "event": "milestone_recorded: Bank appraisal",
+          "source": "citizen_entered"
+        },
+        {
+          "date": "2026-10-12",
+          "event": "deficiency_notice",
+          "source": "citizen_entered",
+          "note": "Bank requested detailed project report."
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-09",
+        "days_remaining": 7,
+        "deadline_state": "paused_awaiting_citizen",
+        "status_freshness": "stale",
+        "risk_level": "medium",
+        "risk_factors": [
+          "days_to_final_due=7",
+          "status_stale"
+        ],
+        "recommended_next_action": "Respond to the deficiency notice with the requested documents; clock status to be reconfirmed after resubmission.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: Tamil Nadu CM Helpline",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://standupmitra.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": "Tests clock-pause logic when a deficiency notice is pending."
+      }
+    },
+    {
+      "timeline_id": "T012",
+      "scheme_id": "S12",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": {
+        "state": "Karnataka",
+        "district": "Mysuru",
+        "office_level": "Bank branch"
+      },
+      "scenario_type": "approaching_no_status_data",
+      "citizen_input_text": "Filled APY form on 5 Oct at the bank; no acknowledgement slip received.",
+      "application": {
+        "reference_number": "SYN-T012-20261005",
+        "submission_date": "2026-10-05",
+        "channel": "bank_branch"
+      },
+      "rule_ref": {
+        "rule_id": "RULE-S12-KA-v0",
+        "rule_version": "0.1-synthetic",
+        "deadline_basis": "illustrative_synthetic",
+        "day_count_method": "calendar_days",
+        "holidays_excluded": false,
+        "verification_state": "unverified",
+        "note": "Illustrative durations only; NOT an official service-delivery standard."
+      },
+      "milestones": [
+        {
+          "milestone_id": "T012-M1",
+          "name": "Enrolment form submitted",
+          "stage": "submission",
+          "expected_offset_days": 0,
+          "expected_date": "2026-10-05",
+          "actual_date": null,
+          "status": "overdue_unconfirmed",
+          "status_source": "none"
+        },
+        {
+          "milestone_id": "T012-M2",
+          "name": "Account activated / auto-debit set",
+          "stage": "decision",
+          "expected_offset_days": 30,
+          "expected_date": "2026-11-04",
+          "actual_date": null,
+          "status": "pending",
+          "status_source": "none"
+        }
+      ],
+      "events_log": [
+        {
+          "date": "2026-10-05",
+          "event": "submission_recorded",
+          "source": "citizen_entered"
+        }
+      ],
+      "as_of_date": "2026-11-02",
+      "expected_output": {
+        "final_due_date": "2026-11-04",
+        "days_remaining": 2,
+        "deadline_state": "approaching",
+        "status_freshness": "no_status_data",
+        "risk_level": "high",
+        "risk_factors": [
+          "days_to_final_due=2",
+          "status_no_status_data",
+          "1_intermediate_milestone(s)_past_expected_date_without_record"
+        ],
+        "recommended_next_action": "Check official status before the due date; keep acknowledgement ready; set reminder.",
+        "status_disclaimer": "Deadline is calculated from the recorded submission date; actual internal department status is unknown unless an official integration confirms it."
+      },
+      "grievance_pathway": [
+        {
+          "level": 1,
+          "authority_type": "Facilitation centre / block or tehsil office",
+          "action": "Status inquiry with application reference",
+          "channel": "in_person_or_phone",
+          "earliest": "any time"
+        },
+        {
+          "level": 2,
+          "authority_type": "Scheme nodal / grievance officer of implementing department",
+          "action": "Written clarification request",
+          "channel": "written",
+          "earliest": "after expected date passes or no response to level 1"
+        },
+        {
+          "level": 3,
+          "authority_type": "State grievance portal: state grievance portal (name to be verified)",
+          "action": "Lodge grievance",
+          "channel": "online",
+          "earliest": "after level 2 response or no reply"
+        },
+        {
+          "level": 4,
+          "authority_type": "CPGRAMS (Centralised Public Grievance Redress and Monitoring System)",
+          "action": "Lodge grievance on central portal",
+          "channel": "online (pgportal.gov.in)",
+          "earliest": "after lower levels"
+        },
+        {
+          "level": 5,
+          "authority_type": "State Right-to-Services first appeal authority (only where the service is notified under the state's Act)",
+          "action": "First appeal",
+          "channel": "per state procedure",
+          "earliest": "per state rule - verify"
+        }
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic timeline; milestone offsets are illustrative; grievance levels reflect generic Indian redressal structure (CPGRAMS is a real central portal; state portals must be verified).",
+        "source_urls": [
+          "https://pgportal.gov.in",
+          "https://pfrda.org.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null,
+        "notes": "No acknowledgement: tests missing-status handling."
+      }
+    }
+  ]
+}

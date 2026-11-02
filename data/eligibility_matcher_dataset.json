@@ -1,0 +1,1250 @@
+{
+  "dataset_info": {
+    "name": "haqsetu_eligibility_matcher_synthetic",
+    "description": "Seed dataset for ranking schemes from free-text citizen descriptions.",
+    "version": "0.1.0",
+    "created": "2026-11-02",
+    "data_origin_summary": "100% synthetic. No real citizen data. No record is a real application.",
+    "licensing": {
+      "synthetic_content": "Authored for the HaqSetu/Vachan project; license per project policy.",
+      "official_sources": "If you add real data from data.gov.in, check each dataset's licence (many use Government Open Data License - India, GODL-India, which requires attribution). For scheme text from ministry portals, cite the portal and date and check reuse terms. Do not scrape or train on private/personal grievance data."
+    },
+    "known_limitations": [
+      "Scheme criteria are paraphrased summaries, not verified against current notifications.",
+      "Milestone durations are illustrative, not statutory, unless flagged statutory_candidate and then still needs human verification.",
+      "12 records is a seed set for schema design and smoke tests, not enough to train a model; use for few-shot, evaluation, or as a template for scaling."
+    ],
+    "as_of_date": "2026-11-02"
+  },
+  "schema": {
+    "dataset_info.*": "Dataset-level metadata: name, version, synthetic flag, licensing and limitations.",
+    "scheme_catalog[].scheme_id": "Stable ID (S01...) used in match labels.",
+    "scheme_catalog[].eligibility_summary": "Paraphrased high-level criteria. NOT authoritative.",
+    "scheme_catalog[].verification_state": "verified | needs_review | unverified.",
+    "records[].record_id": "Unique ID (E###).",
+    "records[].input.text / language": "Raw user text and language code (en, hi, hinglish).",
+    "records[].parsed_profile": "Structured entities expected to be extracted (state, district, area, age, gender, category, income, occupation, needs...). Null = not stated.",
+    "records[].expected_output.needs_clarification": "True when the model should ask follow-ups before ranking confidently.",
+    "records[].expected_output.ranked_matches[]": "Gold ranking. rank (1=best), relevance_grade 0-3 (3=highly relevant, 0=irrelevant; for nDCG), eligibility_signal (likely_eligible | possibly_eligible | needs_info | likely_ineligible), rationale, criteria_met / criteria_unmet / criteria_unknown.",
+    "records[].expected_output.recommended_combinations[]": "Scheme bundles with order (sequential | parallel) and reason.",
+    "records[].expected_output.follow_up_questions": "Minimal questions that would resolve unknown criteria.",
+    "records[].tags": "Slice tags for error analysis (hindi, negative_case, underspecified...).",
+    "records[].metadata": "data_origin (synthetic|real|hybrid), source_basis, source_urls, date_created, last_verified_date, confidence_score (0-1, annotator plausibility), version, verification_state, reviewer."
+  },
+  "scheme_catalog": [
+    {
+      "scheme_id": "S01",
+      "name": "PM-KISAN",
+      "level": "central",
+      "category": "agriculture",
+      "eligibility_summary": "Income support for landholding farmer families; certain categories (e.g., institutional landholders, higher-income taxpayers, some public-office holders) are excluded.",
+      "typical_documents": [
+        "Aadhaar",
+        "land record",
+        "bank account"
+      ],
+      "official_portal_domain": "pmkisan.gov.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S02",
+      "name": "Ayushman Bharat PM-JAY",
+      "level": "central",
+      "category": "health",
+      "eligibility_summary": "Health cover for families in identified deprivation/occupational categories; an extension for senior citizens aged 70+ exists. Beneficiary lists drive eligibility.",
+      "typical_documents": [
+        "Aadhaar",
+        "ration card / family ID",
+        "mobile number"
+      ],
+      "official_portal_domain": "pmjay.gov.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S03",
+      "name": "PMAY-Gramin",
+      "level": "central",
+      "category": "housing",
+      "eligibility_summary": "Rural housing assistance for houseless households or those in kutcha/dilapidated houses, selected from verified lists.",
+      "typical_documents": [
+        "Aadhaar",
+        "job card (if any)",
+        "bank account",
+        "SECC/Awaas+ listing"
+      ],
+      "official_portal_domain": "pmayg.nic.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S04",
+      "name": "NSAP - Indira Gandhi National Old Age Pension",
+      "level": "central",
+      "category": "social_security",
+      "eligibility_summary": "Pension for elderly (60+) persons from BPL households; higher amounts for older age bands; states often top up.",
+      "typical_documents": [
+        "age proof",
+        "BPL proof",
+        "Aadhaar",
+        "bank account"
+      ],
+      "official_portal_domain": "nsap.nic.in",
+      "rules_vary_by_state": true,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S05",
+      "name": "National Scholarship Portal (pre/post-matric schemes)",
+      "level": "central",
+      "category": "education",
+      "eligibility_summary": "Scholarships for students from notified categories (e.g., SC/ST/OBC/minority/merit-means) subject to income ceilings and course level.",
+      "typical_documents": [
+        "income certificate",
+        "caste/community certificate",
+        "marksheet",
+        "bank account",
+        "institute ID"
+      ],
+      "official_portal_domain": "scholarships.gov.in",
+      "rules_vary_by_state": true,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S06",
+      "name": "PM Matru Vandana Yojana (PMMVY)",
+      "level": "central",
+      "category": "women_child",
+      "eligibility_summary": "Cash maternity benefit for eligible pregnant/lactating women, generally for first living child; exclusions for those with other statutory maternity benefits.",
+      "typical_documents": [
+        "Aadhaar",
+        "MCP card",
+        "bank account"
+      ],
+      "official_portal_domain": "wcd.gov.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S07",
+      "name": "PM Ujjwala Yojana (PMUY)",
+      "level": "central",
+      "category": "energy",
+      "eligibility_summary": "LPG connection support for adult women from eligible poor households without an existing LPG connection in the household.",
+      "typical_documents": [
+        "Aadhaar",
+        "ration card",
+        "bank account",
+        "KYC form"
+      ],
+      "official_portal_domain": "pmuy.gov.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S08",
+      "name": "MGNREGA",
+      "level": "central",
+      "category": "employment",
+      "eligibility_summary": "Up to 100 days of unskilled manual work per rural household per year on demand; adult household members must register for a job card.",
+      "typical_documents": [
+        "job card application",
+        "Aadhaar (as required)",
+        "photo"
+      ],
+      "official_portal_domain": "nrega.nic.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S09",
+      "name": "Sukanya Samriddhi Yojana",
+      "level": "central",
+      "category": "savings",
+      "eligibility_summary": "Small-savings account for a girl child (opened by guardian) below the specified age limit.",
+      "typical_documents": [
+        "girl child's birth certificate",
+        "guardian ID/address proof"
+      ],
+      "official_portal_domain": "indiapost.gov.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S10",
+      "name": "PM Vishwakarma",
+      "level": "central",
+      "category": "livelihood",
+      "eligibility_summary": "Recognition, skill training, toolkit incentive and credit support for artisans/craftspeople in notified traditional trades.",
+      "typical_documents": [
+        "Aadhaar",
+        "trade proof/self-declaration",
+        "bank account",
+        "mobile number"
+      ],
+      "official_portal_domain": "pmvishwakarma.gov.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S11",
+      "name": "Stand-Up India",
+      "level": "central",
+      "category": "enterprise",
+      "eligibility_summary": "Bank loans for greenfield enterprises by SC/ST and/or women entrepreneurs, within a stated loan band.",
+      "typical_documents": [
+        "ID/address proof",
+        "caste certificate (if SC/ST)",
+        "project report",
+        "bank KYC"
+      ],
+      "official_portal_domain": "standupmitra.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S12",
+      "name": "Atal Pension Yojana",
+      "level": "central",
+      "category": "social_security",
+      "eligibility_summary": "Pension scheme for unorganised-sector workers aged 18-40 with a bank account; contribution-based.",
+      "typical_documents": [
+        "Aadhaar",
+        "bank account",
+        "mobile number"
+      ],
+      "official_portal_domain": "pfrda.org.in",
+      "rules_vary_by_state": false,
+      "verification_state": "needs_review"
+    },
+    {
+      "scheme_id": "S13",
+      "name": "Income Certificate (State e-District service)",
+      "level": "state",
+      "category": "civil_service",
+      "eligibility_summary": "Certificate issued by the state revenue administration, commonly a prerequisite for scholarships and welfare schemes. Process, fee and timeline vary by state.",
+      "typical_documents": [
+        "ID proof",
+        "address proof",
+        "income declaration/self-affidavit",
+        "ration card"
+      ],
+      "official_portal_domain": "state e-District portal (varies)",
+      "rules_vary_by_state": true,
+      "verification_state": "needs_review"
+    }
+  ],
+  "records": [
+    {
+      "record_id": "E001",
+      "input": {
+        "text": "My family needs an income certificate for a scholarship. My son is in class 11, we are OBC, live in Lucknow, annual income about 90,000 rupees.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Uttar Pradesh",
+        "district": "Lucknow",
+        "area": "urban",
+        "age": null,
+        "gender": null,
+        "category": "OBC",
+        "annual_family_income_inr": 90000,
+        "occupation": null,
+        "education": "class 11 (dependent)",
+        "needs": [
+          "income certificate",
+          "scholarship"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S13",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Income certificate is a prerequisite document for the scholarship the user wants; user gave income and residence.",
+            "criteria_met": [
+              "resident of state",
+              "income declared"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "supporting income proof"
+            ]
+          },
+          {
+            "scheme_id": "S05",
+            "rank": 2,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Class 11 OBC student with stated income may fit a post-matric/related scholarship; income ceiling and course rules must be checked.",
+            "criteria_met": [
+              "student",
+              "OBC category stated",
+              "income stated"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "income ceiling for this scheme-year",
+              "institute registration"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S13",
+              "S05"
+            ],
+            "order": "sequential",
+            "reason": "Obtain income certificate first; it is then attached to the scholarship application."
+          }
+        ],
+        "follow_up_questions": [
+          "Which scholarship (state or national) has your school suggested?",
+          "Does your family have a ration card?"
+        ]
+      },
+      "tags": [
+        "prerequisite_chain",
+        "urban"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://scholarships.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E002",
+      "input": {
+        "text": "मैं 68 साल की विधवा हूँ, बिहार के गया के एक गाँव में रहती हूँ। कोई आमदनी नहीं है। पेंशन चाहिए और इलाज के लिए भी कुछ मदद।",
+        "language": "hi"
+      },
+      "parsed_profile": {
+        "state": "Bihar",
+        "district": "Gaya",
+        "area": "rural",
+        "age": 68,
+        "gender": "female",
+        "marital_status": "widow",
+        "annual_family_income_inr": 0,
+        "needs": [
+          "pension",
+          "health cover"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S04",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Age 60+, no income stated; old-age pension typically requires BPL status which must be confirmed.",
+            "criteria_met": [
+              "age >= 60",
+              "no income stated"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "BPL listing",
+              "bank account"
+            ]
+          },
+          {
+            "scheme_id": "S02",
+            "rank": 2,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Health cover depends on inclusion in beneficiary lists; senior-citizen extension may apply.",
+            "criteria_met": [
+              "senior citizen"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "family inclusion in list",
+              "Aadhaar"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S04",
+              "S02"
+            ],
+            "order": "parallel",
+            "reason": "Both are independent applications requiring similar identity documents."
+          }
+        ],
+        "follow_up_questions": [
+          "Do you have a ration card or BPL card?",
+          "Do you have a bank or post-office account?"
+        ]
+      },
+      "tags": [
+        "hindi",
+        "elderly",
+        "rural"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://nsap.nic.in",
+          "https://pmjay.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E003",
+      "input": {
+        "text": "Meri biwi pregnant hai, pehla bachcha hai. Hum Odisha ke Kandhamal ke gaon mein rehte hain. Kaccha ghar hai, paise ki madad aur pakka ghar chahiye.",
+        "language": "hinglish"
+      },
+      "parsed_profile": {
+        "state": "Odisha",
+        "district": "Kandhamal",
+        "area": "rural",
+        "spouse_pregnant": true,
+        "first_child": true,
+        "housing": "kutcha",
+        "needs": [
+          "maternity cash support",
+          "housing"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S06",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "First pregnancy; maternity cash benefit generally targets first living child.",
+            "criteria_met": [
+              "pregnant",
+              "first child"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "other maternity benefit status",
+              "bank account"
+            ]
+          },
+          {
+            "scheme_id": "S03",
+            "rank": 2,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Kutcha house in rural area; selection is from verified lists, so inclusion must be checked.",
+            "criteria_met": [
+              "rural",
+              "kutcha house"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "listing in housing survey",
+              "existing pucca house"
+            ]
+          },
+          {
+            "scheme_id": "S02",
+            "rank": 3,
+            "relevance_grade": 2,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Family may be covered under health scheme; helps with delivery costs.",
+            "criteria_met": [],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "list inclusion"
+            ]
+          },
+          {
+            "scheme_id": "S07",
+            "rank": 4,
+            "relevance_grade": 1,
+            "eligibility_signal": "needs_info",
+            "rationale": "Relevant only if household lacks an LPG connection; not stated.",
+            "criteria_met": [],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "LPG connection status"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S06",
+              "S03"
+            ],
+            "order": "parallel",
+            "reason": "Different departments; same ID documents reusable."
+          }
+        ],
+        "follow_up_questions": [
+          "Does your household already have an LPG connection?",
+          "Is your name in the village housing list?"
+        ]
+      },
+      "tags": [
+        "code_mixed",
+        "maternal",
+        "multi_scheme"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://wcd.gov.in",
+          "https://pmayg.nic.in",
+          "https://pmjay.gov.in",
+          "https://pmuy.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E004",
+      "input": {
+        "text": "I am a 38 year old farmer in Nashik, Maharashtra with 2 acres in my own name. I want income support now and some pension for old age.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Maharashtra",
+        "district": "Nashik",
+        "area": "rural",
+        "age": 38,
+        "occupation": "farmer",
+        "land_acres": 2,
+        "needs": [
+          "income support",
+          "old-age pension"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S01",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Landholding farmer; exclusions (taxpayer, institutional) not indicated.",
+            "criteria_met": [
+              "landholding farmer"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "income-tax status",
+              "land record in own name verified"
+            ]
+          },
+          {
+            "scheme_id": "S12",
+            "rank": 2,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Age 38 is within the 18-40 band; requires bank account; age limit makes it time-sensitive.",
+            "criteria_met": [
+              "age 18-40"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "bank account",
+              "not covered by other statutory pension"
+            ]
+          },
+          {
+            "scheme_id": "S08",
+            "rank": 3,
+            "relevance_grade": 1,
+            "eligibility_signal": "needs_info",
+            "rationale": "Only relevant if seeking supplementary wage work; not requested.",
+            "criteria_met": [],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "interest in manual work"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S01",
+              "S12"
+            ],
+            "order": "parallel",
+            "reason": "Complementary: current income support plus long-term pension; APY enrolment closes with age 40."
+          }
+        ],
+        "follow_up_questions": [
+          "Do you pay income tax?",
+          "Do you have a bank account linked to Aadhaar?"
+        ]
+      },
+      "tags": [
+        "farmer",
+        "age_window"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://pmkisan.gov.in",
+          "https://pfrda.org.in",
+          "https://nrega.nic.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E005",
+      "input": {
+        "text": "I am an SC woman in Madurai, Tamil Nadu. I want to start a small garment manufacturing unit and need a loan of about 25 lakh rupees.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Tamil Nadu",
+        "district": "Madurai",
+        "area": "semi-urban",
+        "gender": "female",
+        "category": "SC",
+        "needs": [
+          "business loan"
+        ],
+        "loan_amount_inr": 2500000
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S11",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "SC woman, new manufacturing enterprise, loan amount appears within the scheme's stated band.",
+            "criteria_met": [
+              "SC",
+              "woman",
+              "new enterprise",
+              "loan band"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "not a defaulter",
+              "project report"
+            ]
+          },
+          {
+            "scheme_id": "S12",
+            "rank": 2,
+            "relevance_grade": 1,
+            "eligibility_signal": "needs_info",
+            "rationale": "Retirement security for self-employed; secondary need.",
+            "criteria_met": [],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "age"
+            ]
+          }
+        ],
+        "recommended_combinations": [],
+        "follow_up_questions": [
+          "What is your age?",
+          "Is the unit a first-time (greenfield) venture?"
+        ]
+      },
+      "tags": [
+        "enterprise",
+        "dual_eligibility"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://standupmitra.in",
+          "https://pfrda.org.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E006",
+      "input": {
+        "text": "I am a 35 year old carpenter in Jodhpur, Rajasthan. I want skill training, new tools and a cheap loan for my workshop.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Rajasthan",
+        "district": "Jodhpur",
+        "area": "urban",
+        "age": 35,
+        "occupation": "carpenter",
+        "needs": [
+          "skill training",
+          "tools",
+          "credit"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S10",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Carpentry is a traditional artisan trade; scheme covers training, toolkit incentive and credit.",
+            "criteria_met": [
+              "traditional trade"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "not a government employee",
+              "registration"
+            ]
+          },
+          {
+            "scheme_id": "S12",
+            "rank": 2,
+            "relevance_grade": 2,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Age 35 within pension band; useful for long-term security.",
+            "criteria_met": [
+              "age 18-40"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "bank account"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S10",
+              "S12"
+            ],
+            "order": "parallel",
+            "reason": "Livelihood support now and pension enrolment before age cutoff."
+          }
+        ],
+        "follow_up_questions": [
+          "Do you have a bank account?"
+        ]
+      },
+      "tags": [
+        "artisan"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://pmvishwakarma.gov.in",
+          "https://pfrda.org.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E007",
+      "input": {
+        "text": "मेरी बेटी 6 साल की है, हम गुजरात के सूरत में रहते हैं। उसकी पढ़ाई और शादी के लिए बचत की कोई सरकारी योजना बताइए।",
+        "language": "hi"
+      },
+      "parsed_profile": {
+        "state": "Gujarat",
+        "district": "Surat",
+        "area": "urban",
+        "child_gender": "female",
+        "child_age": 6,
+        "needs": [
+          "savings for daughter"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S09",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Girl child aged 6 is below the account-opening age limit; guardian can open the account.",
+            "criteria_met": [
+              "girl child",
+              "age below limit"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "only two accounts per family rule"
+            ]
+          }
+        ],
+        "recommended_combinations": [],
+        "follow_up_questions": [
+          "Do you already have Sukanya accounts for other daughters?"
+        ]
+      },
+      "tags": [
+        "hindi",
+        "savings"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://indiapost.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.9,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E008",
+      "input": {
+        "text": "In Kamrup, Assam our village has no work. I want guaranteed work days for my family and also a gas connection for the kitchen.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Assam",
+        "district": "Kamrup",
+        "area": "rural",
+        "needs": [
+          "wage employment",
+          "LPG connection"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S08",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Rural adult household members can demand work after job-card registration.",
+            "criteria_met": [
+              "rural",
+              "seeking manual work"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "job card status"
+            ]
+          },
+          {
+            "scheme_id": "S07",
+            "rank": 2,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Eligible if household is poor and has no LPG connection.",
+            "criteria_met": [
+              "needs LPG"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "household poverty criteria",
+              "existing connection"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S08",
+              "S07"
+            ],
+            "order": "parallel",
+            "reason": "Independent applications."
+          }
+        ],
+        "follow_up_questions": [
+          "Does any adult in the household have a job card?",
+          "Is the household on the ration-card priority list?"
+        ]
+      },
+      "tags": [
+        "rural",
+        "multi_scheme"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://nrega.nic.in",
+          "https://pmuy.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E009",
+      "input": {
+        "text": "I need help from the government. I am poor and we are struggling.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": null,
+        "district": null,
+        "needs": [
+          "unspecified"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": true,
+        "ranked_matches": [
+          {
+            "scheme_id": "S02",
+            "rank": 1,
+            "relevance_grade": 1,
+            "eligibility_signal": "needs_info",
+            "rationale": "Broad safety-net scheme; cannot confirm without more details.",
+            "criteria_met": [],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "state",
+              "family composition",
+              "ration card"
+            ]
+          },
+          {
+            "scheme_id": "S04",
+            "rank": 2,
+            "relevance_grade": 1,
+            "eligibility_signal": "needs_info",
+            "rationale": "Only if user is 60+.",
+            "criteria_met": [],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "age"
+            ]
+          }
+        ],
+        "recommended_combinations": [],
+        "follow_up_questions": [
+          "Which state and district do you live in?",
+          "What kind of help do you need most: health, housing, food, work, pension, education?",
+          "How many people are in your household and what are their ages?"
+        ]
+      },
+      "tags": [
+        "underspecified",
+        "clarification_required"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://pmjay.gov.in",
+          "https://nsap.nic.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.7,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E010",
+      "input": {
+        "text": "I am a state government employee in Karnataka with 1 acre of agricultural land. Can I get PM-KISAN?",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Karnataka",
+        "occupation": "government employee",
+        "land_acres": 1,
+        "needs": [
+          "PM-KISAN"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S01",
+            "rank": 1,
+            "relevance_grade": 2,
+            "eligibility_signal": "likely_ineligible",
+            "rationale": "Serving government employees are generally in the exclusion categories; this must be confirmed against current guidelines. Model should not give a binding verdict.",
+            "criteria_met": [
+              "owns agricultural land"
+            ],
+            "criteria_unmet": [
+              "government employee (likely excluded)"
+            ],
+            "criteria_unknown": [
+              "pay grade / exclusion exceptions"
+            ]
+          }
+        ],
+        "recommended_combinations": [],
+        "follow_up_questions": [
+          "What is your post/grade? (some categories have exceptions)"
+        ]
+      },
+      "tags": [
+        "negative_case",
+        "exclusion"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://pmkisan.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.75,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E011",
+      "input": {
+        "text": "I am a Muslim student in class 12 in Malappuram, Kerala. Family income is about 1.5 lakh. I need a scholarship for college.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "Kerala",
+        "district": "Malappuram",
+        "category": "minority",
+        "religion": "Muslim",
+        "education": "class 12",
+        "annual_family_income_inr": 150000,
+        "needs": [
+          "scholarship"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S05",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Minority student with stated income; income ceilings and next-course level need checking.",
+            "criteria_met": [
+              "student",
+              "minority",
+              "income stated"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "income ceiling",
+              "marks threshold",
+              "institute registration"
+            ]
+          },
+          {
+            "scheme_id": "S13",
+            "rank": 2,
+            "relevance_grade": 2,
+            "eligibility_signal": "likely_eligible",
+            "rationale": "Income certificate typically needed for the scholarship application.",
+            "criteria_met": [
+              "resident"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "valid certificate already held"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S13",
+              "S05"
+            ],
+            "order": "sequential",
+            "reason": "Income certificate feeds scholarship application."
+          }
+        ],
+        "follow_up_questions": [
+          "Do you already hold an income certificate issued this year?"
+        ]
+      },
+      "tags": [
+        "education",
+        "prerequisite_chain"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://scholarships.gov.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.85,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    },
+    {
+      "record_id": "E012",
+      "input": {
+        "text": "My father is 72, lives with us in Purulia, West Bengal. He has no pension, no ration card, and our house roof is leaking. We need pension, health insurance and a better house.",
+        "language": "en"
+      },
+      "parsed_profile": {
+        "state": "West Bengal",
+        "district": "Purulia",
+        "area": "rural",
+        "age": 72,
+        "relative": "father",
+        "ration_card": false,
+        "housing": "dilapidated",
+        "needs": [
+          "pension",
+          "health cover",
+          "housing"
+        ]
+      },
+      "expected_output": {
+        "needs_clarification": false,
+        "ranked_matches": [
+          {
+            "scheme_id": "S04",
+            "rank": 1,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Age 72 qualifies on age; BPL status uncertain and lack of ration card may complicate proof.",
+            "criteria_met": [
+              "age >= 60"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "BPL listing",
+              "ID documents"
+            ]
+          },
+          {
+            "scheme_id": "S02",
+            "rank": 2,
+            "relevance_grade": 3,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Senior-citizen extension may apply; verify via beneficiary check.",
+            "criteria_met": [
+              "age 70+"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "Aadhaar",
+              "eligibility check result"
+            ]
+          },
+          {
+            "scheme_id": "S03",
+            "rank": 3,
+            "relevance_grade": 2,
+            "eligibility_signal": "possibly_eligible",
+            "rationale": "Dilapidated house suggests possible eligibility; listing-based.",
+            "criteria_met": [
+              "rural",
+              "dilapidated house"
+            ],
+            "criteria_unmet": [],
+            "criteria_unknown": [
+              "listing in survey"
+            ]
+          }
+        ],
+        "recommended_combinations": [
+          {
+            "schemes": [
+              "S04",
+              "S02",
+              "S03"
+            ],
+            "order": "parallel",
+            "reason": "Start with ID documents (Aadhaar/ration card) since all three need them."
+          }
+        ],
+        "follow_up_questions": [
+          "Does your father have an Aadhaar card?",
+          "Can your family apply for a ration card as a first step?"
+        ]
+      },
+      "tags": [
+        "document_gap",
+        "multi_scheme",
+        "elderly"
+      ],
+      "metadata": {
+        "data_origin": "synthetic",
+        "source_basis": "Synthetic scenario modelled on common citizen enquiries; scheme criteria paraphrased at summary level and NOT verified against current official notifications.",
+        "source_urls": [
+          "https://nsap.nic.in",
+          "https://pmjay.gov.in",
+          "https://pmayg.nic.in"
+        ],
+        "date_created": "2026-11-02",
+        "last_verified_date": null,
+        "confidence_score": 0.8,
+        "version": "0.1.0",
+        "verification_state": "unverified",
+        "reviewer": null
+      }
+    }
+  ]
+}
