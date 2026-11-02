@@ -3,78 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>myHaqSetu | Citizen Identity &amp; Statutory Service Assurance Portal (UIDAI &amp; UX4G Inspired)</title>
+  <title>myHaqSetu | Citizen Rights Assurance &amp; Statutory Services Portal</title>
   
-  <!-- UX4G Official Design System Stylesheets (GIGW & WCAG 2.1 AA Compliant) -->
+  <!-- UX4G Design System (MeitY & NeGD, Government of India) -->
   <link rel="stylesheet" href="https://cdn.ux4g.gov.in/UX4G@3.0.18/index.css">
   
-  <!-- Tailwind CSS for utility enhancements & FontAwesome Icons -->
+  <!-- Utility Stylesheet (Tailwind CSS) & FontAwesome Solid Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Official Government Typography: Plus Jakarta Sans / Inter -->
+  <!-- Official Government Typography: Plus Jakarta Sans (Headers) & Inter (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --uidai-navy: #0e2a47;
-      --uidai-blue: #134275;
-      --uidai-royal: #185294;
-      --uidai-accent: #e56717;
-      --uidai-gold: #f59e0b;
-      --uidai-bg: #f4f7fa;
-      --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
-      --font-body: 'Inter', system-ui, sans-serif;
+      /* Official UX4G / UIDAI Design Tokens */
+      --gov-primary: #004b87;          /* UIDAI & National Government Deep Blue */
+      --gov-primary-dark: #003366;     /* Header & Interactive Active Blue */
+      --gov-secondary: #006699;       /* Secondary Navigation & Borders */
+      --gov-accent-orange: #d9531e;   /* Saffron Accent */
+      --gov-accent-gold: #c27d00;     /* Emblem / Warning Accent */
+      --gov-bg: #f8fafc;              /* Crisp Standard Background */
+      --gov-surface: #ffffff;         /* Pure Card White */
+      --gov-border: #d1d5db;          /* 1px Solid Government Gray Border */
+      --gov-border-subtle: #e5e7eb;   /* Light Dividing Line */
+      --gov-text-primary: #111827;    /* Deep Gray High Contrast Text */
+      --gov-text-secondary: #4b5563;  /* 600 Sub-label Text */
+      --gov-text-muted: #6b7280;      /* Micro-copy Text */
+      --gov-success: #15803d;         /* Verified Green */
+      --gov-warning: #b45309;         /* Alert Amber */
+      --gov-danger: #b91c1c;          /* Objection / Shortage Red */
+      
+      --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     }
+
     body {
       font-family: var(--font-body);
       font-size: 15px;
       line-height: 1.5;
-      color: #1e293b;
-      background-color: var(--uidai-bg);
+      color: var(--gov-text-primary);
+      background-color: var(--gov-bg);
       -webkit-font-smoothing: antialiased;
     }
+
     h1, h2, h3, h4, h5, h6 {
       font-family: var(--font-heading);
-      letter-spacing: -0.015em;
+      letter-spacing: -0.01em;
     }
 
-    /* Accessibility focus indicators (WCAG AA/AAA) */
+    /* Strict Focus Visible Ring (WCAG 2.1 AA GIGW Standard) */
     *:focus-visible {
-      outline: 3px solid #185294 !important;
+      outline: 2px solid var(--gov-primary) !important;
       outline-offset: 2px !important;
-      border-radius: 6px;
+      border-radius: 2px;
     }
 
-    /* Skip link for keyboard accessibility */
+    /* Accessible Skip Link */
     .skip-link {
       position: absolute;
       top: -9999px;
       left: 1rem;
-      background: var(--uidai-navy);
+      background: var(--gov-primary-dark);
       color: #ffffff;
-      padding: 0.75rem 1.25rem;
+      padding: 0.5rem 1rem;
       font-weight: 700;
       font-size: 0.875rem;
-      border-radius: 0.5rem;
+      border-radius: 2px;
       z-index: 9999;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      border: 1px solid #ffffff;
     }
     .skip-link:focus {
-      top: 1rem;
+      top: 0.75rem;
     }
 
-    /* myAadhaar Tab Styling */
+    /* Official Government Flag Stripe */
+    .gov-flag-stripe {
+      height: 3px;
+      background: linear-gradient(90deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
+    }
+
+    /* myAadhaar Official Navigation Tab Bar */
+    .myaadhaar-nav-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gov-text-secondary);
+      border-bottom: 3px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+    }
+    .myaadhaar-nav-tab:hover {
+      color: var(--gov-primary);
+      background-color: #f1f5f9;
+    }
     .tab-active {
-      border-bottom: 3.5px solid var(--uidai-royal) !important;
-      color: var(--uidai-royal) !important;
+      color: var(--gov-primary) !important;
+      border-bottom: 3px solid var(--gov-primary) !important;
       font-weight: 700 !important;
       background-color: #ffffff !important;
     }
 
-    /* National Government Badges */
+    /* myAadhaar Card Structure: Flat, Solid White, Thin 1px Border, 4px Radius */
+    .gov-card {
+      background-color: #ffffff;
+      border: 1px solid var(--gov-border);
+      border-radius: 4px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    /* Standard Government Badges */
     .badge-simulated {
       background: #fef3c7;
       color: #92400e;
@@ -86,153 +129,115 @@
       border: 1px solid #86efac;
     }
     .badge-ai {
-      background: #ede9fe;
-      color: #5b21b6;
-      border: 1px solid #ddd6fe;
+      background: #e0e7ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
     }
 
-    /* Dropzone active */
+    /* Dropzone Active */
     .dropzone-active {
-      border-color: var(--uidai-royal) !important;
-      background-color: #eff6ff !important;
+      border-color: var(--gov-primary) !important;
+      background-color: #f0f7ff !important;
     }
 
-    /* Toast animation */
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    /* Toast Container Animation */
+    @keyframes toastIn {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .animate-slide-in {
-      animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: toastIn 0.2s ease-out forwards;
     }
 
-    /* Skeleton shimmer */
+    /* Skeleton Loading Placeholder */
     .skeleton {
-      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
-      border-radius: 0.75rem;
+      border-radius: 2px;
     }
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
 
-    /* Mobile drawer navigation */
-    #mobileNav {
-      display: none;
-    }
-    #mobileNav.open {
-      display: flex;
-    }
-
-    /* Indian National Tricolor Stripe */
-    .tricolor-stripe {
-      height: 4px;
-      background: linear-gradient(90deg, #ff9933 0%, #ff9933 33.3%, #ffffff 33.3%, #ffffff 66.6%, #138808 66.6%, #138808 100%);
-    }
-
-    /* myAadhaar Card Shadow */
-    .uidai-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 1rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-      transition: all 0.2s ease-in-out;
-    }
-    .uidai-card:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-    }
-
-    /* Quick service tile in myAadhaar style */
-    .service-tile {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 0.875rem;
-      padding: 1.25rem;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .service-tile:hover {
-      border-color: var(--uidai-royal);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(24, 82, 148, 0.1);
-    }
+    /* Mobile Drawer */
+    #mobileNav { display: none; }
+    #mobileNav.open { display: flex; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-[#111827] antialiased min-h-screen flex flex-col">
 
   <!-- Accessible Skip Navigation Link -->
   <a href="#main-content" class="skip-link">Skip to main citizen services</a>
 
-  <!-- Indian National Flag Tricolor Accent Bar -->
-  <div class="tricolor-stripe w-full" aria-hidden="true"></div>
+  <!-- Indian National Tricolor Accent Bar -->
+  <div class="gov-flag-stripe w-full" aria-hidden="true"></div>
 
-  <!-- Government of India Top Header Bar (UX4G Standard) -->
-  <div class="bg-[#0e2a47] text-white text-xs py-2 px-4 sm:px-6 lg:px-8 border-b border-[#134275]" aria-label="Official Government Header">
+  <!-- 1. Government of India Master Header Bar (GIGW / UX4G Compliant) -->
+  <div class="bg-[#f1f5f9] text-[#334155] text-xs py-1.5 px-4 sm:px-6 lg:px-8 border-b border-[#cbd5e1]" aria-label="Official Government Header">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-      <div class="flex items-center space-x-3">
-        <span class="font-bold flex items-center gap-1.5 text-slate-100">
-          <i class="fa-solid fa-landmark text-amber-400"></i>
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-[#0f172a] flex items-center gap-1.5">
+          <i class="fa-solid fa-landmark text-[#004b87]" aria-hidden="true"></i>
           GOVERNMENT OF INDIA / भारत सरकार
         </span>
-        <span class="text-slate-500 hidden md:inline">|</span>
-        <span class="text-slate-300 hidden md:inline">Ministry of Electronics &amp; Information Technology (MeitY)</span>
+        <span class="text-slate-400 hidden sm:inline">|</span>
+        <span class="text-slate-600 hidden sm:inline">Ministry of Electronics &amp; Information Technology (MeitY)</span>
       </div>
       <div class="flex items-center space-x-3 text-xs">
         <button type="button" onclick="document.body.classList.toggle('lang-hi'); showToast('Language toggled (English / हिंदी)', 'info');" 
-          class="hover:text-amber-300 px-2.5 py-0.5 rounded border border-slate-600 font-semibold text-slate-100 transition">
-          <i class="fa-solid fa-language mr-1"></i>English / हिंदी
+          class="hover:text-[#004b87] px-2 py-0.5 rounded border border-[#cbd5e1] bg-white font-medium text-[#1e293b] transition">
+          English / हिंदी
         </button>
         <button type="button" onclick="document.body.classList.toggle('contrast-high'); showToast('Contrast Mode Updated', 'info');"
-          class="hover:text-amber-300 px-2 py-0.5 rounded border border-slate-600 text-slate-200 transition" title="Accessibility Mode">
+          class="hover:text-[#004b87] px-2 py-0.5 rounded border border-[#cbd5e1] bg-white font-medium text-[#1e293b] transition" title="Accessibility Font / Contrast">
           A+
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Main Portal Header with Emblem & UIDAI / myAadhaar Branding -->
-  <header role="banner" class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+  <!-- 2. myAadhaar Portal Primary Branding Bar -->
+  <header role="banner" class="bg-white border-b border-[#cbd5e1] sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
 
-        <!-- Emblem & Brand Logo -->
-        <div class="flex items-center space-x-3.5">
-          <!-- Official Emblem Crest Badge -->
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0e2a47] to-[#185294] flex items-center justify-center text-white shadow-sm ring-1 ring-slate-200 shrink-0" aria-hidden="true">
-            <i class="fa-solid fa-fingerprint text-2xl text-amber-400"></i>
+        <!-- Emblem & Brand Identity -->
+        <div class="flex items-center space-x-4">
+          <div class="w-11 h-11 rounded bg-[#004b87] text-white flex items-center justify-center font-bold text-lg border border-[#003366] shrink-0" aria-hidden="true">
+            <i class="fa-solid fa-fingerprint text-xl text-[#ff9933]"></i>
           </div>
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <span class="text-2xl font-black tracking-tight text-[#0e2a47]">
-                my<span class="text-[#e56717]">HaqSetu</span>
+              <span class="text-2xl font-extrabold tracking-tight text-[#004b87]">
+                my<span class="text-[#d9531e]">HaqSetu</span>
               </span>
               <span class="text-slate-300 hidden sm:inline" aria-hidden="true">|</span>
-              <span class="text-xl font-bold tracking-tight text-[#185294]">
-                Vachan <span class="text-[#e56717]">Setu</span>
+              <span class="text-xl font-bold tracking-tight text-[#003366]">
+                Vachan <span class="text-[#d9531e]">Setu</span>
               </span>
-              <span class="text-[11px] px-2.5 py-0.5 rounded-full font-mono font-bold badge-ai">Sarvam-105B</span>
+              <span class="text-[11px] px-2 py-0.5 rounded font-mono font-bold badge-ai">Sarvam-105B</span>
               <span class="text-[11px] px-2 py-0.5 rounded font-mono font-semibold badge-simulated hidden sm:inline">LOCAL DEV</span>
             </div>
-            <p class="text-xs text-slate-500 font-medium">Unique Citizen Identity, Document Assurance &amp; Statutory Guarantee Portal</p>
+            <p class="text-xs text-[#4b5563] font-medium">Unique Citizen Identity, Document Assurance &amp; Statutory Deadlines Portal</p>
           </div>
         </div>
 
-        <!-- Header Actions: Dev Tools, Privacy Purge, Hamburger -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-          
+        <!-- Header Actions: Dev Tools, Privacy Purge, Mobile Hamburger -->
+        <div class="flex items-center space-x-2">
+
           <!-- Developer Tools Trigger -->
           <button type="button" onclick="document.getElementById('devToolsBar').classList.toggle('hidden')" 
-            class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition"
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#f8fafc] hover:bg-[#f1f5f9] text-[#334155] text-xs font-semibold rounded border border-[#cbd5e1] transition"
             aria-label="Toggle developer clock and test controls">
-            <i class="fa-solid fa-sliders text-[#185294]" aria-hidden="true"></i>
+            <i class="fa-solid fa-sliders text-[#004b87]" aria-hidden="true"></i>
             <span>Simulated Date</span>
           </button>
 
           <!-- Privacy Purge Button (DPDP Act) -->
           <button type="button" onclick="deleteUserData()" 
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-red-700 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition shadow-2xs"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#475569] hover:text-[#b91c1c] bg-white hover:bg-red-50 border border-[#cbd5e1] hover:border-red-300 rounded transition"
             aria-label="Privacy Purge: Delete all session data permanently under DPDP guidelines">
             <i class="fa-solid fa-shield-halved text-slate-400" aria-hidden="true"></i>
             <span class="hidden md:inline">Privacy Purge</span>
@@ -240,7 +245,7 @@
 
           <!-- Mobile Hamburger -->
           <button type="button" id="hamburgerBtn" onclick="toggleMobileMenu()" 
-            class="md:hidden p-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 focus:outline-none" 
+            class="md:hidden p-2 rounded border border-[#cbd5e1] text-[#1e293b] hover:bg-[#f1f5f9] focus:outline-none" 
             aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileNav">
             <i class="fa-solid fa-bars text-lg"></i>
           </button>
@@ -248,178 +253,170 @@
       </div>
 
       <!-- Dev Tools Simulated Clock Controller (Collapsible Panel) -->
-      <div id="devToolsBar" class="hidden border-t border-dashed border-slate-200 py-3 bg-slate-50 px-3 rounded-b-xl mb-1 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div id="devToolsBar" class="hidden border-t border-dashed border-[#cbd5e1] py-2.5 bg-[#f8fafc] px-3 rounded-b mb-1 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-700 flex items-center">
-            <i class="fa-regular fa-clock mr-1.5 text-[#185294]"></i>
+          <span class="font-bold text-[#1e293b] flex items-center">
+            <i class="fa-regular fa-clock mr-1.5 text-[#004b87]"></i>
             Simulated Audit Clock:
-            <strong id="clockDisplay" class="ml-1.5 font-mono text-[#0e2a47] bg-white px-2 py-0.5 rounded border border-slate-200 font-bold">2026-11-02</strong>
+            <strong id="clockDisplay" class="ml-1.5 font-mono text-[#003366] bg-white px-2 py-0.5 rounded border border-[#cbd5e1] font-bold">2026-11-02</strong>
           </span>
           <span class="text-slate-400">|</span>
-          <span class="text-slate-500">Advance statutory clock:</span>
-          <button type="button" onclick="advanceClock(1)" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-lg shadow-2xs text-slate-700 font-bold border border-slate-200">+1d</button>
-          <button type="button" onclick="advanceClock(7)" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-lg shadow-2xs text-slate-700 font-bold border border-slate-200">+7d</button>
-          <button type="button" onclick="advanceClock(15)" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-lg shadow-2xs text-slate-700 font-bold border border-slate-200">+15d</button>
-          <button type="button" onclick="resetClock()" title="Reset to base date" class="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 rounded-lg text-slate-700 font-bold" aria-label="Reset simulation date">
+          <span class="text-slate-600">Advance clock:</span>
+          <button type="button" onclick="advanceClock(1)" class="px-2 py-0.5 bg-white hover:bg-[#f1f5f9] rounded text-[#1e293b] font-bold border border-[#cbd5e1]">+1d</button>
+          <button type="button" onclick="advanceClock(7)" class="px-2 py-0.5 bg-white hover:bg-[#f1f5f9] rounded text-[#1e293b] font-bold border border-[#cbd5e1]">+7d</button>
+          <button type="button" onclick="advanceClock(15)" class="px-2 py-0.5 bg-white hover:bg-[#f1f5f9] rounded text-[#1e293b] font-bold border border-[#cbd5e1]">+15d</button>
+          <button type="button" onclick="resetClock()" title="Reset to base date" class="px-2 py-0.5 bg-[#e2e8f0] hover:bg-[#cbd5e1] rounded text-[#1e293b] font-bold" aria-label="Reset simulation date">
             <i class="fa-solid fa-rotate-left mr-1"></i>Reset
           </button>
         </div>
-        <div class="flex items-center gap-2 text-slate-500 text-[11px]">
-          <i class="fa-solid fa-circle-info text-blue-600"></i>
-          <span>Simulates timeline breaches, RTI threshold escalations, and overdue alerts</span>
+        <div class="flex items-center gap-2 text-[#64748b] text-[11px]">
+          <i class="fa-solid fa-circle-info text-[#004b87]"></i>
+          <span>Simulates statutory RTSA deadlines, silent-file triggers, and RTI escalations</span>
         </div>
       </div>
 
-      <!-- Desktop Primary Navigation (myAadhaar Style Tabs) -->
-      <nav role="tablist" aria-label="myAadhaar Services Navigation" class="hidden md:flex space-x-1 overflow-x-auto border-t border-slate-200 pt-1 text-sm font-semibold">
-        <button type="button" role="tab" aria-selected="true" aria-controls="content-haqguide" onclick="switchTab('haqguide')" id="tab-haqguide" 
-          class="py-3 px-4 border-b-2 border-transparent text-slate-600 hover:text-[#185294] hover:bg-slate-100 rounded-t-xl flex items-center gap-2 transition tab-active">
-          <i class="fa-solid fa-magnifying-glass text-[#185294]" aria-hidden="true"></i>
+      <!-- Desktop Primary Navigation (myAadhaar Style Flat Tabs) -->
+      <nav role="tablist" aria-label="myAadhaar Navigation" class="hidden md:flex space-x-1 overflow-x-auto border-t border-[#e2e8f0]">
+        <button type="button" role="tab" aria-selected="true" aria-controls="content-haqguide" onclick="switchTab('haqguide')" id="tab-haqguide" class="myaadhaar-nav-tab tab-active">
+          <i class="fa-solid fa-magnifying-glass text-[#004b87]" aria-hidden="true"></i>
           <span>1. HaqGuide (Rights &amp; Eligibility)</span>
         </button>
-        <button type="button" role="tab" aria-selected="false" aria-controls="content-rejectshield" onclick="switchTab('rejectshield')" id="tab-rejectshield" 
-          class="py-3 px-4 border-b-2 border-transparent text-slate-600 hover:text-[#185294] hover:bg-slate-100 rounded-t-xl flex items-center gap-2 transition">
-          <i class="fa-solid fa-shield-halved text-[#e56717]" aria-hidden="true"></i>
+        <button type="button" role="tab" aria-selected="false" aria-controls="content-rejectshield" onclick="switchTab('rejectshield')" id="tab-rejectshield" class="myaadhaar-nav-tab">
+          <i class="fa-solid fa-shield-halved text-[#d9531e]" aria-hidden="true"></i>
           <span>2. RejectShield (OCR Verifier)</span>
         </button>
-        <button type="button" role="tab" aria-selected="false" aria-controls="content-timeline" onclick="switchTab('timeline')" id="tab-timeline" 
-          class="py-3 px-4 border-b-2 border-transparent text-slate-600 hover:text-[#185294] hover:bg-slate-100 rounded-t-xl flex items-center gap-2 transition">
-          <i class="fa-solid fa-hourglass-half text-slate-600" aria-hidden="true"></i>
-          <span>3. Vachan Setu (Service Tracker)</span>
+        <button type="button" role="tab" aria-selected="false" aria-controls="content-timeline" onclick="switchTab('timeline')" id="tab-timeline" class="myaadhaar-nav-tab">
+          <i class="fa-solid fa-hourglass-half text-[#4b5563]" aria-hidden="true"></i>
+          <span>3. Vachan Setu (Tracker)</span>
         </button>
-        <button type="button" role="tab" aria-selected="false" aria-controls="content-silentfile" onclick="switchTab('silentfile')" id="tab-silentfile" 
-          class="py-3 px-4 border-b-2 border-transparent text-slate-600 hover:text-[#185294] hover:bg-slate-100 rounded-t-xl flex items-center gap-2 transition">
-          <i class="fa-solid fa-triangle-exclamation text-amber-500" aria-hidden="true"></i>
+        <button type="button" role="tab" aria-selected="false" aria-controls="content-silentfile" onclick="switchTab('silentfile')" id="tab-silentfile" class="myaadhaar-nav-tab">
+          <i class="fa-solid fa-triangle-exclamation text-[#b45309]" aria-hidden="true"></i>
           <span>4. Silent-File Alerts &amp; RTI</span>
         </button>
-        <button type="button" role="tab" aria-selected="false" aria-controls="content-notices" onclick="switchTab('notices')" id="tab-notices" 
-          class="py-3 px-4 border-b-2 border-transparent text-slate-600 hover:text-[#185294] hover:bg-slate-100 rounded-t-xl flex items-center gap-2 transition">
-          <i class="fa-regular fa-file-lines text-slate-600" aria-hidden="true"></i>
+        <button type="button" role="tab" aria-selected="false" aria-controls="content-notices" onclick="switchTab('notices')" id="tab-notices" class="myaadhaar-nav-tab">
+          <i class="fa-regular fa-file-lines text-[#4b5563]" aria-hidden="true"></i>
           <span>5. Notice Decoder</span>
         </button>
-        <button type="button" role="tab" aria-selected="false" aria-controls="content-health" onclick="switchTab('health')" id="tab-health" 
-          class="py-3 px-4 border-b-2 border-transparent text-slate-600 hover:text-[#185294] hover:bg-slate-100 rounded-t-xl flex items-center gap-2 transition">
-          <i class="fa-solid fa-chart-pie text-slate-600" aria-hidden="true"></i>
+        <button type="button" role="tab" aria-selected="false" aria-controls="content-health" onclick="switchTab('health')" id="tab-health" class="myaadhaar-nav-tab">
+          <i class="fa-solid fa-chart-pie text-[#4b5563]" aria-hidden="true"></i>
           <span>6. Service Health Console</span>
         </button>
       </nav>
 
       <!-- Mobile Navigation Drawer -->
-      <nav id="mobileNav" role="tablist" aria-label="Mobile Navigation" class="md:hidden flex flex-col border-t border-slate-100 py-2">
+      <nav id="mobileNav" role="tablist" aria-label="Mobile Navigation" class="md:hidden flex flex-col border-t border-[#e2e8f0] py-2">
         <button type="button" role="tab" aria-selected="true" onclick="switchTab('haqguide')" id="tab-haqguide-m" 
-          class="w-full py-3 px-4 text-left font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-3 text-sm border-b border-slate-100">
-          <i class="fa-solid fa-magnifying-glass text-[#185294] w-5 text-center"></i>1. HaqGuide (Search &amp; Rights)
+          class="w-full py-2.5 px-4 text-left font-semibold text-[#1e293b] hover:bg-[#f1f5f9] flex items-center gap-3 text-sm border-b border-[#e2e8f0]">
+          <i class="fa-solid fa-magnifying-glass text-[#004b87] w-5 text-center"></i>1. HaqGuide (Search &amp; Rights)
         </button>
         <button type="button" role="tab" aria-selected="false" onclick="switchTab('rejectshield')" id="tab-rejectshield-m" 
-          class="w-full py-3 px-4 text-left font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-3 text-sm border-b border-slate-100">
-          <i class="fa-solid fa-shield-halved text-[#e56717] w-5 text-center"></i>2. RejectShield (OCR Verifier)
+          class="w-full py-2.5 px-4 text-left font-semibold text-[#1e293b] hover:bg-[#f1f5f9] flex items-center gap-3 text-sm border-b border-[#e2e8f0]">
+          <i class="fa-solid fa-shield-halved text-[#d9531e] w-5 text-center"></i>2. RejectShield (OCR Verifier)
         </button>
         <button type="button" role="tab" aria-selected="false" onclick="switchTab('timeline')" id="tab-timeline-m" 
-          class="w-full py-3 px-4 text-left font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-3 text-sm border-b border-slate-100">
-          <i class="fa-solid fa-hourglass-half text-slate-600 w-5 text-center"></i>3. Vachan Setu (Tracker)
+          class="w-full py-2.5 px-4 text-left font-semibold text-[#1e293b] hover:bg-[#f1f5f9] flex items-center gap-3 text-sm border-b border-[#e2e8f0]">
+          <i class="fa-solid fa-hourglass-half text-[#4b5563] w-5 text-center"></i>3. Vachan Setu (Tracker)
         </button>
         <button type="button" role="tab" aria-selected="false" onclick="switchTab('silentfile')" id="tab-silentfile-m" 
-          class="w-full py-3 px-4 text-left font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-3 text-sm border-b border-slate-100">
-          <i class="fa-solid fa-triangle-exclamation text-amber-500 w-5 text-center"></i>4. Silent-File Alerts &amp; RTI
+          class="w-full py-2.5 px-4 text-left font-semibold text-[#1e293b] hover:bg-[#f1f5f9] flex items-center gap-3 text-sm border-b border-[#e2e8f0]">
+          <i class="fa-solid fa-triangle-exclamation text-[#b45309] w-5 text-center"></i>4. Silent-File Alerts &amp; RTI
         </button>
         <button type="button" role="tab" aria-selected="false" onclick="switchTab('notices')" id="tab-notices-m" 
-          class="w-full py-3 px-4 text-left font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-3 text-sm border-b border-slate-100">
-          <i class="fa-regular fa-file-lines text-slate-600 w-5 text-center"></i>5. Notice Decoder
+          class="w-full py-2.5 px-4 text-left font-semibold text-[#1e293b] hover:bg-[#f1f5f9] flex items-center gap-3 text-sm border-b border-[#e2e8f0]">
+          <i class="fa-regular fa-file-lines text-[#4b5563] w-5 text-center"></i>5. Notice Decoder
         </button>
         <button type="button" role="tab" aria-selected="false" onclick="switchTab('health')" id="tab-health-m" 
-          class="w-full py-3 px-4 text-left font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-3 text-sm">
-          <i class="fa-solid fa-chart-pie text-slate-600 w-5 text-center"></i>6. Service Health Console
+          class="w-full py-2.5 px-4 text-left font-semibold text-[#1e293b] hover:bg-[#f1f5f9] flex items-center gap-3 text-sm">
+          <i class="fa-solid fa-chart-pie text-[#4b5563] w-5 text-center"></i>6. Service Health Console
         </button>
       </nav>
 
     </div>
   </header>
 
-  <!-- myAadhaar Style Quick Services Grid Banner -->
-  <section class="bg-gradient-to-r from-[#0e2a47] via-[#134275] to-[#185294] text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-blue-950" aria-label="Portal Services Overview">
-    <div class="max-w-7xl mx-auto">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <span class="text-xs uppercase font-extrabold tracking-wider px-3 py-1 bg-white/10 rounded-full text-amber-300 border border-white/20">
-            Citizen Rights Assurance &amp; Aadhaar-linked Verification
-          </span>
-          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white mt-2">
-            Welcome to myHaqSetu Digital Resident Services
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-200 mt-1">
-            Deterministic Statutory Deadlines, Pre-submission OCR Anomaly Auditing, and Sarvam-105B Bilingual Guidance.
-          </p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="switchTab('rejectshield')" class="px-4 py-2.5 bg-[#e56717] hover:bg-[#d0560f] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition flex items-center gap-2">
-            <i class="fa-solid fa-file-shield"></i>
-            <span>Audit Documents Now</span>
-          </button>
-          <button type="button" onclick="switchTab('timeline')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm rounded-xl border border-white/30 transition">
-            <span>Track Application</span>
-          </button>
-        </div>
+  <!-- 3. myAadhaar Official Services Header Banner (Flat Navy Blue, No Fancy Gradients) -->
+  <section class="bg-[#004b87] text-white py-5 px-4 sm:px-6 lg:px-8 border-b border-[#003366]" aria-label="Portal Resident Actions">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <span class="text-xs uppercase font-bold tracking-wider px-2 py-0.5 bg-[#003366] text-[#ff9933] rounded border border-[#002244]">
+          Citizen Digital Services &amp; Statutory Assurance
+        </span>
+        <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white mt-1.5">
+          Welcome to myHaqSetu Resident Services
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-200">
+          Deterministic statutory timelines, pre-submission document deficiency verification, and Sarvam-105B bilingual administrative guidance.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="switchTab('rejectshield')" class="px-4 py-2 bg-[#d9531e] hover:bg-[#b84214] text-white font-bold text-xs sm:text-sm rounded border border-[#b84214] transition flex items-center gap-2">
+          <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
+          <span>Verify Documents</span>
+        </button>
+        <button type="button" onclick="switchTab('timeline')" class="px-4 py-2 bg-[#003366] hover:bg-[#002244] text-white font-semibold text-xs sm:text-sm rounded border border-white/20 transition">
+          <span>Track Application</span>
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- Main Content Area -->
-  <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 focus:outline-none" tabindex="-1">
+  <!-- Main Citizen Services Content Area -->
+  <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none" tabindex="-1">
 
     <!-- ================= TAB 1: HAQGUIDE ================= -->
     <div id="content-haqguide" class="space-y-6">
 
-      <!-- myAadhaar Inspired Search Hero Card -->
-      <div class="uidai-card border-l-4 border-l-[#185294] p-6 sm:p-8">
+      <!-- Search Card: Flat, Solid White, Thin 1px Border, 4px Radius -->
+      <div class="gov-card border-l-4 border-l-[#004b87] p-6 sm:p-7">
         <div class="max-w-3xl">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="bg-blue-50 text-[#185294] border border-blue-200 text-xs px-3 py-1 rounded-full uppercase tracking-wider font-extrabold">
-              Service Discovery &amp; Rights
+          <div class="flex items-center gap-2 mb-1">
+            <span class="bg-[#f1f5f9] text-[#004b87] border border-[#cbd5e1] text-xs px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              Service Discovery &amp; Entitlement Check
             </span>
             <span class="text-xs text-slate-500 font-medium">Right to Public Services Act (RTSA)</span>
           </div>
 
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-2">
-            Express your welfare or certificate requirement
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[#111827] mt-2">
+            Search Welfare Scheme or Certificate Requirement
           </h1>
-          <p class="text-slate-600 text-sm sm:text-base mt-2 leading-relaxed">
+          <p class="text-[#4b5563] text-sm mt-1 leading-relaxed">
             Search for government scholarships, caste certificates, pensions, or agricultural subsidies. 
-            Our statutory engine extracts your profile constraints, checks eligibility rules, and delivers plain-language bilingual advice powered by Sarvam-105B.
+            The statutory engine extracts your criteria constraints, reviews official guidelines, and provides plain-language bilingual guidance powered by Sarvam-105B.
           </p>
           
           <!-- Search Form Input with Voice Input -->
-          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <div class="mt-5 flex flex-col sm:flex-row gap-2">
             <div class="relative flex-1">
               <label for="matcherQuery" class="sr-only">Describe your public service or scholarship need</label>
               <input id="matcherQuery" type="text" 
                 placeholder="e.g. Post-matric scholarship for OBC college student family income 1.5 lakh in UP..." 
                 value="Post-matric scholarship for OBC college student family income 1.5 lakh in UP" 
-                class="w-full pl-4 pr-12 py-3.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#185294] text-base font-medium shadow-inner transition">
-              <button type="button" onclick="toggleVoiceInput()" class="absolute right-3.5 top-3.5 text-slate-500 hover:text-[#185294] p-1 rounded-lg" aria-label="Use voice search in Hindi or English">
-                <i class="fa-solid fa-microphone text-lg" aria-hidden="true"></i>
+                class="w-full pl-3.5 pr-10 py-2.5 rounded bg-white border border-[#9ca3af] text-[#111827] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004b87] text-sm font-medium">
+              <button type="button" onclick="toggleVoiceInput()" class="absolute right-3 top-2.5 text-[#64748b] hover:text-[#004b87] p-1" aria-label="Use voice search in Hindi or English">
+                <i class="fa-solid fa-microphone text-base" aria-hidden="true"></i>
               </button>
             </div>
             <button type="button" onclick="runMatch()" id="btnMatch" 
-              class="px-7 py-3.5 bg-[#185294] hover:bg-[#134275] text-white font-bold rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2 text-base shrink-0 min-h-[50px]">
+              class="px-5 py-2.5 bg-[#004b87] hover:bg-[#003366] text-white font-bold rounded border border-[#003366] transition flex items-center justify-center gap-2 text-sm shrink-0 min-h-[42px]">
               <span>Find Services</span>
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
 
-          <!-- Quick Search Chips -->
-          <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
-            <span class="text-slate-500 font-semibold py-1">Common Resident Queries:</span>
+          <!-- Quick Search Chips (Flat, No Emojis) -->
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate-500 font-medium">Suggested queries:</span>
             <button type="button" onclick="setQuery('Post-matric scholarship for OBC college student family income 1.5 lakh in UP')" 
-              class="bg-slate-100 hover:bg-blue-50 hover:text-[#185294] border border-slate-200 px-3 py-1.5 rounded-full text-slate-700 font-medium transition">
-              🎓 OBC Post-Matric Scholarship
+              class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              OBC Post-Matric Scholarship
             </button>
             <button type="button" onclick="setQuery('My family needs an income certificate for a scholarship in Uttar Pradesh')" 
-              class="bg-slate-100 hover:bg-blue-50 hover:text-[#185294] border border-slate-200 px-3 py-1.5 rounded-full text-slate-700 font-medium transition">
-              📜 Income Certificate
+              class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              Income Certificate
             </button>
             <button type="button" onclick="setQuery('Kisan credit card loan for small farmer with 2 acres land')" 
-              class="bg-slate-100 hover:bg-blue-50 hover:text-[#185294] border border-slate-200 px-3 py-1.5 rounded-full text-slate-700 font-medium transition">
-              🌾 PM-KISAN / Kisan Credit
+              class="bg-white hover:bg-slate-100 hover:text-[#004b87] border border-[#cbd5e1] px-2.5 py-1 rounded text-[#334155] font-medium transition">
+              PM-KISAN / Kisan Credit
             </button>
           </div>
         </div>
@@ -435,164 +432,164 @@
     <div id="content-rejectshield" class="hidden space-y-6">
 
       <!-- Scheme Selector & Active Checklist Bar -->
-      <div class="uidai-card p-6 space-y-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-100">
+      <div class="gov-card p-6 space-y-5">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#e2e8f0]">
           <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-shield-halved text-[#185294] mr-2.5" aria-hidden="true"></i>RejectShield: File-Based Document &amp; Anomaly Verifier
+            <h2 class="text-lg sm:text-xl font-bold text-[#111827] flex items-center">
+              <i class="fa-solid fa-shield-halved text-[#004b87] mr-2" aria-hidden="true"></i>RejectShield: Document Verification &amp; Shortage Audit
             </h2>
-            <p class="text-sm text-slate-600 mt-1">
-              Upload real PDFs, JPGs, or PNG files. RejectShield executes optical character recognition (OCR), extracts applicant profile entities, identifies mandatory document shortages, and prevents administrative rejections.
+            <p class="text-xs sm:text-sm text-[#4b5563] mt-1">
+              Upload PDF or image files. RejectShield runs optical character recognition (OCR), extracts applicant profile details, identifies mandatory document shortages, and prevents administrative objections.
             </p>
           </div>
           
           <div class="flex items-center space-x-2 shrink-0">
-            <label for="selectedSchemeId" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Target Scheme:</label>
+            <label for="selectedSchemeId" class="text-xs font-bold text-[#374151] uppercase tracking-wider">Target Scheme:</label>
             <select id="selectedSchemeId" onchange="onSchemeChange()" 
-              class="text-xs sm:text-sm font-semibold bg-blue-50 border border-blue-200 text-[#0e2a47] rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-[#185294] focus:outline-none">
-              <option value="S05" selected>🎓 National Scholarship Portal (Post-Matric)</option>
-              <option value="S13">📜 Income Certificate (State e-District)</option>
-              <option value="S01">🌾 PM-KISAN (Kisan Samman Nidhi)</option>
-              <option value="S02">🏥 Ayushman Bharat PM-JAY (Golden Card)</option>
+              class="text-xs sm:text-sm font-semibold bg-white border border-[#9ca3af] text-[#111827] rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#004b87]">
+              <option value="S05" selected>National Scholarship Portal (Post-Matric)</option>
+              <option value="S13">Income Certificate (State e-District)</option>
+              <option value="S01">PM-KISAN (Kisan Samman Nidhi)</option>
+              <option value="S02">Ayushman Bharat PM-JAY (Golden Card)</option>
             </select>
           </div>
         </div>
 
-        <!-- Multi-File Drag-and-Drop Ingestion Area -->
+        <!-- Multi-File Drag-and-Drop Ingestion Area (UX4G Standard File Uploader Pattern) -->
         <div id="dragDropArea" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"
-          class="border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-2xl p-8 text-center hover:border-[#185294] hover:bg-blue-50/60 transition cursor-pointer"
+          class="border-2 border-dashed border-[#9ca3af] bg-[#f8fafc] rounded p-6 text-center hover:border-[#004b87] hover:bg-[#f0f7ff] transition cursor-pointer"
           onclick="document.getElementById('multiFileInput').click()"
           role="region" aria-label="Document Upload Area">
           <input type="file" id="multiFileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" class="hidden" onchange="handleFileInputChange(event)">
-          <div class="flex flex-col items-center justify-center space-y-3">
-            <div class="w-14 h-14 rounded-2xl bg-blue-100 text-[#185294] flex items-center justify-center text-2xl shadow-xs" aria-hidden="true">
+          <div class="flex flex-col items-center justify-center space-y-2">
+            <div class="w-12 h-12 rounded bg-[#e2e8f0] text-[#004b87] flex items-center justify-center text-xl" aria-hidden="true">
               <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>
             <div>
-              <p class="text-base font-bold text-slate-900">Drag &amp; Drop Document Files (PDF, JPG, PNG) or <span class="text-[#185294] underline font-extrabold">Browse Files</span></p>
-              <p class="text-sm text-slate-500 mt-1 max-w-xl mx-auto">Upload Aadhaar card, Income certificate, Domicile certificate, Marksheets, Fee receipts (Scanned images or PDFs supported via Tesseract OCR)</p>
+              <p class="text-sm font-bold text-[#111827]">Drag &amp; drop document files (PDF, JPG, PNG) or <span class="text-[#004b87] underline">browse files</span></p>
+              <p class="text-xs text-[#6b7280] mt-0.5">Upload Aadhaar card, Income certificate, Domicile certificate, Marksheets, Fee receipts (OCR processed via Tesseract)</p>
             </div>
-            <div class="flex gap-2 text-xs text-slate-500 pt-1 font-mono">
-              <span class="bg-white px-2.5 py-1 rounded-md border border-slate-200">.PDF</span>
-              <span class="bg-white px-2.5 py-1 rounded-md border border-slate-200">.JPG / .JPEG</span>
-              <span class="bg-white px-2.5 py-1 rounded-md border border-slate-200">.PNG</span>
-              <span class="bg-white px-2.5 py-1 rounded-md border border-slate-200">.TXT</span>
+            <div class="flex gap-2 text-xs text-[#6b7280] pt-1 font-mono">
+              <span class="bg-white px-2 py-0.5 rounded border border-[#d1d5db]">.PDF</span>
+              <span class="bg-white px-2 py-0.5 rounded border border-[#d1d5db]">.JPG</span>
+              <span class="bg-white px-2 py-0.5 rounded border border-[#d1d5db]">.PNG</span>
+              <span class="bg-white px-2 py-0.5 rounded border border-[#d1d5db]">.TXT</span>
             </div>
           </div>
         </div>
 
         <!-- Official Required Documents Checklist Bar -->
-        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-          <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-clipboard-list text-[#185294] mr-2" aria-hidden="true"></i>Official Required Document Checklist for <span id="checklistSchemeTitle" class="text-[#0e2a47] ml-1 font-extrabold">National Scholarship</span>
+        <div class="bg-[#f8fafc] p-4 rounded border border-[#cbd5e1]">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+            <h3 class="text-xs font-bold text-[#374151] uppercase tracking-wider flex items-center">
+              <i class="fa-solid fa-clipboard-list text-[#004b87] mr-2" aria-hidden="true"></i>Official Required Document Checklist for <span id="checklistSchemeTitle" class="text-[#003366] ml-1 font-bold">National Scholarship</span>
             </h3>
-            <span id="docCountBadge" class="text-xs px-3 py-1 rounded-full bg-slate-200 text-slate-800 font-mono font-bold">0 Documents</span>
+            <span id="docCountBadge" class="text-xs px-2.5 py-0.5 rounded bg-white text-[#111827] border border-[#cbd5e1] font-mono font-bold">0 Documents</span>
           </div>
 
           <!-- Dynamic Checklist Chips with Add/Upload buttons -->
-          <div id="checklistItemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
+          <div id="checklistItemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 mt-2">
             <!-- Injected required document chips -->
           </div>
         </div>
 
         <!-- Document Management Actions Toolbar -->
-        <div class="flex flex-wrap justify-between items-center pt-2 gap-3">
-          <div class="flex flex-wrap gap-2.5">
-            <button type="button" onclick="document.getElementById('multiFileInput').click()" class="px-4 py-2.5 bg-[#185294] hover:bg-[#134275] text-white font-semibold rounded-xl text-xs sm:text-sm shadow-xs flex items-center transition">
-              <i class="fa-solid fa-file-arrow-up mr-2" aria-hidden="true"></i>Upload Files (PDF / Image)
+        <div class="flex flex-wrap justify-between items-center pt-2 gap-2">
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="document.getElementById('multiFileInput').click()" class="px-3.5 py-2 bg-[#004b87] hover:bg-[#003366] text-white font-semibold rounded text-xs shadow-xs flex items-center transition">
+              <i class="fa-solid fa-file-arrow-up mr-1.5" aria-hidden="true"></i>Upload Files (PDF / Image)
             </button>
-            <button type="button" onclick="loadPreset('scholarship_with_shortage_and_discrepancy')" class="px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-semibold rounded-xl text-xs sm:text-sm border border-amber-300 flex items-center transition">
-              <i class="fa-solid fa-triangle-exclamation mr-1.5 text-amber-600" aria-hidden="true"></i>⚡ Sample: Missing 3 Documents + Name Anomaly
+            <button type="button" onclick="loadPreset('scholarship_with_shortage_and_discrepancy')" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-[#b45309] font-semibold rounded text-xs border border-[#f59e0b] flex items-center transition">
+              <i class="fa-solid fa-triangle-exclamation mr-1.5 text-[#b45309]" aria-hidden="true"></i>Sample: Missing 3 Documents + Name Anomaly
             </button>
-            <button type="button" onclick="loadPreset('scholarship_complete_and_verified')" class="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-semibold rounded-xl text-xs sm:text-sm border border-emerald-300 flex items-center transition">
-              <i class="fa-solid fa-circle-check mr-1.5 text-emerald-600" aria-hidden="true"></i>⚡ Sample: 100% Complete &amp; Verified Packet
+            <button type="button" onclick="loadPreset('scholarship_complete_and_verified')" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-[#15803d] font-semibold rounded text-xs border border-[#10b981] flex items-center transition">
+              <i class="fa-solid fa-circle-check mr-1.5 text-[#15803d]" aria-hidden="true"></i>Sample: 100% Complete &amp; Verified Packet
             </button>
           </div>
 
           <div class="flex gap-2">
-            <button type="button" onclick="clearAllDocs()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm transition">
+            <button type="button" onclick="clearAllDocs()" class="px-3 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] font-semibold rounded text-xs border border-[#cbd5e1] transition">
               Clear All
             </button>
-            <button type="button" onclick="runFullVerification()" id="btnRunVerification" class="px-6 py-2.5 bg-[#e56717] hover:bg-[#d0560f] text-white font-bold rounded-xl text-xs sm:text-sm shadow transition flex items-center">
-              <i class="fa-solid fa-shield-virus mr-2 text-amber-200" aria-hidden="true"></i>Verify Anomalies &amp; Shortage
+            <button type="button" onclick="runFullVerification()" id="btnRunVerification" class="px-5 py-2 bg-[#d9531e] hover:bg-[#b84214] text-white font-bold rounded text-xs border border-[#b84214] transition flex items-center">
+              <i class="fa-solid fa-shield-virus mr-1.5" aria-hidden="true"></i>Verify Anomalies &amp; Shortage
             </button>
           </div>
         </div>
       </div>
 
       <!-- Uploading / OCR Processing Spinner Banner -->
-      <div id="ocrProcessingBanner" class="hidden p-5 bg-blue-50 border border-blue-200 rounded-2xl text-[#0e2a47] flex items-center justify-between shadow-xs">
-        <div class="flex items-center space-x-3.5">
-          <i class="fa-solid fa-circle-notch fa-spin text-2xl text-[#185294]" aria-hidden="true"></i>
+      <div id="ocrProcessingBanner" class="hidden p-4 bg-[#f0f7ff] border border-[#bae6fd] rounded text-[#0369a1] flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <i class="fa-solid fa-circle-notch fa-spin text-xl text-[#004b87]" aria-hidden="true"></i>
           <div>
-            <span class="text-sm font-bold block" id="ocrProcessingTitle">Running Tesseract OCR &amp; PyMuPDF entity extraction...</span>
-            <span class="text-xs text-[#185294]" id="ocrProcessingSubtitle">Parsing PDF pages, scanned image layers, and classifying fields...</span>
+            <span class="text-xs font-bold block" id="ocrProcessingTitle">Running Tesseract OCR &amp; PyMuPDF entity extraction...</span>
+            <span class="text-xs text-[#0284c7]" id="ocrProcessingSubtitle">Parsing PDF pages, scanned image layers, and classifying fields...</span>
           </div>
         </div>
-        <span class="text-xs font-mono font-bold bg-white px-2.5 py-1 rounded-lg border border-blue-200">Tesseract OCR 5.4</span>
+        <span class="text-xs font-mono font-bold bg-white px-2 py-0.5 rounded border border-[#bae6fd]">Tesseract OCR 5.4</span>
       </div>
 
       <!-- Active Ingested Document Cards Grid -->
       <div>
-        <div class="flex justify-between items-center mb-3">
-          <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-xs font-bold text-[#4b5563] uppercase tracking-wider flex items-center">
             <i class="fa-solid fa-folder-open mr-1.5 text-slate-400" aria-hidden="true"></i>Ingested Documents Packet (<span id="uploadedCount">0</span> Files Analyzed)
           </h3>
-          <span class="text-xs text-slate-500 font-medium">Files are OCR-scanned and classified automatically</span>
+          <span class="text-xs text-slate-500">Scanned and verified through OCR</span>
         </div>
 
-        <div id="uploadedDocsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="uploadedDocsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           <!-- Dynamic document cards injected here -->
         </div>
       </div>
 
       <!-- Verification Results Container -->
-      <div id="verificationResults" class="hidden space-y-6" aria-live="polite">
+      <div id="verificationResults" class="hidden space-y-5" aria-live="polite">
 
         <!-- RAG Readiness Summary Banner -->
-        <div id="ragBanner" class="p-6 rounded-2xl border shadow-sm">
+        <div id="ragBanner" class="p-5 rounded border">
           <!-- Injected RAG report -->
         </div>
 
         <!-- Document Shortage & Pending Checklist Box -->
-        <div class="uidai-card p-6 space-y-4">
-          <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-            <h3 class="text-lg font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-boxes-stacked text-amber-500 mr-2" aria-hidden="true"></i>1. Scheme Document Shortage &amp; Pending Check
+        <div class="gov-card p-5 space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-[#e2e8f0]">
+            <h3 class="text-base font-bold text-[#111827] flex items-center">
+              <i class="fa-solid fa-boxes-stacked text-[#b45309] mr-2" aria-hidden="true"></i>1. Scheme Document Shortage &amp; Pending Check
             </h3>
-            <span id="shortageBadge" class="text-xs font-bold px-3 py-1 rounded-full font-mono"></span>
+            <span id="shortageBadge" class="text-xs font-bold px-2 py-0.5 rounded font-mono"></span>
           </div>
 
-          <div id="shortageDetailsContainer" class="space-y-3">
+          <div id="shortageDetailsContainer" class="space-y-2">
             <!-- Injected shortages -->
           </div>
         </div>
 
         <!-- Cross-Document Consistency & Anomaly Matrix -->
-        <div class="uidai-card p-6 space-y-4">
-          <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <div class="gov-card p-5 space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-[#e2e8f0]">
             <div>
-              <h3 class="text-lg font-bold text-slate-900 flex items-center">
-                <i class="fa-solid fa-diagram-project text-[#185294] mr-2" aria-hidden="true"></i>2. Cross-Document Consistency &amp; Anomaly Matrix
+              <h3 class="text-base font-bold text-[#111827] flex items-center">
+                <i class="fa-solid fa-diagram-project text-[#004b87] mr-2" aria-hidden="true"></i>2. Cross-Document Consistency &amp; Anomaly Matrix
               </h3>
               <p class="text-xs text-slate-500 mt-0.5">Compares applicant name, DOB, father's name, category, and income across all ingested files.</p>
             </div>
-            <span class="text-xs px-2.5 py-1 rounded font-mono badge-ai font-bold">ai_inferred</span>
+            <span class="text-xs px-2 py-0.5 rounded font-mono badge-ai font-bold">ai_inferred</span>
           </div>
 
           <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs sm:text-sm">
-              <thead class="bg-slate-50 text-slate-700 border-b border-slate-200 uppercase font-bold text-xs">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#f8fafc] text-[#374151] border-b border-[#d1d5db] uppercase font-bold">
                 <tr>
-                  <th class="p-3.5">Verified Field</th>
-                  <th class="p-3.5">Document A Source</th>
-                  <th class="p-3.5">Document B Source</th>
-                  <th class="p-3.5">Anomaly / Match Status</th>
-                  <th class="p-3.5">Analysis &amp; Regulatory Finding</th>
+                  <th class="p-2.5">Verified Field</th>
+                  <th class="p-2.5">Document A Source</th>
+                  <th class="p-2.5">Document B Source</th>
+                  <th class="p-2.5">Anomaly / Match Status</th>
+                  <th class="p-2.5">Analysis &amp; Regulatory Finding</th>
                 </tr>
               </thead>
-              <tbody id="matrixBody" class="divide-y divide-slate-100">
+              <tbody id="matrixBody" class="divide-y divide-[#e5e7eb]">
                 <!-- Injected Rows -->
               </tbody>
             </table>
@@ -600,30 +597,30 @@
         </div>
 
         <!-- Actionable Guidance & Remediation -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="uidai-card p-6 space-y-3">
-            <h4 class="font-bold text-slate-900 text-base flex items-center">
-              <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2" aria-hidden="true"></i>Specific Rejection Anomalies Flagged
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="gov-card p-5 space-y-2.5">
+            <h4 class="font-bold text-[#111827] text-sm flex items-center">
+              <i class="fa-solid fa-triangle-exclamation text-[#b45309] mr-2" aria-hidden="true"></i>Specific Rejection Anomalies Flagged
             </h4>
-            <div id="findingsList" class="space-y-2 text-xs sm:text-sm">
+            <div id="findingsList" class="space-y-2 text-xs">
               <!-- Injected Findings -->
             </div>
           </div>
 
-          <div class="uidai-card p-6 space-y-4 flex flex-col justify-between">
+          <div class="gov-card p-5 space-y-3 flex flex-col justify-between">
             <div>
-              <h4 class="font-bold text-slate-900 text-base flex items-center">
-                <i class="fa-solid fa-wand-magic-sparkles text-[#185294] mr-2" aria-hidden="true"></i>Sarvam-105B AI Remediation Guidance
+              <h4 class="font-bold text-[#111827] text-sm flex items-center">
+                <i class="fa-solid fa-wand-magic-sparkles text-[#004b87] mr-2" aria-hidden="true"></i>Sarvam-105B AI Remediation Guidance
               </h4>
               <p class="text-xs text-slate-500 mt-0.5">Bilingual explanation in English and सरल हिंदी</p>
-              <div id="aiSummaryBox" class="mt-3 text-xs sm:text-sm text-slate-700 leading-relaxed bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+              <div id="aiSummaryBox" class="mt-2 text-xs text-[#1e293b] leading-relaxed bg-[#f8fafc] p-3 rounded border border-[#cbd5e1]">
                 <!-- Injected AI summary -->
               </div>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex justify-end">
-              <button type="button" onclick="handoffToVachanSetu()" class="px-5 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow transition flex items-center gap-2">
-                <span>Simulate Submission &amp; Track on Vachan Setu</span>
+            <div class="pt-3 border-t border-[#e2e8f0] flex justify-end">
+              <button type="button" onclick="handoffToVachanSetu()" class="px-4 py-2 bg-[#15803d] hover:bg-[#166534] text-white rounded text-xs font-bold transition flex items-center gap-1.5">
+                <span>Record Case on Vachan Setu</span>
                 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
               </button>
             </div>
@@ -635,34 +632,34 @@
 
     <!-- ================= TAB 3: VACHAN SETU ================= -->
     <div id="content-timeline" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center uidai-card p-6 gap-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gov-card p-5 gap-3">
         <div>
-          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center">
-            <i class="fa-solid fa-hourglass-half text-[#185294] mr-2.5" aria-hidden="true"></i>Vachan Setu: Statutory Deadlines &amp; Service Promises
+          <h2 class="text-lg sm:text-xl font-bold text-[#111827] flex items-center">
+            <i class="fa-solid fa-hourglass-half text-[#004b87] mr-2" aria-hidden="true"></i>Vachan Setu: Statutory Deadlines &amp; Service Promises
           </h2>
-          <p class="text-sm text-slate-600 mt-1">Every citizen promise visible. Pure deterministic statutory calculation with tamper-evident audit history.</p>
+          <p class="text-xs sm:text-sm text-[#4b5563] mt-0.5">Every citizen promise visible. Pure deterministic statutory calculation with tamper-evident audit history.</p>
         </div>
         <div class="flex gap-2">
-          <button type="button" onclick="openSubmitModal()" class="px-5 py-2.5 bg-[#185294] hover:bg-[#134275] text-white font-bold rounded-xl text-xs sm:text-sm shadow-xs transition">
+          <button type="button" onclick="openSubmitModal()" class="px-4 py-2 bg-[#004b87] hover:bg-[#003366] text-white font-bold rounded text-xs transition">
             + Record New Citizen Case
           </button>
         </div>
       </div>
 
       <!-- Case Cards Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <!-- Active Cases Selector -->
-        <div class="lg:col-span-1 space-y-3">
-          <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider">Active Tracked Cases</h3>
-          <div id="casesList" class="space-y-2.5 max-h-[620px] overflow-y-auto pr-1">
+        <div class="lg:col-span-1 space-y-2.5">
+          <h3 class="text-xs font-bold text-[#4b5563] uppercase tracking-wider">Active Tracked Cases</h3>
+          <div id="casesList" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
             <!-- Injected cases -->
           </div>
         </div>
 
         <!-- Selected Case Detailed Timeline View -->
         <div class="lg:col-span-2">
-          <div id="caseDetail" class="uidai-card p-6 sm:p-8 space-y-6" aria-live="polite">
-            <div class="text-center py-16 text-slate-400 text-base">Select a case on the left to inspect its Promise Timeline &amp; Milestones</div>
+          <div id="caseDetail" class="gov-card p-6 space-y-5" aria-live="polite">
+            <div class="text-center py-14 text-slate-400 text-sm">Select a case on the left to inspect its Promise Timeline &amp; Milestones</div>
           </div>
         </div>
       </div>
@@ -670,67 +667,67 @@
 
     <!-- ================= TAB 4: SILENT-FILE DETECTOR & RTI ================= -->
     <div id="content-silentfile" class="hidden space-y-6">
-      <div class="uidai-card p-6 sm:p-8">
-        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center">
-          <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2.5" aria-hidden="true"></i>Silent-File Detector &amp; Statutory Escalation
+      <div class="gov-card p-6">
+        <h2 class="text-lg sm:text-xl font-bold text-[#111827] flex items-center">
+          <i class="fa-solid fa-triangle-exclamation text-[#b45309] mr-2" aria-hidden="true"></i>Silent-File Detector &amp; Statutory Escalation
         </h2>
-        <p class="text-base text-slate-600 mt-1">Files that stop moving create citizen distress. Vachan Setu monitors cases without updates for &gt;14 days or breaching official SLAs, and drafts legally-sound grievance petitions.</p>
+        <p class="text-xs sm:text-sm text-[#4b5563] mt-1">Files that stop moving create citizen distress. Vachan Setu monitors cases without updates for &gt;14 days or breaching official SLAs, and drafts legally-sound grievance petitions.</p>
 
         <!-- Alerts Queue -->
-        <div id="alertsQueue" class="mt-6 space-y-3" aria-live="polite">
+        <div id="alertsQueue" class="mt-5 space-y-2.5" aria-live="polite">
           <!-- Injected alerts -->
         </div>
       </div>
 
       <!-- Letter Drafter Panel -->
-      <div id="letterPanel" class="hidden uidai-card p-6 sm:p-8 space-y-4">
-        <div class="flex flex-wrap justify-between items-center pb-3 border-b border-slate-200 gap-2">
+      <div id="letterPanel" class="hidden gov-card p-6 space-y-3.5">
+        <div class="flex flex-wrap justify-between items-center pb-2.5 border-b border-[#e2e8f0] gap-2">
           <div>
-            <h3 class="font-bold text-slate-900 text-lg flex items-center">
-              <i class="fa-solid fa-file-signature text-[#185294] mr-2" aria-hidden="true"></i>Sarvam-105B AI Drafted Letter
+            <h3 class="font-bold text-[#111827] text-base flex items-center">
+              <i class="fa-solid fa-file-signature text-[#004b87] mr-2" aria-hidden="true"></i>Sarvam-105B AI Drafted Letter
             </h3>
             <span id="letterMeta" class="text-xs text-slate-500 font-mono"></span>
           </div>
           <div class="flex gap-2">
-            <button type="button" onclick="copyLetter()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition">
-              <i class="fa-regular fa-copy mr-1.5" aria-hidden="true"></i>Copy Text
+            <button type="button" onclick="copyLetter()" class="px-3 py-1.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#1e293b] text-xs font-semibold rounded border border-[#cbd5e1] transition">
+              <i class="fa-regular fa-copy mr-1" aria-hidden="true"></i>Copy Text
             </button>
-            <button type="button" onclick="printLetter()" class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-[#185294] text-xs sm:text-sm font-semibold rounded-xl transition">
-              <i class="fa-solid fa-print mr-1.5" aria-hidden="true"></i>Print PDF
+            <button type="button" onclick="printLetter()" class="px-3 py-1.5 bg-[#f0f7ff] hover:bg-[#e0f2fe] text-[#004b87] text-xs font-semibold rounded border border-[#bae6fd] transition">
+              <i class="fa-solid fa-print mr-1" aria-hidden="true"></i>Print PDF
             </button>
           </div>
         </div>
 
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs sm:text-sm text-amber-900 flex items-start gap-2.5">
-          <i class="fa-solid fa-circle-info text-amber-600 mt-0.5" aria-hidden="true"></i>
-          <span><strong>Citizen Verification Required:</strong> This draft was generated by Sarvam AI based on statutory rules. Review and confirm facts before dispatching to the department.</span>
+        <div class="bg-[#fffbeb] border border-[#fde68a] p-3 rounded text-xs text-[#92400e] flex items-start gap-2">
+          <i class="fa-solid fa-circle-info text-[#b45309] mt-0.5" aria-hidden="true"></i>
+          <span><strong>Citizen Verification Notice:</strong> This draft was generated by Sarvam AI based on statutory rules. Review and confirm facts before dispatching to the department.</span>
         </div>
 
-        <textarea id="letterBody" rows="16" class="w-full text-xs sm:text-sm font-mono p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#185294] leading-relaxed"></textarea>
+        <textarea id="letterBody" rows="16" class="w-full text-xs font-mono p-3 bg-[#f8fafc] border border-[#cbd5e1] rounded focus:outline-none focus:ring-2 focus:ring-[#004b87] leading-relaxed"></textarea>
       </div>
     </div>
 
     <!-- ================= TAB 5: NOTICE DECODER ================= -->
     <div id="content-notices" class="hidden space-y-6">
-      <div class="uidai-card p-6 sm:p-8">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-3">
+      <div class="gov-card p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-[#e2e8f0] gap-2">
           <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center">
-              <i class="fa-regular fa-file-lines text-[#185294] mr-2.5" aria-hidden="true"></i>Notice Decoder: Understand Rejection &amp; Deficiency Memos
+            <h2 class="text-lg sm:text-xl font-bold text-[#111827] flex items-center">
+              <i class="fa-regular fa-file-lines text-[#004b87] mr-2" aria-hidden="true"></i>Notice Decoder: Rejection &amp; Deficiency Memo Interpretation
             </h2>
-            <p class="text-sm text-slate-600 mt-1">Translate complex administrative rejection jargon into simple actionable Hindi and English.</p>
+            <p class="text-xs sm:text-sm text-[#4b5563] mt-0.5">Translate complex administrative rejection jargon into simple actionable Hindi and English.</p>
           </div>
-          <button type="button" onclick="loadSampleNotice()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-sm font-semibold transition">
+          <button type="button" onclick="loadSampleNotice()" class="px-3 py-1.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] rounded text-xs font-semibold border border-[#cbd5e1] transition">
             Load Sample UP Tehsil Memo
           </button>
         </div>
 
-        <div class="mt-6 space-y-4">
-          <label for="noticeInput" class="text-xs font-bold text-slate-700 uppercase tracking-wider block">Paste Official Rejection / Deficiency Memo</label>
-          <textarea id="noticeInput" rows="6" class="w-full text-xs sm:text-sm font-mono p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#185294]" placeholder="Paste the text of the government notice or rejection slip..."></textarea>
-          <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="mt-4 space-y-3">
+          <label for="noticeInput" class="text-xs font-bold text-[#374151] uppercase tracking-wider block">Paste Official Rejection / Deficiency Memo</label>
+          <textarea id="noticeInput" rows="6" class="w-full text-xs font-mono p-3 bg-[#f8fafc] border border-[#cbd5e1] rounded focus:outline-none focus:ring-2 focus:ring-[#004b87]" placeholder="Paste the text of the government notice or rejection slip..."></textarea>
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
             <span class="text-xs text-slate-500">Powered by Sarvam-105B bilingual administrative simplification engine</span>
-            <button type="button" onclick="runNoticeDecode()" id="btnDecode" class="px-6 py-3 bg-[#185294] hover:bg-[#134275] text-white rounded-xl text-sm font-bold shadow-xs transition">
+            <button type="button" onclick="runNoticeDecode()" id="btnDecode" class="px-5 py-2.5 bg-[#004b87] hover:bg-[#003366] text-white rounded text-xs font-bold border border-[#003366] transition">
               Decode Notice &amp; Draft Response Letter
             </button>
           </div>
@@ -744,22 +741,22 @@
 
     <!-- ================= TAB 6: SERVICE HEALTH CONSOLE ================= -->
     <div id="content-health" class="hidden space-y-6">
-      <div class="uidai-card p-6 sm:p-8">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-3">
+      <div class="gov-card p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-[#e2e8f0] gap-2">
           <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-chart-line text-[#185294] mr-2.5" aria-hidden="true"></i>Service Health Console: Citizen Accountability
+            <h2 class="text-lg sm:text-xl font-bold text-[#111827] flex items-center">
+              <i class="fa-solid fa-chart-line text-[#004b87] mr-2" aria-hidden="true"></i>Service Health Console: Citizen Accountability
             </h2>
-            <p class="text-sm text-slate-600 mt-1">Aggregate delivery metrics, stage bottlenecks, and systemic failure points across public departments.</p>
+            <p class="text-xs sm:text-sm text-[#4b5563] mt-0.5">Aggregate delivery metrics, stage bottlenecks, and systemic failure points across public departments.</p>
           </div>
           <div class="text-right">
-            <span class="text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono font-bold">
+            <span class="text-xs px-2.5 py-0.5 rounded bg-[#f0fdf4] text-[#15803d] border border-[#bbf7d0] font-mono font-bold">
               <i class="fa-solid fa-user-shield mr-1" aria-hidden="true"></i>k-Anonymity (k=5) Active
             </span>
           </div>
         </div>
 
-        <div id="healthContent" class="mt-6 space-y-6" aria-live="polite">
+        <div id="healthContent" class="mt-5 space-y-5" aria-live="polite">
           <!-- Injected KPI cards and charts -->
         </div>
       </div>
@@ -767,36 +764,36 @@
 
   </main>
 
-  <!-- Submit Case Accessible Modal Dialog -->
-  <div id="submitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-5">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-        <h3 id="modalTitle" class="font-bold text-slate-900 text-xl">Record Simulated Application</h3>
-        <button type="button" onclick="closeSubmitModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg" aria-label="Close dialog">
-          <i class="fa-solid fa-xmark text-lg"></i>
+  <!-- Submit Case Accessible Modal Dialog (UX4G Compliant) -->
+  <div id="submitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded max-w-lg w-full p-6 shadow-lg border border-[#cbd5e1] space-y-4">
+      <div class="flex justify-between items-center pb-2.5 border-b border-[#e2e8f0]">
+        <h3 id="modalTitle" class="font-bold text-[#111827] text-lg">Record Simulated Application</h3>
+        <button type="button" onclick="closeSubmitModal()" class="text-slate-400 hover:text-slate-600 p-1" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark text-base"></i>
         </button>
       </div>
-      <div class="space-y-4 text-sm">
+      <div class="space-y-3 text-xs sm:text-sm">
         <div>
-          <label for="newScheme" class="font-semibold text-slate-700 block mb-1">Scheme / Service Name</label>
-          <input id="newScheme" type="text" value="National Scholarship Portal (Post-Matric)" class="w-full p-3 border border-slate-300 rounded-xl text-slate-900 focus:ring-2 focus:ring-[#185294]">
+          <label for="newScheme" class="font-semibold text-[#374151] block mb-1">Scheme / Service Name</label>
+          <input id="newScheme" type="text" value="National Scholarship Portal (Post-Matric)" class="w-full p-2 border border-[#9ca3af] rounded text-[#111827] focus:ring-2 focus:ring-[#004b87]">
         </div>
         <div>
-          <label for="newName" class="font-semibold text-slate-700 block mb-1">Applicant Name</label>
-          <input id="newName" type="text" value="Ravi Kumar" class="w-full p-3 border border-slate-300 rounded-xl text-slate-900 focus:ring-2 focus:ring-[#185294]">
+          <label for="newName" class="font-semibold text-[#374151] block mb-1">Applicant Name</label>
+          <input id="newName" type="text" value="Ravi Kumar" class="w-full p-2 border border-[#9ca3af] rounded text-[#111827] focus:ring-2 focus:ring-[#004b87]">
         </div>
         <div>
-          <label for="newDept" class="font-semibold text-slate-700 block mb-1">Department</label>
-          <input id="newDept" type="text" value="Social Welfare Department / Tehsil" class="w-full p-3 border border-slate-300 rounded-xl text-slate-900 focus:ring-2 focus:ring-[#185294]">
+          <label for="newDept" class="font-semibold text-[#374151] block mb-1">Department</label>
+          <input id="newDept" type="text" value="Social Welfare Department / Tehsil" class="w-full p-2 border border-[#9ca3af] rounded text-[#111827] focus:ring-2 focus:ring-[#004b87]">
         </div>
         <div>
-          <label for="newDays" class="font-semibold text-slate-700 block mb-1">Official Turnaround Time (Days)</label>
-          <input id="newDays" type="number" value="21" class="w-full p-3 border border-slate-300 rounded-xl text-slate-900 focus:ring-2 focus:ring-[#185294]">
+          <label for="newDays" class="font-semibold text-[#374151] block mb-1">Official Turnaround Time (Days)</label>
+          <input id="newDays" type="number" value="21" class="w-full p-2 border border-[#9ca3af] rounded text-[#111827] focus:ring-2 focus:ring-[#004b87]">
         </div>
       </div>
-      <div class="pt-3 flex justify-end gap-3 border-t border-slate-100">
-        <button type="button" onclick="closeSubmitModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition">Cancel</button>
-        <button type="button" onclick="submitNewCase()" class="px-5 py-2.5 bg-[#185294] hover:bg-[#134275] text-white rounded-xl text-sm font-semibold shadow transition">Confirm &amp; Track</button>
+      <div class="pt-2 flex justify-end gap-2 border-t border-[#e2e8f0]">
+        <button type="button" onclick="closeSubmitModal()" class="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] rounded text-xs font-semibold border border-[#cbd5e1] transition">Cancel</button>
+        <button type="button" onclick="submitNewCase()" class="px-4 py-2 bg-[#004b87] hover:bg-[#003366] text-white rounded text-xs font-semibold border border-[#003366] transition">Confirm &amp; Track</button>
       </div>
     </div>
   </div>
@@ -805,48 +802,47 @@
   <input type="file" id="singleDocFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" class="hidden" onchange="onSingleDocFileSelected(event)">
 
   <!-- Accessible Toast Container -->
-  <div id="toastContainer" aria-live="assertive" class="fixed bottom-6 right-6 z-50 space-y-2.5 w-88 max-w-[calc(100vw-2rem)]"></div>
+  <div id="toastContainer" aria-live="assertive" class="fixed bottom-5 right-5 z-50 space-y-2 w-80 max-w-[calc(100vw-2rem)]"></div>
 
-  <!-- Government Standard Citizen Information Footer (myAadhaar & UX4G standard) -->
-  <footer role="contentinfo" class="mt-16 bg-[#0e2a47] text-slate-300 text-sm border-t border-blue-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-[#134275]">
-        <div class="md:col-span-2">
-          <div class="flex items-center gap-2.5 mb-3">
-            <div class="w-9 h-9 rounded-lg bg-[#185294] flex items-center justify-center text-white" aria-hidden="true">
-              <i class="fa-solid fa-fingerprint text-amber-400 text-lg"></i>
+  <!-- 4. Official Government Footer (myAadhaar & UX4G Standard) -->
+  <footer role="contentinfo" class="mt-14 bg-[#003366] text-slate-300 text-xs border-t border-[#002244]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 pb-6 border-b border-[#004b87]">
+        <div class="md:col-span-2 space-y-2">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded bg-[#004b87] flex items-center justify-center text-white" aria-hidden="true">
+              <i class="fa-solid fa-fingerprint text-[#ff9933] text-sm"></i>
             </div>
-            <span class="text-white font-bold text-lg">myHaqSetu | Vachan Setu</span>
+            <span class="text-white font-bold text-base">myHaqSetu | Vachan Setu</span>
           </div>
-          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-md">
-            Digital Identity &amp; Statutory Citizen Assurance Platform. Designed in accordance with UX4G Design Guidelines (MeitY) and myAadhaar (UIDAI) accessibility principles.
+          <p class="text-slate-300 text-xs leading-relaxed max-w-md">
+            Digital Identity &amp; Statutory Citizen Assurance Platform. Designed in accordance with official UX4G Design Guidelines (MeitY) and myAadhaar (UIDAI) portal patterns.
           </p>
-          <div class="mt-3 flex items-center gap-2 text-xs text-amber-400 font-mono">
-            <i class="fa-solid fa-check-double"></i>
-            <span>GIGW &amp; WCAG 2.1 AA Compliant</span>
+          <div class="text-[11px] text-[#ff9933] font-mono">
+            <i class="fa-solid fa-check-double mr-1"></i>GIGW &amp; WCAG 2.1 AA Compliant
           </div>
         </div>
-        <div>
-          <h3 class="text-white font-semibold text-sm mb-3">Statutory Citizen Notice</h3>
-          <p class="text-slate-400 text-xs leading-relaxed">
-            All records displayed are synthetic for system demonstration under simulated timelines. Eligibility analysis is advisory and subject to official gazette verification.
+        <div class="space-y-1.5">
+          <h3 class="text-white font-semibold text-xs uppercase tracking-wider">Statutory Notice</h3>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            All records displayed are synthetic for system demonstration under simulated timelines. Eligibility analysis is advisory and subject to official gazette notification verification.
           </p>
         </div>
-        <div>
-          <h3 class="text-white font-semibold text-sm mb-3">DPDP Act Governance</h3>
-          <p class="text-slate-400 text-xs leading-relaxed">
-            Compliant with Digital Personal Data Protection Act 2023 principles. Documents processed in-memory for validation and purged per policy.
+        <div class="space-y-1.5">
+          <h3 class="text-white font-semibold text-xs uppercase tracking-wider">DPDP Act Compliance</h3>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            Compliant with Digital Personal Data Protection Act 2023 design standards. Documents are processed in-memory for validation and purged per policy.
           </p>
-          <button type="button" onclick="deleteUserData()" class="mt-3 text-xs text-amber-400 hover:text-amber-300 underline font-semibold">
+          <button type="button" onclick="deleteUserData()" class="text-[11px] text-[#ff9933] hover:underline font-semibold block pt-1">
             Purge All Session Data
           </button>
         </div>
       </div>
-      <div class="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
+      <div class="pt-5 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-slate-400">
         <span>© 2026 myHaqSetu AI &amp; Vachan Setu — Powered by Sarvam-105B</span>
         <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" aria-hidden="true"></span>
-          <span class="text-slate-300 font-medium">All Statutory Endpoints Operational</span>
+          <span class="w-2 h-2 rounded-full bg-[#10b981] inline-block" aria-hidden="true"></span>
+          <span class="text-slate-300">All Statutory Endpoints Operational</span>
         </div>
       </div>
     </div>
@@ -856,8 +852,9 @@
   <script src="https://cdn.ux4g.gov.in/UX4G@3.0.18/ux4g.js"></script>
   <script src="https://cdn.ux4g.gov.in/UX4G@3.0.18/ux4g-custom.js"></script>
 
-  <!-- Core Application Logic -->
+  <!-- Core Application Scripts -->
   <script>
+
 
 
     // --- ACCESSIBLE TOAST NOTIFICATION SYSTEM ---
@@ -872,7 +869,7 @@
       }[type] || { bg: 'bg-slate-900 text-white', icon: 'fa-bell', border: 'border-slate-800' };
 
       const toast = document.createElement('div');
-      toast.className = `${config.bg} ${config.border} border px-4 py-3 rounded-xl shadow-xl flex items-center justify-between gap-3 text-sm animate-slide-in`;
+      toast.className = `${config.bg} ${config.border} border px-4 py-3 rounded shadow-xl flex items-center justify-between gap-3 text-sm animate-slide-in`;
       toast.setAttribute('role', 'status');
       toast.innerHTML = `
         <div class="flex items-center gap-2.5 min-w-0">
@@ -990,14 +987,14 @@
       if (container) {
         container.innerHTML = `
           <div class="space-y-4" aria-busy="true" aria-live="polite">
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
+            <div class="bg-white p-6 rounded border border-slate-200 space-y-3">
               <div class="skeleton h-5 w-48"></div>
               <div class="skeleton h-4 w-3/4"></div>
             </div>
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
+            <div class="bg-white p-6 rounded border border-slate-200 space-y-4">
               <div class="flex justify-between items-center">
                 <div class="skeleton h-6 w-64"></div>
-                <div class="skeleton h-8 w-28 rounded-xl"></div>
+                <div class="skeleton h-8 w-28 rounded"></div>
               </div>
               <div class="skeleton h-16 w-full"></div>
             </div>
@@ -1033,7 +1030,7 @@
       `).join('');
 
       html += `
-        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-wrap items-center gap-2">
+        <div class="bg-white p-4 rounded border border-slate-200 flex flex-wrap items-center gap-2">
           <span class="text-xs font-bold text-slate-500 uppercase">Extracted Profile:</span>
           ${profileBadges || '<span class="text-xs text-slate-400">No profile constraints detected</span>'}
           <span class="ml-auto text-xs px-2 py-0.5 rounded font-mono badge-ai">ai_inferred</span>
@@ -1042,7 +1039,7 @@
 
       if (data.ai_rationale) {
         html += `
-          <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 border border-blue-200 p-4 rounded-xl shadow-xs">
+          <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 border border-blue-200 p-4 rounded shadow-xs">
             <div class="flex items-start">
               <i class="fa-solid fa-robot text-blue-600 mt-1 mr-3 text-lg"></i>
               <div>
@@ -1084,7 +1081,7 @@
         const criteriaUnknownHtml = m.criteria_unknown.map(c => `<li class="flex items-center text-slate-500"><i class="fa-regular fa-circle-question mr-1.5 text-xs"></i>${c}</li>`).join('');
 
         html += `
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-blue-300 transition space-y-4">
+          <div class="bg-white p-5 rounded border border-slate-200 shadow-xs hover:border-blue-300 transition space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
               <div>
                 <div class="flex items-center space-x-2">
@@ -1102,7 +1099,7 @@
 
             <p class="text-xs text-slate-600">${m.summary}</p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 p-3 rounded border border-slate-100 text-xs">
               <div>
                 <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Criteria Met</span>
                 <ul class="space-y-1">${criteriaMetHtml || '<li class="text-slate-400">None detected</li>'}</ul>
@@ -1189,7 +1186,7 @@
 
       if (docEntries.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-full py-8 text-center text-slate-400 bg-white border border-dashed border-slate-200 rounded-xl">
+          <div class="col-span-full py-8 text-center text-slate-400 bg-white border border-dashed border-slate-200 rounded">
             <i class="fa-solid fa-file-pdf text-2xl mb-2 text-slate-300"></i>
             <p class="text-xs">No documents uploaded in this packet yet. Upload a PDF, JPG, or PNG above or load sample documents.</p>
           </div>
@@ -1198,7 +1195,7 @@
       }
 
       grid.innerHTML = docEntries.map(([docKey, content]) => `
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+        <div class="bg-white p-4 rounded border border-slate-200 shadow-2xs space-y-2">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
               <i class="fa-solid fa-file-invoice text-indigo-600 mr-1.5"></i>${formatDocName(docKey)}
@@ -1396,11 +1393,11 @@
       if (data.overall_status === 'GREEN') ragBg = 'bg-emerald-50 border-emerald-300 text-emerald-900';
       if (data.overall_status === 'RED') ragBg = 'bg-red-50 border-red-300 text-red-900';
 
-      ragBanner.className = `p-6 rounded-2xl border shadow-sm ${ragBg}`;
+      ragBanner.className = `p-6 rounded border shadow-none ${ragBg}`;
       ragBanner.innerHTML = `
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-lg shadow" style="background-color: ${data.readiness_color}">
+            <div class="w-12 h-12 rounded flex items-center justify-center font-bold text-white text-lg shadow" style="background-color: ${data.readiness_color}">
               ${data.overall_status}
             </div>
             <div>
@@ -1425,7 +1422,7 @@
         shortageBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full font-mono bg-emerald-100 text-emerald-800';
         shortageBadge.textContent = 'NO SHORTAGE (All Mandatory Documents Attached)';
         shortageContainer.innerHTML = `
-          <div class="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-800 flex items-center">
+          <div class="p-3 bg-emerald-50 rounded text-xs text-emerald-800 flex items-center">
             <i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-sm"></i>
             <span>Every document mandated under the official <strong>${data.scheme_name}</strong> guidelines has been provided.</span>
           </div>
@@ -1437,7 +1434,7 @@
           <p class="text-xs text-slate-600">The following documents are missing from your uploaded file package. Submitting without them will result in an immediate objection memo from the department:</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
             ${data.shortage_list.map(s => `
-              <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs flex justify-between items-start">
+              <div class="p-3 bg-red-50 border border-red-200 rounded text-xs flex justify-between items-start">
                 <div>
                   <span class="font-bold text-red-900 block"><i class="fa-solid fa-triangle-exclamation mr-1.5 text-red-600"></i>${s.name}</span>
                   <p class="text-[11px] text-red-700 mt-0.5"><strong>Purpose:</strong> ${s.purpose}</p>
@@ -1479,7 +1476,7 @@
       // 4. Findings
       const findingsList = document.getElementById('findingsList');
       findingsList.innerHTML = (data.findings || []).map(f => `
-        <div class="p-3 rounded-xl border ${f.severity === 'critical' ? 'bg-red-50/80 border-red-200 text-red-900' : 'bg-amber-50/80 border-amber-200 text-amber-900'} space-y-1">
+        <div class="p-3 rounded border ${f.severity === 'critical' ? 'bg-red-50/80 border-red-200 text-red-900' : 'bg-amber-50/80 border-amber-200 text-amber-900'} space-y-1">
           <div class="font-bold flex items-center justify-between">
             <span>${f.finding}</span>
             <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-white/80">${f.severity}</span>
@@ -1517,7 +1514,7 @@
     function renderCasesList() {
       const list = document.getElementById('casesList');
       list.innerHTML = currentCases.map(c => `
-        <div onclick="selectCase('${c.case_id}')" class="p-3 rounded-xl border ${selectedCaseId === c.case_id ? 'border-indigo-500 bg-indigo-50/50 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300'} cursor-pointer transition">
+        <div onclick="selectCase('${c.case_id}')" class="p-3 rounded border ${selectedCaseId === c.case_id ? 'border-indigo-500 bg-indigo-50/50 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300'} cursor-pointer transition">
           <div class="flex justify-between items-start">
             <div>
               <span class="text-[10px] font-mono text-slate-400 block">${c.case_id}</span>
@@ -1585,7 +1582,7 @@
         </div>
 
         <!-- Statutory Guarantee Alert -->
-        <div class="p-3.5 rounded-xl border text-xs ${c.is_statutory ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-700'}">
+        <div class="p-3.5 rounded border text-xs ${c.is_statutory ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-700'}">
           <i class="fa-solid ${c.is_statutory ? 'fa-scale-balanced text-emerald-700' : 'fa-circle-info text-slate-500'} mr-1.5"></i>
           <strong>${c.deadline_basis}:</strong> ${c.is_statutory ? 'This service is guaranteed under the State Right to Public Services Act. Officials face mandatory disciplinary review for unjustified delays.' : 'Illustrative citizen charter timeline. Not yet verified against latest statutory gazette notifications.'}
         </div>
@@ -1593,7 +1590,7 @@
         <!-- Promise Milestones -->
         <div>
           <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Milestone Progress & Promise Timeline</h4>
-          <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="p-4 bg-slate-50 rounded border border-slate-100">
             ${milestonesHtml}
           </div>
         </div>
@@ -1651,7 +1648,7 @@
         }
 
         container.innerHTML = alerts.map(a => `
-          <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div class="p-4 rounded border border-slate-200 bg-white shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
             <div>
               <div class="flex items-center space-x-2">
                 <span class="text-xs font-mono font-bold text-slate-500">${a.case_id}</span>
@@ -1762,14 +1759,14 @@ You are required to submit rectification within 15 days, failing which the appli
       container.classList.remove('hidden');
 
       container.innerHTML = `
-        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-5 rounded-2xl border border-indigo-200 space-y-3">
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-5 rounded border border-indigo-200 space-y-3">
           <h3 class="font-bold text-slate-900 text-sm flex items-center">
             <i class="fa-solid fa-language text-indigo-600 mr-2"></i>सरल हिंदी में समझें (Plain Hindi Explanation)
           </h3>
-          <p class="text-xs text-slate-800 leading-relaxed bg-white/80 p-3 rounded-xl border border-indigo-100">${data.plain_language_explanation.replace(/\n/g, '<br>')}</p>
+          <p class="text-xs text-slate-800 leading-relaxed bg-white/80 p-3 rounded border border-indigo-100">${data.plain_language_explanation.replace(/\n/g, '<br>')}</p>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div class="bg-white p-5 rounded border border-slate-200 shadow-none space-y-3">
           <h3 class="font-bold text-slate-900 text-sm flex items-center">
             <i class="fa-solid fa-list-check text-emerald-600 mr-2"></i>Immediate Action Steps for Citizen
           </h3>
@@ -1778,14 +1775,14 @@ You are required to submit rectification within 15 days, failing which the appli
           </ul>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div class="bg-white p-5 rounded border border-slate-200 shadow-none space-y-3">
           <div class="flex justify-between items-center">
             <h3 class="font-bold text-slate-900 text-sm flex items-center">
               <i class="fa-regular fa-envelope text-blue-600 mr-2"></i>Draft Response & Resubmission Letter (Sarvam-105B)
             </h3>
             <button onclick="copyResponseLetter()" class="text-xs text-blue-600 font-semibold hover:underline">Copy Response</button>
           </div>
-          <textarea id="responseLetterText" rows="10" class="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-200 rounded-xl leading-relaxed">${data.draft_response_letter}</textarea>
+          <textarea id="responseLetterText" rows="10" class="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-200 rounded leading-relaxed">${data.draft_response_letter}</textarea>
         </div>
       `;
     }
@@ -1806,22 +1803,22 @@ You are required to submit rectification within 15 days, failing which the appli
         container.innerHTML = `
           <!-- KPI Cards -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div class="bg-slate-50 p-4 rounded border border-slate-200">
               <span class="text-xs font-bold text-slate-500 uppercase">Total Applications</span>
               <div class="text-2xl font-bold text-slate-900 mt-1">${data.total_cases_tracked}</div>
               <span class="text-[11px] text-slate-400">Across 12 states</span>
             </div>
-            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+            <div class="bg-emerald-50 p-4 rounded border border-emerald-200">
               <span class="text-xs font-bold text-emerald-700 uppercase">Overall SLA Adherence</span>
               <div class="text-2xl font-bold text-emerald-800 mt-1">${data.overall_sla_compliance_pct}%</div>
               <span class="text-[11px] text-emerald-600">On-track & Approaching</span>
             </div>
-            <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+            <div class="bg-amber-50 p-4 rounded border border-amber-200">
               <span class="text-xs font-bold text-amber-700 uppercase">Silent Files (>14d)</span>
               <div class="text-2xl font-bold text-amber-800 mt-1">${data.stale_silent_files}</div>
               <span class="text-[11px] text-amber-600">No department updates</span>
             </div>
-            <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+            <div class="bg-red-50 p-4 rounded border border-red-200">
               <span class="text-xs font-bold text-red-700 uppercase">Overdue Violations</span>
               <div class="text-2xl font-bold text-red-800 mt-1">${data.overdue_violations}</div>
               <span class="text-[11px] text-red-600">Exceeded statutory SLA</span>
@@ -1830,7 +1827,7 @@ You are required to submit rectification within 15 days, failing which the appli
 
           <!-- Bottlenecks & Causes -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="p-4 bg-white rounded-xl border border-slate-200">
+            <div class="p-4 bg-white rounded border border-slate-200">
               <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3">Public Service Stage Bottleneck Analysis</h4>
               <div class="space-y-3 text-xs">
                 ${data.stage_bottlenecks.map(b => `
@@ -1848,7 +1845,7 @@ You are required to submit rectification within 15 days, failing which the appli
               </div>
             </div>
 
-            <div class="p-4 bg-white rounded-xl border border-slate-200">
+            <div class="p-4 bg-white rounded border border-slate-200">
               <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3">Top Avoidable Application Rejection Reasons</h4>
               <div class="space-y-2 text-xs">
                 ${data.top_rejection_reasons.map(r => `
@@ -1930,6 +1927,7 @@ You are required to submit rectification within 15 days, failing which the appli
       }
     }
 
+  
   
   </script>
 </body>
