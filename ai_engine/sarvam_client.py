@@ -2,12 +2,23 @@
 Sarvam-105B Cloud API client wrapper for VachanSetu.
 Uses the official sarvamai SDK (pip install sarvamai).
 Set SARVAM_API_KEY environment variable before use.
+
+Model notes:
+  - sarvam-105b              : Deep reasoning model. Uses internal chain-of-thought
+                               tokens heavily; best for complex analysis tasks.
+  - sarvam-105b-conversations: Optimised for real-time chat / voice. Returns
+                               content directly without burning tokens on reasoning.
+                               Used as the default for all VachanSetu modules.
 """
 
 import os
 from sarvamai import SarvamAI
 
 _client = None
+
+# Use the conversations variant by default — it returns content reliably
+# without exhausting the token budget on internal reasoning steps.
+DEFAULT_MODEL = "sarvam-105b-conversations"
 
 
 def _get_client():
@@ -23,15 +34,17 @@ def _get_client():
     return _client
 
 
-def chat(messages, system_prompt=None, temperature=0.3, max_tokens=1024):
+def chat(messages, system_prompt=None, temperature=0.3, max_tokens=1024,
+         model=DEFAULT_MODEL):
     """
-    Send a chat request to sarvam-105b.
+    Send a chat request to Sarvam AI.
 
     Args:
         messages: list of {"role": "user"/"assistant", "content": str}
         system_prompt: optional system-level instruction string
         temperature: float 0-1, lower = more deterministic
         max_tokens: int
+        model: Sarvam model ID (default: sarvam-105b-conversations)
 
     Returns:
         str: model response text
@@ -44,13 +57,22 @@ def chat(messages, system_prompt=None, temperature=0.3, max_tokens=1024):
     full_messages.extend(messages)
 
     try:
-        response = client.chat.completions.create(
-            model="sarvam-105b",
+        # sarvamai SDK: client.chat.completions() is a direct method call,
+        # NOT client.chat.completions.create()
+        response = client.chat.completions(
+            model=model,
             messages=full_messages,
             temperature=temperature,
             max_tokens=max_tokens,
         )
-        return response.choices[0].message.content.strip()
+        content = response.choices[0].message.content
+        if content is None:
+            raise ValueError(
+                f"Model returned no content (finish_reason="
+                f"{response.choices[0].finish_reason}). "
+                "Try increasing max_tokens or switching to sarvam-105b-conversations."
+            )
+        return content.strip()
 
     except Exception as error:
         raise RuntimeError(f"Sarvam API error: {error}") from error
