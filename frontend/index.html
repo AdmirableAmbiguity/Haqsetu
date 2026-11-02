@@ -42,7 +42,7 @@
           <div class="hidden md:flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs">
             <span class="px-2 font-medium text-slate-600 flex items-center">
               <i class="fa-regular fa-clock mr-1.5 text-indigo-600"></i>
-              Simulated: <strong id="clockDisplay" class="ml-1 text-slate-900 font-mono">2026-11-02</strong>
+              Simulated Date: <strong id="clockDisplay" class="ml-1 text-slate-900 font-mono">2026-11-02</strong>
             </span>
             <button onclick="advanceClock(1)" class="px-2 py-1 bg-white hover:bg-slate-50 rounded shadow-xs text-slate-700 font-medium border border-slate-200 ml-1">+1d</button>
             <button onclick="advanceClock(7)" class="px-2 py-1 bg-white hover:bg-slate-50 rounded shadow-xs text-slate-700 font-medium border border-slate-200 ml-1">+7d</button>
@@ -59,10 +59,10 @@
       <!-- Navigation Tabs -->
       <nav class="flex space-x-6 overflow-x-auto text-sm border-t border-slate-100">
         <button onclick="switchTab('haqguide')" id="tab-haqguide" class="py-3 px-1 border-b-2 font-medium text-slate-600 hover:text-blue-600 flex items-center tab-active">
-          <i class="fa-solid fa-magnifying-glass mr-2"></i>1. HaqGuide (Rights & Matcher)
+          <i class="fa-solid fa-magnifying-glass mr-2"></i>1. HaqGuide (Search & Rights)
         </button>
         <button onclick="switchTab('rejectshield')" id="tab-rejectshield" class="py-3 px-1 border-b-2 font-medium text-slate-600 hover:text-blue-600 flex items-center">
-          <i class="fa-solid fa-shield-virus mr-2"></i>2. RejectShield (Document Audit)
+          <i class="fa-solid fa-shield-halved mr-2 text-indigo-600"></i>2. RejectShield (Verifier & Shortage Audit)
         </button>
         <button onclick="switchTab('timeline')" id="tab-timeline" class="py-3 px-1 border-b-2 font-medium text-slate-600 hover:text-blue-600 flex items-center">
           <i class="fa-solid fa-timeline mr-2"></i>3. Vachan Setu (Service Tracker)
@@ -89,12 +89,12 @@
         <div class="relative z-10 max-w-3xl">
           <span class="inline-block bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs px-2.5 py-1 rounded-full uppercase tracking-wider font-semibold mb-2">Know Your Rights</span>
           <h2 class="text-2xl font-bold tracking-tight">Express your need in your own words</h2>
-          <p class="text-slate-300 text-sm mt-1">Search in Hindi, English or Hinglish. Our engine extracts your eligibility profile, checks 13+ official schemes deterministically, and explains matching criteria using Sarvam-105B.</p>
+          <p class="text-slate-300 text-sm mt-1">Search for scholarships, certificates, pensions, or agricultural aid. Our engine extracts your eligibility profile, checks official criteria, and explains rights using Sarvam-105B.</p>
           
           <div class="mt-4 flex gap-2">
             <div class="relative flex-1">
-              <input id="matcherQuery" type="text" placeholder="e.g. My family needs an income certificate for a scholarship in Lucknow, UP..." 
-                value="My family needs an income certificate for a scholarship in Uttar Pradesh" 
+              <input id="matcherQuery" type="text" placeholder="e.g. Post-matric scholarship for OBC college student family income 1.5 lakh in UP..." 
+                value="Post-matric scholarship for OBC college student family income 1.5 lakh in UP" 
                 class="w-full pl-4 pr-10 py-3 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium shadow-inner">
               <button onclick="toggleVoiceInput()" class="absolute right-3 top-3 text-slate-400 hover:text-blue-600">
                 <i class="fa-solid fa-microphone"></i>
@@ -108,10 +108,10 @@
 
           <!-- Suggested Chips -->
           <div class="mt-3 flex flex-wrap gap-2 text-xs">
-            <span class="text-slate-400 py-1">Try asking:</span>
-            <button onclick="setQuery('My family needs an income certificate for a scholarship in Uttar Pradesh')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-slate-200">Income Certificate for Scholarship</button>
-            <button onclick="setQuery('Post-matric scholarship for OBC college student family income 1.5 lakh in UP')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-slate-200">UP OBC Post-Matric Scholarship</button>
-            <button onclick="setQuery('Kisan credit card loan for small farmer with 2 acres land')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-slate-200">Kisan Credit Card</button>
+            <span class="text-slate-400 py-1">Quick searches:</span>
+            <button onclick="setQuery('Post-matric scholarship for OBC college student family income 1.5 lakh in UP')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-slate-200">🎓 OBC Post-Matric Scholarship</button>
+            <button onclick="setQuery('My family needs an income certificate for a scholarship in Uttar Pradesh')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-slate-200">📜 Income Certificate</button>
+            <button onclick="setQuery('Kisan credit card loan for small farmer with 2 acres land')" class="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-slate-200">🌾 PM-KISAN / Kisan Credit</button>
           </div>
         </div>
       </div>
@@ -122,82 +122,127 @@
       </div>
     </div>
 
-    <!-- ================= TAB 2: REJECTSHIELD ================= -->
+    <!-- ================= TAB 2: REJECTSHIELD (COMPLETE VERIFIER & SHORTAGE AUDIT) ================= -->
     <div id="content-rejectshield" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-100 gap-3">
+
+      <!-- Scheme Selector & Active Checklist Bar -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-3 border-b border-slate-100">
           <div>
             <h2 class="text-xl font-bold text-slate-900 flex items-center">
-              <i class="fa-solid fa-shield-halved text-blue-600 mr-2"></i>RejectShield: Application Pre-Audit Intelligence
+              <i class="fa-solid fa-shield-halved text-indigo-600 mr-2"></i>RejectShield: Comprehensive Application & Document Verifier
             </h2>
-            <p class="text-sm text-slate-500 mt-0.5">Catch avoidable discrepancies and missing documents before submitting to government portals.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Select your target scheme to load its statutory document checklist, detect missing documents (shortages), and perform cross-document consistency verification.</p>
           </div>
-          <button onclick="loadSampleDocs()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-lg text-sm border border-indigo-200 flex items-center transition shadow-xs">
-            <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>Load Synthetic Test Packet (R. Kumar vs Ravi Kumar)
-          </button>
-        </div>
-
-        <!-- Document Input Columns -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div class="p-4 border border-slate-200 rounded-xl bg-slate-50">
-            <div class="flex justify-between items-center mb-2">
-              <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
-                <i class="fa-regular fa-file-lines mr-1.5 text-blue-500"></i>1. Application Form
-              </label>
-              <span class="text-xs text-slate-400">Text / Form</span>
-            </div>
-            <textarea id="docApp" rows="7" class="w-full text-xs font-mono p-2.5 bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500" placeholder="Paste or load application details..."></textarea>
-          </div>
-
-          <div class="p-4 border border-slate-200 rounded-xl bg-slate-50">
-            <div class="flex justify-between items-center mb-2">
-              <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
-                <i class="fa-regular fa-id-card mr-1.5 text-purple-500"></i>2. Identity Card (Aadhaar)
-              </label>
-              <span class="text-xs text-slate-400">KYC Proof</span>
-            </div>
-            <textarea id="docId" rows="7" class="w-full text-xs font-mono p-2.5 bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500" placeholder="Paste or load identity details..."></textarea>
-          </div>
-
-          <div class="p-4 border border-slate-200 rounded-xl bg-slate-50">
-            <div class="flex justify-between items-center mb-2">
-              <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
-                <i class="fa-regular fa-file-certificate mr-1.5 text-green-500"></i>3. Supporting Certificate
-              </label>
-              <span class="text-xs text-slate-400">Domicile / Income</span>
-            </div>
-            <textarea id="docCert" rows="7" class="w-full text-xs font-mono p-2.5 bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500" placeholder="Paste or load supporting certificate..."></textarea>
+          
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-600">Active Scheme:</label>
+            <select id="selectedSchemeId" onchange="onSchemeChange()" class="text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 rounded-lg px-3 py-2 focus:ring-1 focus:ring-indigo-500">
+              <option value="S05" selected>🎓 National Scholarship Portal (Post-Matric Scholarship)</option>
+              <option value="S13">📜 Income Certificate (State e-District)</option>
+              <option value="S01">🌾 PM-KISAN (Kisan Samman Nidhi)</option>
+              <option value="S02">🏥 Ayushman Bharat PM-JAY (Golden Card)</option>
+            </select>
           </div>
         </div>
 
-        <div class="mt-4 flex justify-end">
-          <button onclick="runAudit()" id="btnAudit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition flex items-center text-sm">
-            <i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Run Cross-Document Consistency Audit
-          </button>
+        <!-- Official Required Documents Checklist Accordion / Summary -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
+              <i class="fa-solid fa-clipboard-list text-blue-600 mr-2"></i>Official Required Document Checklist for <span id="checklistSchemeTitle" class="text-indigo-700 ml-1">National Scholarship</span>
+            </h3>
+            <span id="docCountBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-mono font-medium">0 Documents</span>
+          </div>
+
+          <!-- Dynamic Checklist Chips with Add buttons -->
+          <div id="checklistItemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 mt-3">
+            <!-- Injected required document chips -->
+          </div>
+        </div>
+
+        <!-- Document Management Actions Toolbar -->
+        <div class="flex flex-wrap justify-between items-center pt-2 gap-2">
+          <div class="flex flex-wrap gap-2">
+            <button onclick="openAddDocModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs shadow-xs flex items-center transition">
+              <i class="fa-solid fa-plus mr-1.5"></i>Add Document
+            </button>
+            <button onclick="loadPreset('scholarship_with_shortage_and_discrepancy')" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold rounded-lg text-xs border border-amber-300 flex items-center transition">
+              <i class="fa-solid fa-triangle-exclamation mr-1.5 text-amber-600"></i>⚡ Load Scholarship with Shortage & Name Mismatch
+            </button>
+            <button onclick="loadPreset('scholarship_complete_and_verified')" class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold rounded-lg text-xs border border-emerald-300 flex items-center transition">
+              <i class="fa-solid fa-circle-check mr-1.5 text-emerald-600"></i>⚡ Load 100% Complete & Verified Packet
+            </button>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="clearAllDocs()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded-lg text-xs">
+              Clear All
+            </button>
+            <button onclick="runFullVerification()" id="btnRunVerification" class="px-5 py-2 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-lg text-xs shadow transition flex items-center">
+              <i class="fa-solid fa-shield-virus mr-2 text-amber-400"></i>Verify Shortage & Consistency
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Audit Results Container -->
-      <div id="auditResults" class="hidden space-y-6">
-        <!-- RAG Summary Card -->
-        <div id="ragBanner" class="p-5 rounded-2xl border shadow-sm">
+      <!-- Active Submitted Documents Cards Container -->
+      <div>
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+            <i class="fa-solid fa-folder-open mr-1.5 text-slate-400"></i>Uploaded Document Packet (<span id="uploadedCount">0</span> Documents Present)
+          </h3>
+          <span class="text-xs text-slate-400">You can edit contents or upload .txt / images directly</span>
+        </div>
+
+        <div id="uploadedDocsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamic document cards injected here -->
+        </div>
+      </div>
+
+      <!-- Verification Results Container -->
+      <div id="verificationResults" class="hidden space-y-6">
+
+        <!-- RAG Readiness Summary Banner -->
+        <div id="ragBanner" class="p-6 rounded-2xl border shadow-sm">
           <!-- Injected RAG report -->
         </div>
 
+        <!-- Document Shortage & Completeness Box -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+            <h3 class="text-md font-bold text-slate-900 flex items-center">
+              <i class="fa-solid fa-boxes-stacked text-amber-500 mr-2"></i>1. Document Completeness & Shortage Audit
+            </h3>
+            <span id="shortageBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full font-mono"></span>
+          </div>
+
+          <div id="shortageDetailsContainer" class="space-y-3">
+            <!-- Injected shortages -->
+          </div>
+        </div>
+
         <!-- Cross-Document Consistency Matrix -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="text-md font-bold text-slate-900 mb-3 flex items-center">
-            <i class="fa-solid fa-diagram-project text-indigo-600 mr-2"></i>Cross-Document Consistency Matrix
-          </h3>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+            <div>
+              <h3 class="text-md font-bold text-slate-900 flex items-center">
+                <i class="fa-solid fa-diagram-project text-indigo-600 mr-2"></i>2. Cross-Document Consistency Matrix
+              </h3>
+              <p class="text-xs text-slate-500">Compares applicant name, DOB, father's name, category, and income across all submitted documents.</p>
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded font-mono badge-ai">ai_inferred</span>
+          </div>
+
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-semibold">
                 <tr>
-                  <th class="p-3">Field</th>
-                  <th class="p-3">Document A Value</th>
-                  <th class="p-3">Document B Value</th>
-                  <th class="p-3">Match Status</th>
-                  <th class="p-3">Analysis & Observation</th>
+                  <th class="p-3">Verified Entity</th>
+                  <th class="p-3">Document A</th>
+                  <th class="p-3">Document B</th>
+                  <th class="p-3">Consistency Status</th>
+                  <th class="p-3">Verification Finding & Legal Observation</th>
                 </tr>
               </thead>
               <tbody id="matrixBody" class="divide-y divide-slate-100">
@@ -207,31 +252,37 @@
           </div>
         </div>
 
-        <!-- Findings & Citizen Guidance -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <h4 class="font-bold text-slate-900 text-sm mb-3 flex items-center">
-              <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i>Evidence-Backed Findings
+        <!-- Actionable Guidance & Remediation -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h4 class="font-bold text-slate-900 text-sm flex items-center">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i>Specific Rejection Objections Prevented
             </h4>
             <div id="findingsList" class="space-y-2 text-xs">
               <!-- Injected Findings -->
             </div>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <h4 class="font-bold text-slate-900 text-sm mb-3 flex items-center">
-              <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-2"></i>Sarvam-105B Citizen Guidance
-            </h4>
-            <div id="aiSummaryBox" class="text-xs text-slate-700 leading-relaxed bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
-              <!-- Injected AI summary -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm flex items-center">
+                <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-2"></i>Sarvam-105B Citizen Remediation Guidance
+              </h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Bilingual explanation in English and सरल हिंदी</p>
+              <div id="aiSummaryBox" class="mt-3 text-xs text-slate-700 leading-relaxed bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                <!-- Injected AI summary -->
+              </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
-              <button onclick="proceedToSubmission()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs">
-                Simulate Portal Submission & Track with Vachan Setu →
+
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+              <button onclick="handoffToVachanSetu()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center">
+                <span>Simulate Submission & Track on Vachan Setu</span>
+                <i class="fa-solid fa-arrow-right ml-2"></i>
               </button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -379,7 +430,7 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="font-semibold text-slate-700">Scheme / Service Name</label>
-          <input id="newScheme" type="text" value="Income Certificate" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
+          <input id="newScheme" type="text" value="National Scholarship Portal (Post-Matric)" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
         </div>
         <div>
           <label class="font-semibold text-slate-700">Applicant Name</label>
@@ -387,16 +438,49 @@
         </div>
         <div>
           <label class="font-semibold text-slate-700">Department</label>
-          <input id="newDept" type="text" value="Revenue Department / Tehsil" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
+          <input id="newDept" type="text" value="Social Welfare Department / Tehsil" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
         </div>
         <div>
           <label class="font-semibold text-slate-700">Official Turnaround Time (Days)</label>
-          <input id="newDays" type="number" value="15" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
+          <input id="newDays" type="number" value="21" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
         </div>
       </div>
       <div class="pt-2 flex justify-end gap-2">
         <button onclick="closeSubmitModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold">Cancel</button>
         <button onclick="submitNewCase()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow">Confirm & Track</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Document Modal -->
+  <div id="addDocModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-md">Add Document to Application Packet</h3>
+        <button onclick="closeAddDocModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700">Document Type / Name</label>
+          <select id="modalDocType" class="w-full mt-1 p-2 border border-slate-200 rounded-lg">
+            <option value="caste_certificate">Caste / Category Certificate (OBC/SC/ST)</option>
+            <option value="previous_marksheet">Previous Year Academic Marksheet</option>
+            <option value="fee_receipt_admission">College Fee Receipt & Admission Letter</option>
+            <option value="bank_passbook">Bank Account Passbook (Aadhaar Linked)</option>
+            <option value="domicile_certificate">Domicile / Residence Certificate</option>
+            <option value="income_certificate">Income Certificate</option>
+            <option value="aadhaar_card">Aadhaar Identity Card</option>
+            <option value="custom_document">Custom Supporting Document</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700">Paste Text Content or Description</label>
+          <textarea id="modalDocContent" rows="5" class="w-full mt-1 p-2 border border-slate-200 rounded-lg font-mono text-xs" placeholder="Paste extracted text or type document details..."></textarea>
+        </div>
+      </div>
+      <div class="pt-2 flex justify-end gap-2">
+        <button onclick="closeAddDocModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold">Cancel</button>
+        <button onclick="confirmAddDocFromModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow">Add to Packet</button>
       </div>
     </div>
   </div>
@@ -407,6 +491,10 @@
     let currentCases = [];
     let selectedCaseId = null;
 
+    // RejectShield State
+    let activeSchemeDocs = null;
+    let submittedDocs = {};
+
     function switchTab(tabId) {
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
       document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
@@ -415,6 +503,9 @@
       document.getElementById(`content-${tabId}`).classList.remove('hidden');
       activeTab = tabId;
 
+      if (tabId === 'rejectshield' && !activeSchemeDocs) {
+        onSchemeChange();
+      }
       if (tabId === 'timeline') loadCases();
       if (tabId === 'silentfile') loadAlerts();
       if (tabId === 'health') loadHealth();
@@ -461,7 +552,7 @@
       }
     }
 
-    // --- TAB 1: MATCHING ---
+    // --- TAB 1: HAQGUIDE SEARCH ---
     async function runMatch() {
       const q = document.getElementById('matcherQuery').value;
       if (!q.trim()) return;
@@ -561,8 +652,8 @@
                 </div>
                 <p class="text-xs text-slate-500 mt-0.5">${m.department} • ${m.state} • Official SLA: <strong>${m.time_limit_days} days</strong> (${m.is_statutory ? 'Statutory Guarantee' : 'Illustrative Charter'})</p>
               </div>
-              <button onclick="selectSchemeForAudit('${m.name}')" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg text-xs border border-blue-200 transition">
-                Inspect Checklist & Audit Documents →
+              <button onclick="handoffToRejectShield('${m.scheme_id}', '${m.name}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs shadow-xs transition flex items-center">
+                <i class="fa-solid fa-shield-halved mr-1.5"></i>Audit Documents on RejectShield →
               </button>
             </div>
 
@@ -589,61 +680,187 @@
       container.innerHTML = html;
     }
 
-    function selectSchemeForAudit(name) {
+    function handoffToRejectShield(schemeId, schemeName) {
       switchTab('rejectshield');
-      loadSampleDocs();
+      const sel = document.getElementById('selectedSchemeId');
+      if (schemeId === 'S05' || schemeName.toLowerCase().includes('scholarship')) {
+        sel.value = 'S05';
+      } else if (schemeId === 'S13' || schemeName.toLowerCase().includes('income')) {
+        sel.value = 'S13';
+      } else if (schemeId === 'S01' || schemeName.toLowerCase().includes('kisan')) {
+        sel.value = 'S01';
+      } else if (schemeId === 'S02' || schemeName.toLowerCase().includes('ayushman')) {
+        sel.value = 'S02';
+      }
+      onSchemeChange();
+      loadPreset('scholarship_with_shortage_and_discrepancy');
     }
 
-    // --- TAB 2: REJECTSHIELD ---
-    async function loadSampleDocs() {
+    // --- TAB 2: REJECTSHIELD (FULL VERIFIER & SHORTAGE SYSTEM) ---
+
+    async function onSchemeChange() {
+      const schemeId = document.getElementById('selectedSchemeId').value;
       try {
-        const res = await fetch('/api/rejectshield/sample');
-        const data = await res.json();
-        document.getElementById('docApp').value = data.application;
-        document.getElementById('docId').value = data.identity;
-        document.getElementById('docCert').value = data.certificate;
+        const res = await fetch(`/api/rejectshield/checklist?scheme_id=${schemeId}`);
+        activeSchemeDocs = await res.json();
+        renderSchemeChecklistBar();
       } catch (e) {
-        alert("Error loading sample: " + e);
+        console.error("Error loading checklist: " + e);
       }
     }
 
-    async function runAudit() {
-      const app = document.getElementById('docApp').value;
-      const id = document.getElementById('docId').value;
-      const cert = document.getElementById('docCert').value;
+    function renderSchemeChecklistBar() {
+      if (!activeSchemeDocs) return;
+      document.getElementById('checklistSchemeTitle').textContent = activeSchemeDocs.scheme_name || 'Selected Scheme';
+      const reqList = activeSchemeDocs.required_documents || [];
+      document.getElementById('docCountBadge').textContent = `${reqList.length} Required Documents`;
 
-      if (!app && !id) {
-        alert("Please load or paste documents first.");
+      const container = document.getElementById('checklistItemsContainer');
+      container.innerHTML = reqList.map(item => {
+        const isPresent = Boolean(submittedDocs[item.id] || (item.id === 'aadhaar_card' && submittedDocs['identity']));
+        return `
+          <div class="p-2.5 rounded-lg border ${isPresent ? 'bg-emerald-50/80 border-emerald-200' : 'bg-white border-slate-200'} flex justify-between items-center text-xs shadow-2xs">
+            <div class="pr-2">
+              <div class="flex items-center space-x-1.5">
+                <i class="fa-solid ${isPresent ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-red-500'}"></i>
+                <span class="font-bold ${isPresent ? 'text-emerald-900' : 'text-slate-800'}">${item.name}</span>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-0.5 line-clamp-1">${item.purpose}</p>
+            </div>
+            ${isPresent 
+              ? `<span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded font-mono">Present</span>` 
+              : `<button onclick="quickAddDoc('${item.id}', '${item.name}')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded border border-indigo-200 shrink-0">+ Add</button>`
+            }
+          </div>
+        `;
+      }).join('');
+
+      renderUploadedDocsGrid();
+    }
+
+    function renderUploadedDocsGrid() {
+      const grid = document.getElementById('uploadedDocsGrid');
+      const docEntries = Object.entries(submittedDocs);
+      document.getElementById('uploadedCount').textContent = docEntries.length;
+
+      if (docEntries.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-400 bg-white border border-dashed border-slate-200 rounded-xl">
+            <i class="fa-regular fa-folder-open text-2xl mb-2 text-slate-300"></i>
+            <p class="text-xs">No documents uploaded in this packet yet. Click <strong>"+ Add Document"</strong> or load a preset above.</p>
+          </div>
+        `;
         return;
       }
 
-      const btn = document.getElementById('btnAudit');
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Analyzing Cross-Document Consistency...`;
+      grid.innerHTML = docEntries.map(([docKey, content]) => `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
+              <i class="fa-regular fa-file-lines text-indigo-600 mr-1.5"></i>${formatDocName(docKey)}
+            </span>
+            <button onclick="removeDoc('${docKey}')" class="text-slate-400 hover:text-red-600 text-xs">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+          <textarea onchange="updateDocContent('${docKey}', this.value)" rows="6" class="w-full text-xs font-mono p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-indigo-500 leading-relaxed">${content}</textarea>
+          <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1">
+            <span>Length: ${content.length} chars</span>
+            <span class="font-mono text-emerald-600">Extracted</span>
+          </div>
+        </div>
+      `).join('');
+    }
 
+    function formatDocName(k) {
+      return k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    function updateDocContent(key, val) {
+      submittedDocs[key] = val;
+    }
+
+    function removeDoc(key) {
+      delete submittedDocs[key];
+      renderSchemeChecklistBar();
+    }
+
+    function clearAllDocs() {
+      submittedDocs = {};
+      document.getElementById('verificationResults').classList.add('hidden');
+      renderSchemeChecklistBar();
+    }
+
+    function quickAddDoc(docId, docName) {
+      openAddDocModal(docId);
+    }
+
+    function openAddDocModal(prefillDocId) {
+      document.getElementById('addDocModal').classList.remove('hidden');
+      if (prefillDocId) {
+        document.getElementById('modalDocType').value = prefillDocId;
+      }
+      document.getElementById('modalDocContent').value = '';
+    }
+
+    function closeAddDocModal() {
+      document.getElementById('addDocModal').classList.add('hidden');
+    }
+
+    function confirmAddDocFromModal() {
+      const type = document.getElementById('modalDocType').value;
+      const text = document.getElementById('modalDocContent').value.trim() || `OFFICIAL DOCUMENT: ${type.toUpperCase()}\nApplicant Name: Ravi Kumar\nFather's Name: Suresh Kumar\nDate: 01/11/2026\nStatus: Certified`;
+      submittedDocs[type] = text;
+      closeAddDocModal();
+      renderSchemeChecklistBar();
+    }
+
+    async function loadPreset(presetKey) {
       try {
-        const res = await fetch('/api/rejectshield/audit', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            documents: {
-              application: app,
-              identity: id,
-              certificate: cert
-            },
-            requirements: ['application', 'identity', 'income_proof']
-          })
-        });
+        const res = await fetch('/api/rejectshield/presets');
         const data = await res.json();
-        renderAuditReport(data);
+        const preset = data[presetKey];
+        if (!preset) return;
+
+        document.getElementById('selectedSchemeId').value = preset.scheme_id;
+        submittedDocs = Object.assign({}, preset.documents);
+        await onSchemeChange();
+        await runFullVerification();
       } catch (e) {
-        alert("Error auditing documents: " + e);
-      } finally {
-        btn.innerHTML = `<i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Run Cross-Document Consistency Audit`;
+        alert("Error loading preset: " + e);
       }
     }
 
-    function renderAuditReport(data) {
-      document.getElementById('auditResults').classList.remove('hidden');
+    async function runFullVerification() {
+      const schemeId = document.getElementById('selectedSchemeId').value;
+      if (Object.keys(submittedDocs).length === 0) {
+        alert("Please upload or add at least one document to run verification.");
+        return;
+      }
+
+      const btn = document.getElementById('btnRunVerification');
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying Shortage & Consistency...`;
+
+      try {
+        const res = await fetch('/api/rejectshield/verify', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            scheme_id: schemeId,
+            documents: submittedDocs
+          })
+        });
+        const data = await res.json();
+        renderVerificationResults(data);
+      } catch (e) {
+        alert("Error verifying application: " + e);
+      } finally {
+        btn.innerHTML = `<i class="fa-solid fa-shield-virus mr-2 text-amber-400"></i>Verify Shortage & Consistency`;
+      }
+    }
+
+    function renderVerificationResults(data) {
+      document.getElementById('verificationResults').classList.remove('hidden');
 
       // 1. RAG Banner
       const ragBanner = document.getElementById('ragBanner');
@@ -651,60 +868,104 @@
       if (data.overall_status === 'GREEN') ragBg = 'bg-emerald-50 border-emerald-300 text-emerald-900';
       if (data.overall_status === 'RED') ragBg = 'bg-red-50 border-red-300 text-red-900';
 
-      ragBanner.className = `p-5 rounded-2xl border shadow-sm ${ragBg}`;
+      ragBanner.className = `p-6 rounded-2xl border shadow-sm ${ragBg}`;
       ragBanner.innerHTML = `
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow" style="background-color: ${data.readiness_color}">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-lg shadow" style="background-color: ${data.readiness_color}">
               ${data.overall_status}
             </div>
             <div>
-              <h3 class="text-lg font-bold">${data.readiness_label}</h3>
-              <p class="text-xs opacity-80">Application Readiness Score: ${data.overall_status === 'GREEN' ? '100% Consistent' : data.overall_status === 'AMBER' ? 'Needs Review (Minor Variations Found)' : 'Discrepancies Likely to Cause Official Rejection'}</p>
+              <span class="text-xs uppercase font-mono font-bold tracking-wider opacity-75">RejectShield Verification Verdict</span>
+              <h3 class="text-xl font-bold">${data.readiness_label}</h3>
+              <p class="text-xs opacity-85 mt-0.5">Scheme: <strong>${data.scheme_name}</strong> • ${data.uploaded_docs_count} Documents Ingested • ${data.shortage_count} Shortage(s) Flagged</p>
             </div>
           </div>
-          <span class="text-xs px-2.5 py-1 rounded font-mono bg-white/60 border border-current">RejectShield Engine</span>
+          <div class="text-right">
+            <span class="text-xs px-3 py-1 rounded-full font-mono font-bold bg-white/70 border border-current">
+              ${data.overall_status === 'GREEN' ? '100% Ready' : data.overall_status === 'AMBER' ? 'Action Recommended' : 'Action Required'}
+            </span>
+          </div>
         </div>
       `;
 
-      // 2. Matrix
-      const matrixBody = document.getElementById('matrixBody');
-      matrixBody.innerHTML = (data.consistency_matrix || []).map(row => {
-        let statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">Exact Match</span>';
-        if (row.status === 'abbreviation_variation') {
-          statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Abbreviation Variation</span>';
-        } else if (row.status === 'mismatch') {
-          statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800">Mismatch</span>';
-        }
-        return `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-semibold text-slate-800">${row.field}</td>
-            <td class="p-3 font-mono text-slate-600">${row.val_a} <span class="text-slate-400 block text-[10px]">(${row.doc_a})</span></td>
-            <td class="p-3 font-mono text-slate-600">${row.val_b} <span class="text-slate-400 block text-[10px]">(${row.doc_b})</span></td>
-            <td class="p-3">${statusBadge}</td>
-            <td class="p-3 text-slate-600 text-xs">${row.note}</td>
-          </tr>
-        `;
-      }).join('');
+      // 2. Shortage Box
+      const shortageBadge = document.getElementById('shortageBadge');
+      const shortageContainer = document.getElementById('shortageDetailsContainer');
 
-      // 3. Findings
+      if (data.shortage_count === 0) {
+        shortageBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full font-mono bg-emerald-100 text-emerald-800';
+        shortageBadge.textContent = 'NO SHORTAGE (All Mandatory Docs Present)';
+        shortageContainer.innerHTML = `
+          <div class="p-3 bg-emerald-50 rounded-xl text-xs text-emerald-800 flex items-center">
+            <i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-sm"></i>
+            <span>Every document mandated under the official <strong>${data.scheme_name}</strong> guidelines has been provided.</span>
+          </div>
+        `;
+      } else {
+        shortageBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full font-mono bg-red-100 text-red-800';
+        shortageBadge.textContent = `CRITICAL: ${data.shortage_count} MANDATORY DOCUMENT(S) MISSING`;
+        shortageContainer.innerHTML = `
+          <p class="text-xs text-slate-600">The following documents are legally required for this scheme. Submitting without them will result in an immediate rejection or deficiency memo from the department:</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+            ${data.shortage_list.map(s => `
+              <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs flex justify-between items-start">
+                <div>
+                  <span class="font-bold text-red-900 block"><i class="fa-solid fa-triangle-exclamation mr-1.5 text-red-600"></i>${s.name}</span>
+                  <p class="text-[11px] text-red-700 mt-0.5"><strong>Purpose:</strong> ${s.purpose}</p>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Issuing Authority: ${s.authority}</p>
+                </div>
+                <button onclick="quickAddDoc('${s.id}', '${s.name}')" class="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold shrink-0 ml-2 shadow-xs">
+                  + Upload Now
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // 3. Matrix
+      const matrixBody = document.getElementById('matrixBody');
+      if (data.consistency_matrix.length === 0) {
+        matrixBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Upload at least two documents containing identity fields to compare pairwise consistency.</td></tr>`;
+      } else {
+        matrixBody.innerHTML = data.consistency_matrix.map(row => {
+          let statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">Exact Match</span>';
+          if (row.status === 'abbreviation_variation') {
+            statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Abbreviation Variation</span>';
+          } else if (row.status === 'mismatch' || row.status === 'minor_spelling_variation') {
+            statusBadge = '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800">Discrepancy</span>';
+          }
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-slate-800">${row.field}</td>
+              <td class="p-3 font-mono text-slate-600">${row.val_a || 'N/A'} <span class="text-slate-400 block text-[10px]">(${formatDocName(row.doc_a)})</span></td>
+              <td class="p-3 font-mono text-slate-600">${row.val_b || 'N/A'} <span class="text-slate-400 block text-[10px]">(${formatDocName(row.doc_b)})</span></td>
+              <td class="p-3">${statusBadge}</td>
+              <td class="p-3 text-slate-600 text-xs">${row.note}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 4. Findings
       const findingsList = document.getElementById('findingsList');
       findingsList.innerHTML = (data.findings || []).map(f => `
-        <div class="p-2.5 rounded-lg border ${f.severity === 'critical' ? 'bg-red-50 border-red-200 text-red-800' : 'bg-amber-50 border-amber-200 text-amber-800'}">
+        <div class="p-3 rounded-xl border ${f.severity === 'critical' ? 'bg-red-50/80 border-red-200 text-red-900' : 'bg-amber-50/80 border-amber-200 text-amber-900'} space-y-1">
           <div class="font-bold flex items-center justify-between">
             <span>${f.finding}</span>
-            <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/70">${f.severity}</span>
+            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-white/80">${f.severity}</span>
           </div>
-          <p class="text-[11px] mt-1 opacity-90"><strong>Evidence:</strong> ${f.evidence}</p>
-          ${f.correction ? `<p class="text-[11px] mt-0.5 font-medium text-slate-900"><strong>Action:</strong> ${f.correction}</p>` : ''}
+          <p class="text-[11px] opacity-90"><strong>Evidence:</strong> ${f.evidence}</p>
+          ${f.correction ? `<p class="text-[11px] font-medium text-slate-900"><strong>Remedy:</strong> ${f.correction}</p>` : ''}
         </div>
       `).join('');
 
-      // 4. AI summary
+      // 5. Sarvam AI summary
       document.getElementById('aiSummaryBox').innerHTML = data.ai_summary.replace(/\n/g, '<br>');
     }
 
-    function proceedToSubmission() {
+    function handoffToVachanSetu() {
       switchTab('timeline');
       openSubmitModal();
     }

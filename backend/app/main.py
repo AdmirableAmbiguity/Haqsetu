@@ -9,7 +9,7 @@ from typing import Dict, List, Any, Optional
 
 from backend.app.services.registry import registry
 from backend.app.services.matcher import matcher
-from backend.app.services.rejectshield_svc import rejectshield_svc
+from backend.app.services.rejectshield_svc import rejectshield_verifier
 from backend.app.services.timeline_engine import timeline_engine
 from backend.app.services.escalation_svc import escalation_svc
 from backend.app.services.notice_svc import notice_svc
@@ -19,7 +19,7 @@ from ai_engine.haqguide import generate_checklist as get_checklist
 app = FastAPI(
     title="HaqSetu AI + Vachan Setu",
     description="Citizen-Service Assurance Platform for Indian Government Schemes",
-    version="1.0.0"
+    version="1.1.0"
 )
 
 app.add_middleware(
@@ -42,9 +42,9 @@ class ChecklistRequest(BaseModel):
     service_name: str
     language: Optional[str] = "English"
 
-class AuditRequest(BaseModel):
+class VerifyPackageRequest(BaseModel):
+    scheme_id: Optional[str] = "S05"
     documents: Dict[str, str]
-    requirements: Optional[List[str]] = None
 
 class CreateCaseRequest(BaseModel):
     scheme_name: str
@@ -74,7 +74,7 @@ def health():
     return {
         "status": "healthy",
         "app": "HaqSetu AI + Vachan Setu",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "sarvam_ai_active": bool(os.environ.get("SARVAM_API_KEY")),
         "simulated_today": str(timeline_engine.simulated_today)
     }
@@ -93,36 +93,57 @@ def get_service_checklist(req: ChecklistRequest):
         checklist = get_checklist(req.service_name, language=req.language)
         return {"service": req.service_name, "checklist": checklist}
     except Exception as e:
-        return {
-            "service": req.service_name,
-            "checklist": {
-                "required_documents": [
-                    {"document": "Aadhaar Card", "purpose": "Proof of Identity & Domicile"},
-                    {"document": "Income Affidavit / Salary Slip", "purpose": "Proof of Annual Family Income"},
-                    {"document": "Ration Card / BPL Card", "purpose": "Family Composition Verification"}
-                ],
-                "important_notes": ["Verify certificate validity on the official state e-District portal."]
-            }
-        }
+        docs = registry.get_scheme_docs(req.service_name)
+        return {"service": req.service_name, "checklist": docs}
 
-@app.post("/api/rejectshield/audit")
-def audit_documents(req: AuditRequest):
-    return rejectshield_svc.audit_documents(doc_inputs=req.documents, required_docs=req.requirements)
+# --- REJECTSHIELD VERIFIER APIS ---
 
-@app.get("/api/rejectshield/sample")
-def get_sample_docs():
-    """Returns sample synthetic documents for 1-click testing."""
-    samples_dir = Path(__file__).resolve().parent.parent.parent / "samples"
-    app_text = (samples_dir / "application.txt").read_text(encoding="utf-8", errors="ignore") if (samples_dir / "application.txt").exists() else ""
-    id_text = (samples_dir / "identity.txt").read_text(encoding="utf-8", errors="ignore") if (samples_dir / "identity.txt").exists() else ""
-    cert_text = (samples_dir / "certificate.txt").read_text(encoding="utf-8", errors="ignore") if (samples_dir / "certificate.txt").exists() else ""
+@app.get("/api/rejectshield/checklist")
+def get_scheme_document_checklist(scheme_id: str = "S05"):
+    """Returns official required document checklist for the selected scheme."""
+    return registry.get_scheme_docs(scheme_id)
 
+@app.post("/api/rejectshield/verify")
+def verify_application_package(req: VerifyPackageRequest):
+    """Runs complete RejectShield verifier: shortage check + cross-document consistency."""
+    return rejectshield_verifier.verify_application_package(
+        scheme_id_or_name=req.scheme_id or "S05",
+        submitted_documents=req.documents
+    )
+
+@app.get("/api/rejectshield/presets")
+def get_verifier_presets():
+    """Returns pre-built synthetic test packets for 1-click verification testing."""
     return {
-        "application": app_text,
-        "identity": id_text,
-        "certificate": cert_text,
-        "notes": "Preloaded synthetic sample with deliberate name abbreviation ('R. Kumar' vs 'Ravi Kumar') to showcase cross-document consistency detection."
+        "scholarship_with_shortage_and_discrepancy": {
+            "name": "Scholarship: Shortage of 3 Documents + Name Discrepancy (R. Kumar vs Ravi Kumar)",
+            "scheme_id": "S05",
+            "documents": {
+                "application": "NATIONAL SCHOLARSHIP PORTAL APPLICATION FORM\nScheme: Post-Matric Scholarship for OBC Students\nApplicant Name: Ravi Kumar\nFather's Name: Suresh Kumar\nDate of Birth: 15/08/2004\nSocial Category: OBC\nAnnual Family Income: Rs. 1,50,000\nInstitution: Lucknow University\nRoll No: LU/2024/7821\nAddress: 123 Main Street, Hazratganj, Lucknow, UP - 226001",
+                "aadhaar_card": "GOVERNMENT OF INDIA - AADHAAR CARD\nName: R. Kumar\nDate of Birth: 15-08-2004\nGender: Male\nFather's Name: Suresh Kumar\nAddress: 123 Main St, Lucknow, UP - 226001\nAadhaar No: XXXX-XXXX-4521",
+                "income_certificate": "OFFICE OF THE TEHSILDAR, LUCKNOW\nINCOME CERTIFICATE\nCertificate No: UP/INC/2026/8912\nApplicant Name: Ravi Kumar\nFather's Name: Suresh Kumar\nCertified Annual Family Income: Rs. 1,50,000 (Rupees One Lakh Fifty Thousand Only)\nValidity: 3 Years from date of issue (10/01/2026)\nIssuing Authority: Tehsildar, Lucknow",
+                "domicile_certificate": "STATE OF UTTAR PRADESH - DOMICILE CERTIFICATE\nName: Ravi Kumar\nFather's Name: Suresh Kumar\nPermanent Residence: 123 Main Street, Lucknow, Uttar Pradesh\nCertificate No: DM/LKO/DOM/00432"
+            },
+            "note": "Demonstrates: 1) Shortage detection (Missing Caste Certificate, Fee Receipt, Bank Passbook, Marksheet), and 2) Cross-document abbreviation detection ('R. Kumar' vs 'Ravi Kumar')."
+        },
+        "scholarship_complete_and_verified": {
+            "name": "Scholarship: 100% Complete Packet (All 7 Documents Present & Verified)",
+            "scheme_id": "S05",
+            "documents": {
+                "application": "NATIONAL SCHOLARSHIP PORTAL APPLICATION\nApplicant Name: Ravi Kumar\nFather's Name: Suresh Kumar\nDate of Birth: 15/08/2004\nSocial Category: OBC\nAnnual Family Income: Rs. 1,50,000\nInstitution: University of Lucknow\nRoll No: LU/2024/7821",
+                "aadhaar_card": "AADHAAR CARD\nName: Ravi Kumar\nDate of Birth: 15/08/2004\nGender: Male\nFather: Suresh Kumar\nAddress: 123 Main Street, Lucknow, UP",
+                "income_certificate": "INCOME CERTIFICATE (TEHSIL LUCKNOW)\nApplicant: Ravi Kumar\nFather: Suresh Kumar\nAnnual Income: Rs. 1,50,000\nIssue Date: 10/01/2026",
+                "caste_certificate": "CASTE CERTIFICATE (OBC - OTHER BACKWARD CLASS)\nCandidate Name: Ravi Kumar\nFather's Name: Suresh Kumar\nCategory: OBC (Ahir / Yadav)\nIssuing Authority: Sub-Divisional Magistrate, Lucknow\nCertificate No: UP/OBC/2025/11029",
+                "previous_marksheet": "BOARD OF HIGH SCHOOL & INTERMEDIATE EDUCATION\nCANDIDATE: Ravi Kumar\nFather: Suresh Kumar\nRoll: 2841092\nResult: PASSED (78.4% First Division)",
+                "fee_receipt_admission": "UNIVERSITY OF LUCKNOW - TUITION FEE RECEIPT\nStudent: Ravi Kumar\nCourse: B.Sc Semester III\nReceipt No: REC-2026-4412\nTuition Fee Paid: Rs. 14,500\nBonafide Enrollment: Verified Active Student",
+                "bank_passbook": "STATE BANK OF INDIA - PASSBOOK\nAccount Holder: Ravi Kumar\nA/C No: 39812009123\nIFSC: SBIN0001234\nAadhaar NPCI Status: LINKED & SEEDED ACTIVE",
+                "domicile_certificate": "DOMICILE CERTIFICATE\nName: Ravi Kumar\nState: Uttar Pradesh\nDistrict: Lucknow"
+            },
+            "note": "Demonstrates: Perfect 100% complete package resulting in Green 'Ready for Submission' rating."
+        }
     }
+
+# --- TIMELINE & CASES APIS ---
 
 @app.get("/api/cases")
 def list_cases():
@@ -182,4 +203,4 @@ if FRONTEND_DIR.exists():
         index_file = FRONTEND_DIR / "index.html"
         if index_file.exists():
             return FileResponse(index_file)
-        return JSONResponse({"status": "Backend running. Frontend index.html not yet built."})
+        return JSONResponse({"status": "Backend running."})
