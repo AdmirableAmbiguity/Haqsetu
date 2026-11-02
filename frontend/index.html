@@ -1508,12 +1508,10 @@
       if (data.response && !data.structured_guide) {
         // Convert markdown headings and bold to html
         let formattedText = data.response
-          .replace(/### (.*?)
-/g, '<h3 class="text-base font-bold text-slate-900 mt-2 mb-1.5">$1</h3>')
-          .replace(/#### (.*?)
-/g, '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mt-2 mb-1">$1</h4>')
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\n/g, '<br>');
+          .replace(new RegExp('### (.*?)(?:\\r?\\n|$)', 'g'), '<h3 class="text-base font-bold text-slate-900 mt-2 mb-1.5">$1</h3>')
+          .replace(new RegExp('#### (.*?)(?:\\r?\\n|$)', 'g'), '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mt-2 mb-1">$1</h4>')
+          .replace(new RegExp('\\*\\*(.*?)\\*\\*', 'g'), '<strong>$1</strong>')
+          .replace(new RegExp('\\r?\\n', 'g'), '<br>');
 
         html += `
           <div class="bg-white p-5 rounded border border-slate-200 space-y-2 text-sm text-slate-800 leading-relaxed shadow-xs">
