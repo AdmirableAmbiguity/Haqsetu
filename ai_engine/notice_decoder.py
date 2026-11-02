@@ -119,7 +119,7 @@ def suggest_next_steps(notice_text, service_name=None, language="Hindi"):
 
 
 def draft_response_letter(notice_text, applicant_name, application_ref,
-                           service_name=None, additional_context=None):
+                           service_name=None, additional_context=None, language="Hindi"):
     """
     Draft a factual response letter for the citizen to review and submit.
 
@@ -152,7 +152,7 @@ def draft_response_letter(notice_text, applicant_name, application_ref,
                     "- Address each stated reason factually\n"
                     "- Request specific clarification if needed\n"
                     "- Include a clear heading: DRAFT LETTER — PLEASE REVIEW BEFORE SUBMITTING\n"
-                    "- Write in English with a Hindi version below it"
+                    "- Write formal, legally sound text in English with a complete, accurate translation in " + (language if language else "Hindi") + " provided immediately below it (or solely in English if English is requested)"
                 )
             }
         ],

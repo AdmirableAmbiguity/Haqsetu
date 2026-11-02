@@ -73,46 +73,77 @@ def chat(messages, system_prompt=None, temperature=0.3, max_tokens=1024,
         raise RuntimeError(f"Sarvam API error: {error}") from error
 
 
-def translate_to_hindi(text):
-    """Translate English text to Hindi using sarvam-105b."""
+# 11 Indian Languages supported by Sarvam-105B
+SARVAM_LANGUAGES = {
+    "English": {"name": "English", "native": "English", "code": "en-IN", "instruction": "simple, plain English"},
+    "Hindi": {"name": "Hindi", "native": "हिन्दी", "code": "hi-IN", "instruction": "simple Hindi (Devanagari script)"},
+    "Bengali": {"name": "Bengali", "native": "বাংলা", "code": "bn-IN", "instruction": "simple Bengali (Bangla script)"},
+    "Telugu": {"name": "Telugu", "native": "తెలుగు", "code": "te-IN", "instruction": "simple Telugu (Telugu script)"},
+    "Marathi": {"name": "Marathi", "native": "मराठी", "code": "mr-IN", "instruction": "simple Marathi (Devanagari script)"},
+    "Tamil": {"name": "Tamil", "native": "தமிழ்", "code": "ta-IN", "instruction": "simple Tamil (Tamil script)"},
+    "Gujarati": {"name": "Gujarati", "native": "ગુજરાતી", "code": "gu-IN", "instruction": "simple Gujarati (Gujarati script)"},
+    "Kannada": {"name": "Kannada", "native": "ಕನ್ನಡ", "code": "kn-IN", "instruction": "simple Kannada (Kannada script)"},
+    "Malayalam": {"name": "Malayalam", "native": "മലയാളം", "code": "ml-IN", "instruction": "simple Malayalam (Malayalam script)"},
+    "Odia": {"name": "Odia", "native": "ଓଡ଼ିଆ", "code": "od-IN", "instruction": "simple Odia (Odia script)"},
+    "Punjabi": {"name": "Punjabi", "native": "ਪੰਜਾਬੀ", "code": "pa-IN", "instruction": "simple Punjabi (Gurmukhi script)"},
+    "Hinglish": {"name": "Hinglish", "native": "Hinglish", "code": "hi-IN", "instruction": "Hinglish (a conversational blend of Hindi and English that Indian citizens use daily)"},
+}
+
+
+def translate_text(text: str, target_language: str = "Hindi") -> str:
+    """Translate text into any of the 11 Sarvam-supported Indian languages."""
+    if not text or not text.strip():
+        return ""
+    if target_language.lower() == "english":
+        return text
+
+    info = SARVAM_LANGUAGES.get(target_language.capitalize()) or SARVAM_LANGUAGES.get("Hindi")
+    instruction = info.get("instruction", f"simple {target_language}")
+
     return chat(
         messages=[{"role": "user", "content": text}],
         system_prompt=(
-            "You are a professional translator. "
-            "Translate the following text to simple, clear Hindi. "
-            "Return only the Hindi translation, nothing else."
+            f"You are a professional government and legal translator for Indian citizens. "
+            f"Translate the following text accurately into {instruction}. "
+            f"Keep official identifiers, dates, application numbers, and amounts clear and accurate. "
+            f"Return only the direct translation with no preface, commentary, or meta remarks."
         ),
         temperature=0.1,
         max_tokens=2048,
     )
 
 
+def translate_to_hindi(text):
+    """Translate English text to Hindi using sarvam-105b."""
+    return translate_text(text, "Hindi")
+
+
 def explain_in_simple_language(text, language="Hindi"):
     """
-    Explain complex government/legal text in simple language.
-    language: "Hindi", "English", or "Hinglish"
+    Explain complex government/legal text in simple language across any of the
+    11 Sarvam-supported Indian languages.
     """
-    lang_instruction = {
-        "Hindi": "simple Hindi (Devanagari script)",
-        "English": "simple, plain English",
-        "Hinglish": "Hinglish (a mix of Hindi and English that Indian citizens use daily)",
-    }.get(language, "simple Hindi")
+    info = SARVAM_LANGUAGES.get(language.capitalize())
+    if info:
+        lang_instruction = info["instruction"]
+    else:
+        lang_instruction = f"simple {language}"
 
     return chat(
         messages=[
             {
                 "role": "user",
                 "content": (
-                    f"Explain the following government document or rule "
+                    f"Explain the following government document, rejection notice, or rule "
                     f"in {lang_instruction} for a common citizen. "
-                    f"Use short sentences and avoid jargon:\n\n{text}"
+                    f"Use short sentences, clear bullet points, and avoid bureaucratic jargon:\n\n{text}"
                 ),
             }
         ],
         system_prompt=(
-            "You are a helpful assistant that explains Indian government "
-            "rules and procedures to ordinary citizens in clear, accessible language."
+            "You are a citizen rights advocate and administrative assistant. "
+            "Explain Indian government notices, rejection reasons, and public procedures to ordinary citizens in clear, accessible language."
         ),
-        temperature=0.4,
-        max_tokens=1024,
+        temperature=0.3,
+        max_tokens=1500,
     )

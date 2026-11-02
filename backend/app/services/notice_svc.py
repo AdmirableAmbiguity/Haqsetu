@@ -49,7 +49,8 @@ class NoticeService:
                 notice_text=notice_text,
                 applicant_name=applicant_name,
                 application_ref=app_ref,
-                service_name=service_name
+                service_name=service_name,
+                language=language
             )
         except Exception:
             response_letter = (

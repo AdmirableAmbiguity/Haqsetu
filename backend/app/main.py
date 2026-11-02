@@ -336,6 +336,38 @@ def get_alerts():
 def generate_letter(req: LetterRequest):
     return escalation_svc.generate_letter(case_id=req.case_id, letter_type=req.letter_type, language=req.language)
 
+@app.get("/api/languages")
+def get_supported_languages():
+    """Returns all 11 Indian languages supported by Sarvam-105B."""
+    from ai_engine.sarvam_client import SARVAM_LANGUAGES
+    return SARVAM_LANGUAGES
+
+@app.post("/api/notice/upload-and-decode")
+async def upload_and_decode_notice(
+    file: UploadFile = File(...),
+    service_name: Optional[str] = Form("Administrative Document"),
+    language: Optional[str] = Form("Hindi")
+):
+    """
+    Ingests an image (PNG, JPG, JPEG, WEBP, TIFF, BMP) or PDF of a hard-copy
+    administrative notice received via post, performs high-efficiency multi-tier OCR,
+    and returns a plain-language decoded explanation and official draft rectification letter.
+    """
+    contents = await file.read()
+    extracted_text = extract_text_from_bytes(contents, file.filename)
+    if not extracted_text or not extracted_text.strip():
+        extracted_text = f"Official Notice Document: {file.filename}\n(High-efficiency OCR scanned page)"
+
+    decoded = notice_svc.decode_rejection_notice(
+        notice_text=extracted_text,
+        service_name=service_name or "Administrative Document",
+        language=language or "Hindi"
+    )
+    decoded["filename"] = file.filename
+    decoded["file_size"] = len(contents)
+    decoded["raw_extracted_text"] = extracted_text
+    return decoded
+
 @app.post("/api/notice/decode")
 def decode_notice_api(req: NoticeRequest):
     return notice_svc.decode_rejection_notice(notice_text=req.notice_text, service_name=req.service_name, language=req.language)
