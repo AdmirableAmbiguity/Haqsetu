@@ -26,7 +26,26 @@ try:
 except Exception:
     pass
 
+_groq_client = None
 _openai_client = None
+
+
+def get_groq_client():
+    """Return a Groq client if GROQ_API_KEY is set, else None."""
+    global _groq_client
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key or not api_key.strip():
+        return None
+    if _groq_client is None:
+        try:
+            from groq import Groq
+            _groq_client = Groq(api_key=api_key.strip())
+            logger.info("Groq Tier-1 engine initialised (openai/gpt-oss-120b).")
+        except Exception as e:
+            logger.warning(f"Could not initialise Groq client: {e}")
+            return None
+    return _groq_client
+
 
 def get_openai_client():
     global _openai_client
@@ -700,7 +719,44 @@ def answer_domain_query(query: str, state: Optional[str] = None, language: str =
                 "provider": "grounded_civic_kb"
             }
 
-    # Step 2: Attempt OpenAI ChatGPT (Tier 1) if OPENAI_API_KEY is present
+    # Step 2: Attempt Groq (Tier 1) — openai/gpt-oss-120b
+    groq_client = get_groq_client()
+    if groq_client is not None:
+        try:
+            state_ctx = f"The citizen resides in or is asking about {state}." if state else "Provide applicable Indian central/state government guidance."
+            sys_prompt = (
+                "You are the Lead Citizen Rights & Government Procedure Specialist for VachanSetu, "
+                "an authoritative Indian public service platform.\n"
+                "Provide a well-structured, legally accurate, step-by-step procedural guide for ANY "
+                "civic, administrative, legal, or welfare scheme query from an Indian citizen.\n"
+                "Structure your response with:\n"
+                "1. Clear Summary & Statutory Basis (relevant Act / Scheme / Rule / Article)\n"
+                "2. Responsible Government Department & Official Portal (valid .gov.in / .nic.in URLs)\n"
+                "3. Step-by-Step Procedure (numbered, chronological)\n"
+                "4. Required Documents Checklist (mandatory vs optional)\n"
+                "5. Statutory Timelines (SLA), Fees & Grievance / Appeal Rights\n"
+                "Tone: Authoritative, dignified, supportive. No unrelated promotional content."
+            )
+            completion = groq_client.chat.completions.create(
+                model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
+                messages=[
+                    {"role": "system", "content": sys_prompt},
+                    {"role": "user", "content": f"Citizen Query: {clean_q}\n{state_ctx}\nLanguage: {language}"}
+                ],
+                temperature=0.2,
+                max_tokens=1500,
+            )
+            ans = completion.choices[0].message.content
+            if ans and len(ans.strip()) > 50:
+                return {
+                    "response": ans.strip(),
+                    "structured_guide": None,
+                    "provider": "groq_llama"
+                }
+        except Exception as e:
+            logger.warning(f"Groq call failed, falling back to OpenAI/Sarvam: {e}")
+
+    # Step 3: Attempt OpenAI ChatGPT (Tier 2) if OPENAI_API_KEY is present
     openai_client = get_openai_client()
     if openai_client is not None:
         try:
@@ -735,7 +791,7 @@ def answer_domain_query(query: str, state: Optional[str] = None, language: str =
         except Exception as e:
             logger.warning(f"OpenAI ChatGPT call encountered error, falling back to Sarvam: {e}")
 
-    # Step 3: Attempt Sarvam-105B (Tier 2)
+    # Step 4: Attempt Sarvam-105B (Tier 3)
     try:
         state_ctx = f"The citizen specifically inquired about {state}." if state else "Provide general Indian and state-specific statutory guidance."
         prompt = (
@@ -765,7 +821,7 @@ def answer_domain_query(query: str, state: Optional[str] = None, language: str =
     except Exception as e:
         logger.warning(f"Sarvam call failed: {e}")
 
-    # Step 4: Robust Universal Synthesizer (Tier 3 Zero-Failure Fallback)
+    # Step 5: Robust Universal Synthesizer (Tier 4 Zero-Failure Fallback)
     state_str = state if state else "your State / Central Department"
     fallback_resp = (
         f"### Citizen Guidance: {clean_q.capitalize()}\n\n"

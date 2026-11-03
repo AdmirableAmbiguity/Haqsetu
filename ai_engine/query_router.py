@@ -658,6 +658,7 @@ class QueryRouter:
         omni_result = answer_domain_query(query=query, state=detected_state, language="English")
         ai_response = omni_result["response"]
         structured_guide = omni_result.get("structured_guide")
+        ai_provider = omni_result.get("provider", "unknown")
 
         session.add_message("user", query, intent)
         session.add_message("assistant", ai_response, intent)
@@ -668,6 +669,7 @@ class QueryRouter:
             "intent": intent,
             "response": ai_response,
             "structured_guide": structured_guide,
+            "provider": ai_provider,
             "matches": [],  # Clean: no scheme cards!
             "follow_ups": [
                 "Check document requirements on RejectShield",
