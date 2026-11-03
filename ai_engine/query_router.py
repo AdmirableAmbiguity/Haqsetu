@@ -606,6 +606,51 @@ class QueryRouter:
                 ]
             }
 
+        # ── DOMAIN GUARD: Reject off-topic queries ─────────────────────────────────
+        OFF_TOPIC_PATTERNS = [
+            r"\bweather\b", r"\btemperature\b", r"\brain forecast\b", r"\bforecast\b",
+            r"\bcricket\b", r"\bfootball\b", r"\bsoccer\b", r"\bmatches? score\b",
+            r"\biplb?\b", r"\bworld cup score\b", r"\bsports score\b",
+            r"\bmovie review\b", r"\bfilm review\b", r"\bnetflix\b", r"\botto\b",
+            r"\bstock price\b", r"\bbitcoin\b", r"\bcrypto price\b", r"\bnifty\b", r"\bsensex\b",
+            r"\bjoke\b", r"\bfunny\b", r"\blaugh\b",
+            r"\brecipe\b", r"\bcooking\b",
+            r"\bhoroscope\b", r"\brastifal\b",
+            r"\bwho won\b.*\bmatch\b", r"\bscoreboard\b",
+            r"\bceleb(rity)?\b", r"\bgossip\b",
+        ]
+        import re as _re
+        _q_lower = query.lower()
+        for _pat in OFF_TOPIC_PATTERNS:
+            if _re.search(_pat, _q_lower):
+                _off_topic_resp = (
+                    "**This query is outside VachanSetu's domain.**\n\n"
+                    "VachanSetu is a dedicated **Indian Government Citizen Services Platform** and can only assist with:\n"
+                    "• Government schemes, entitlements & welfare programs\n"
+                    "• Certificates & documents (Aadhaar, domicile, income, caste etc.)\n"
+                    "• Legal rights, RTI, grievance redressal\n"
+                    "• Public services (ration card, passport, driving licence etc.)\n"
+                    "• Administrative procedures and citizen rights\n\n"
+                    "Please ask a question related to government services or your civic rights."
+                )
+                session.add_message("user", query, "OUT_OF_DOMAIN")
+                session.add_message("assistant", _off_topic_resp, "OUT_OF_DOMAIN")
+                return {
+                    "session_id": session.session_id,
+                    "section": "haqguide",
+                    "intent": "OUT_OF_DOMAIN",
+                    "response": _off_topic_resp,
+                    "structured_guide": None,
+                    "provider": "domain_guard",
+                    "matches": [],
+                    "follow_ups": [
+                        "How to apply for Aadhaar update?",
+                        "Find government schemes I am eligible for",
+                        "How to file an RTI application?"
+                    ]
+                }
+        # ── END DOMAIN GUARD ────────────────────────────────────────────────────────
+
         # ── GROQ DIRECT ANSWER (Tier 1 — fires for EVERY question) ──────────────────
         # Every question typed in HaqSetu goes directly to Groq first.
         # Only if Groq fails do we fall back to KB templates or Sarvam.

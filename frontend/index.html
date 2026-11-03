@@ -1389,6 +1389,67 @@
       }
     }
 
+
+    // ── TYPEWRITER ANIMATION ENGINE ─────────────────────────────────────────
+    function startTypewriterAnimation(rawText) {
+      const target = document.getElementById('typewriter-target');
+      const cursor = document.getElementById('typewriter-cursor');
+      if (!target) return;
+
+      // Pre-process markdown to HTML first
+      let formattedText = rawText
+        .replace(/^# (.*?)(?:\r?\n|$)/gm, '<h2 class="text-lg font-bold text-slate-900 mt-3 mb-2">$1</h2>')
+        .replace(/^## (.*?)(?:\r?\n|$)/gm, '<h3 class="text-base font-bold text-slate-900 mt-2.5 mb-1.5">$1</h3>')
+        .replace(/^### (.*?)(?:\r?\n|$)/gm, '<h4 class="text-sm font-bold text-slate-800 mt-2 mb-1">$1</h4>')
+        .replace(/^#### (.*?)(?:\r?\n|$)/gm, '<h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-1.5 mb-1">$1</h5>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^[•\-\*] (.*?)(?:\r?\n|$)/gm, '<li class="ml-4 list-disc text-slate-700 leading-relaxed">$1</li>')
+        .replace(/\r?\n/g, '<br>');
+
+      // Split into tokens: HTML tags vs text characters
+      // Typewriter outputs full HTML tags instantly, characters one-by-one
+      const tokens = [];
+      const tagRegex = /<[^>]+>/g;
+      let lastIdx = 0;
+      let match;
+      while ((match = tagRegex.exec(formattedText)) !== null) {
+        // Text before this tag — each char is a token
+        for (let i = lastIdx; i < match.index; i++) {
+          tokens.push({ type: 'char', val: formattedText[i] });
+        }
+        // The tag itself — output as a single block
+        tokens.push({ type: 'tag', val: match[0] });
+        lastIdx = match.index + match[0].length;
+      }
+      // Remaining text after last tag
+      for (let i = lastIdx; i < formattedText.length; i++) {
+        tokens.push({ type: 'char', val: formattedText[i] });
+      }
+
+      target.innerHTML = '';
+      let i = 0;
+      // Speed: 8ms per char — feels like a fast, trained model
+      const BASE_DELAY = 8;
+
+      function typeNext() {
+        if (i >= tokens.length) {
+          // Done — hide cursor
+          if (cursor) cursor.style.display = 'none';
+          return;
+        }
+        const token = tokens[i++];
+        target.innerHTML += token.val;
+        // Scroll into view smoothly
+        target.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        // Tags are instant, chars have delay
+        const delay = token.type === 'tag' ? 0 : BASE_DELAY;
+        setTimeout(typeNext, delay);
+      }
+
+      typeNext();
+    }
+    // ── END TYPEWRITER ────────────────────────────────────────────────────────
+
     // SECTION 2: SCHEME FINDER SEARCH
     async function runSchemeFinderSearch() {
       const q = document.getElementById('sfQuery').value.trim();
@@ -1611,29 +1672,27 @@
         `;
       }
 
-      // 2. Render Text Response (Conversational or Comparison Matrix)
+            // 2. Render Text Response with Typewriter Animation
       if (data.response && !data.structured_guide) {
-        // Convert markdown headings and bold to html
-        let formattedText = data.response
-          .replace(new RegExp('^# (.*?)(?:\\r?\\n|$)', 'gm'), '<h2 class="text-lg font-bold text-slate-900 mt-3 mb-2">$1</h2>')
-          .replace(new RegExp('^## (.*?)(?:\\r?\\n|$)', 'gm'), '<h3 class="text-base font-bold text-slate-900 mt-2.5 mb-1.5">$1</h3>')
-          .replace(new RegExp('^### (.*?)(?:\\r?\\n|$)', 'gm'), '<h4 class="text-sm font-bold text-slate-800 mt-2 mb-1">$1</h4>')
-          .replace(new RegExp('^#### (.*?)(?:\\r?\\n|$)', 'gm'), '<h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-1.5 mb-1">$1</h5>')
-          .replace(new RegExp('\\*\\*(.*?)\\*\\*', 'g'), '<strong>$1</strong>')
-          .replace(new RegExp('^[•\\-\\*]\\s+(.*?)(?:\\r?\\n|$)', 'gm'), '<li class="ml-4 list-disc text-slate-700 leading-relaxed">$1</li>')
-          .replace(new RegExp('\\r?\\n', 'g'), '<br>');
+        const isOffDomain = data.intent === 'OUT_OF_DOMAIN';
+        const headerIcon = isOffDomain ? 'fa-ban' : 'fa-comments';
+        const headerColor = isOffDomain ? 'text-[#d9531e]' : 'text-[#004b87]';
+        const headerLabel = isOffDomain ? 'Outside Platform Domain' : 'HaqGuide Advisory Response';
 
         html += `
           <div class="bg-white p-5 rounded border border-slate-200 space-y-2 text-sm text-slate-800 leading-relaxed shadow-xs">
-            <div class="flex items-center gap-2 pb-2 border-b border-slate-100 text-xs font-bold text-[#004b87] uppercase tracking-wider">
-              <i class="fa-solid fa-comments"></i>HaqGuide Advisory Response
+            <div class="flex items-center gap-2 pb-2 border-b border-slate-100 text-xs font-bold ${headerColor} uppercase tracking-wider">
+              <i class="fa-solid ${headerIcon}"></i>\u00a0${headerLabel}
             </div>
-            <div class="prose max-w-none text-xs sm:text-sm text-slate-800">${formattedText}</div>
+            <div id="typewriter-target" class="prose max-w-none text-xs sm:text-sm text-slate-800 whitespace-pre-wrap"></div>
+            <span id="typewriter-cursor" class="inline-block w-0.5 h-4 bg-[#004b87] animate-pulse ml-0.5 align-middle"></span>
           </div>
         `;
+        window._typewriterRawText = data.response;
+        window._typewriterPending = true;
       }
 
-      // 3. Render Scheme Expert Focus Banner (When in Scheme Expert mode)
+// 3. Render Scheme Expert Focus Banner (When in Scheme Expert mode)
       if (data.active_scheme) {
         const s = data.active_scheme;
         html += `
@@ -1766,6 +1825,12 @@
       }
 
       container.innerHTML = html;
+      // Launch typewriter animation if pending
+      if (window._typewriterPending && window._typewriterRawText) {
+        window._typewriterPending = false;
+        startTypewriterAnimation(window._typewriterRawText);
+        window._typewriterRawText = null;
+      }
     }
 
     function handleFollowUpClick(q) {
