@@ -165,6 +165,7 @@
     #mobileNav { display: none; }
     #mobileNav.open { display: flex; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 </head>
 <body class="bg-[#f8fafc] text-[#111827] antialiased min-h-screen flex flex-col">
 
@@ -1391,66 +1392,111 @@
 
 
     // ── TYPEWRITER ANIMATION ENGINE ─────────────────────────────────────────
+    // ── ROBUST MARKDOWN & LINK FORMATTER (Bilingual Hindi + English) ──────
+    function formatGovernanceMarkdown(rawText) {
+      if (!rawText) return '';
+      let cleanText = rawText;
+
+      // 1. If marked.js is available, use it for 100% compliant CommonMark/GFM formatting
+      if (typeof marked !== 'undefined' && marked.parse) {
+        try {
+          marked.setOptions({
+            breaks: true,
+            gfm: true
+          });
+          let parsed = marked.parse(cleanText);
+          // Enhance links with UX4G compliant styling and security attributes
+          parsed = parsed.replace(/<a\s+href=/g, '<a target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors" href=');
+          // Add table styling
+          parsed = parsed.replace(/<table>/g, '<div class="overflow-x-auto my-3"><table class="min-w-full text-xs text-left border border-slate-200 divide-y divide-slate-200">');
+          parsed = parsed.replace(/<\/table>/g, '</table></div>');
+          parsed = parsed.replace(/<th>/g, '<th class="px-3 py-2 bg-slate-100 font-bold text-slate-800 border-b border-slate-200">');
+          parsed = parsed.replace(/<td>/g, '<td class="px-3 py-2 border-b border-slate-100 text-slate-700">');
+          return parsed;
+        } catch (e) {
+          console.warn('marked.parse error, falling back to regex parser', e);
+        }
+      }
+
+      // 2. High-Fidelity Fallback Parser for Hindi & English (Preserves Unicode graphemes)
+      return cleanText
+        // Headers
+        .replace(/^#### (.*?)(?:\r?\n|$)/gm, '<h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-3 mb-1">$1</h5>')
+        .replace(/^### (.*?)(?:\r?\n|$)/gm, '<h4 class="text-sm font-bold text-[#004b87] mt-3.5 mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-circle-dot text-[10px]"></i>$1</h4>')
+        .replace(/^## (.*?)(?:\r?\n|$)/gm, '<h3 class="text-base font-bold text-slate-900 mt-4 mb-2 pb-1 border-b border-slate-200">$1</h3>')
+        .replace(/^# (.*?)(?:\r?\n|$)/gm, '<h2 class="text-lg font-bold text-slate-950 mt-4 mb-2 pb-1 border-b-2 border-[#004b87]">$1</h2>')
+        // Bold and emphasis
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em class="italic text-slate-800">$1</em>')
+        // Markdown Links: [Title](URL)
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors">$1 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>')
+        // Bare URLs (protect existing anchors)
+        .replace(/(?<!href=["'])(https?:\/\/[^\s<\)\]]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors">$1 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>')
+        // Bullet points (both English and Hindi bullets)
+        .replace(/^[•\-\*]\s+(.*?)(?:\r?\n|$)/gm, '<li class="ml-4 list-disc text-slate-700 leading-relaxed my-0.5">$1</li>')
+        // Numbered lists
+        .replace(/^(\d+)\.\s+(.*?)(?:\r?\n|$)/gm, '<li class="ml-4 list-decimal text-slate-700 leading-relaxed my-0.5">$2</li>')
+        // Linebreaks
+        .replace(/\r?\n/g, '<br>');
+    }
+
     function startTypewriterAnimation(rawText) {
       const target = document.getElementById('typewriter-target');
       const cursor = document.getElementById('typewriter-cursor');
       if (!target) return;
 
-      // Convert Markdown to clean, clickable HTML
-      let formattedText = rawText
-        .replace(/^# (.*?)(?:\r?\n|$)/gm, '<h2 class="text-lg font-bold text-slate-900 mt-3 mb-2">$1</h2>')
-        .replace(/^## (.*?)(?:\r?\n|$)/gm, '<h3 class="text-base font-bold text-slate-900 mt-2.5 mb-1.5">$1</h3>')
-        .replace(/^### (.*?)(?:\r?\n|$)/gm, '<h4 class="text-sm font-bold text-slate-800 mt-2 mb-1">$1</h4>')
-        .replace(/^#### (.*?)(?:\r?\n|$)/gm, '<h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-1.5 mb-1">$1</h5>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        // Markdown links: [Title](URL) -> Styled clickable Gov badge link
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors">$1 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>')
-        // Bare URLs (not already part of an href): http(s)://...
-        .replace(/(?<!href=["'])(https?:\/\/[^\s<\)\]]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors">$1 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>')
-        .replace(/^[•\-\*] (.*?)(?:\r?\n|$)/gm, '<li class="ml-4 list-disc text-slate-700 leading-relaxed">$1</li>')
-        .replace(/\r?\n/g, '<br>');
+      const formattedHtml = formatGovernanceMarkdown(rawText);
 
-      // Parse into tokens: HTML tags vs text units
+      // DOM-safe Tree Streaming: Tokenize HTML preserving tags, entities, and Unicode graphemes
       const tokens = [];
-      const tagRegex = /<[^>]+>/g;
+      const tagOrEntityRegex = /<[^>]+>|&[a-zA-Z0-9#]+;/g;
       let lastIdx = 0;
       let match;
-      while ((match = tagRegex.exec(formattedText)) !== null) {
-        for (let i = lastIdx; i < match.index; i++) {
-          tokens.push({ type: 'char', val: formattedText[i] });
+      while ((match = tagOrEntityRegex.exec(formattedHtml)) !== null) {
+        if (match.index > lastIdx) {
+          const textChunk = formattedHtml.substring(lastIdx, match.index);
+          // Split Unicode graphemes safely (prevents breaking Hindi matras/ligatures)
+          const graphemes = Array.from(textChunk);
+          for (let g of graphemes) {
+            tokens.push({ type: 'char', val: g });
+          }
         }
-        // Emit HTML tags atomically so tags never break mid-stream
         tokens.push({ type: 'tag', val: match[0] });
         lastIdx = match.index + match[0].length;
       }
-      for (let i = lastIdx; i < formattedText.length; i++) {
-        tokens.push({ type: 'char', val: formattedText[i] });
+      if (lastIdx < formattedHtml.length) {
+        const textChunk = formattedHtml.substring(lastIdx);
+        const graphemes = Array.from(textChunk);
+        for (let g of graphemes) {
+          tokens.push({ type: 'char', val: g });
+        }
       }
 
       target.innerHTML = '';
       let i = 0;
-      // High-speed smooth stream: 4 characters per chunk at 4ms interval (fast & responsive)
-      const CHUNK_SIZE = 4;
-      const CHUNK_INTERVAL_MS = 4;
+      // High-speed smooth cadence: 8-10 graphemes per tick for snappy, fluid delivery
+      const CHUNK_SIZE = 8;
+      const CHUNK_INTERVAL_MS = 6;
 
       function typeNext() {
         if (i >= tokens.length) {
           if (cursor) cursor.style.display = 'none';
+          target.innerHTML = formattedHtml; // Ensure 100% final perfection
           return;
         }
 
-        let chunkHtml = '';
+        let chunk = '';
         let charsAppended = 0;
 
         while (i < tokens.length && charsAppended < CHUNK_SIZE) {
           const tok = tokens[i++];
-          chunkHtml += tok.val;
+          chunk += tok.val;
           if (tok.type === 'char') {
             charsAppended++;
           }
         }
 
-        target.innerHTML += chunkHtml;
+        target.innerHTML += chunk;
         target.scrollIntoView({ behavior: 'smooth', block: 'end' });
         setTimeout(typeNext, CHUNK_INTERVAL_MS);
       }
