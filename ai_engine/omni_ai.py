@@ -735,7 +735,7 @@ def answer_domain_query(query: str, state: Optional[str] = None, language: str =
                 "(e.g. appointments.uidai.gov.in for Aadhaar, passport.gov.in for passport, etc.) AND "
                 "the toll-free helpline number. If state/city is mentioned, name likely center types "
                 "(Post Office, SBI branch, CSC/Jan Seva Kendra, district office).\n"
-                "- ALWAYS include official government portal URLs (.gov.in / .nic.in).\n"
+                "- ALWAYS ATTACH DIRECT OFFICIAL ACTION LINKS: When the query is about Domicile, Income, Caste, Ration Card, Aadhaar, Driving Licence, or any certificate/service, ALWAYS provide the exact state or central government action portal URL in Markdown [Portal Name](https://...) where citizens can directly apply (e.g., UP -> https://edistrict.up.gov.in, UK -> https://edistrict.uk.gov.in, Bihar -> https://serviceonline.bihar.gov.in, Maharashtra -> https://aaplesarkar.mahaonline.gov.in, MP -> https://mpedistrict.gov.in, Central -> https://services.india.gov.in). Do NOT give informational blogs or news links.\n"
                 "- ALWAYS include toll-free helpline numbers where available.\n"
                 "- For document requirements: clearly mark each as MANDATORY or OPTIONAL.\n"
                 "- For timelines: give exact days (e.g. '30-90 days', '24 hours'), not vague terms.\n\n"

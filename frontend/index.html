@@ -1396,54 +1396,63 @@
       const cursor = document.getElementById('typewriter-cursor');
       if (!target) return;
 
-      // Pre-process markdown to HTML first
+      // Convert Markdown to clean, clickable HTML
       let formattedText = rawText
         .replace(/^# (.*?)(?:\r?\n|$)/gm, '<h2 class="text-lg font-bold text-slate-900 mt-3 mb-2">$1</h2>')
         .replace(/^## (.*?)(?:\r?\n|$)/gm, '<h3 class="text-base font-bold text-slate-900 mt-2.5 mb-1.5">$1</h3>')
         .replace(/^### (.*?)(?:\r?\n|$)/gm, '<h4 class="text-sm font-bold text-slate-800 mt-2 mb-1">$1</h4>')
         .replace(/^#### (.*?)(?:\r?\n|$)/gm, '<h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-1.5 mb-1">$1</h5>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Markdown links: [Title](URL) -> Styled clickable Gov badge link
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors">$1 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>')
+        // Bare URLs (not already part of an href): http(s)://...
+        .replace(/(?<!href=["'])(https?:\/\/[^\s<\)\]]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#004b87] hover:text-[#002f56] font-semibold underline decoration-2 underline-offset-2 bg-blue-50/80 hover:bg-blue-100 px-1.5 py-0.5 rounded text-xs transition-colors">$1 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>')
         .replace(/^[•\-\*] (.*?)(?:\r?\n|$)/gm, '<li class="ml-4 list-disc text-slate-700 leading-relaxed">$1</li>')
         .replace(/\r?\n/g, '<br>');
 
-      // Split into tokens: HTML tags vs text characters
-      // Typewriter outputs full HTML tags instantly, characters one-by-one
+      // Parse into tokens: HTML tags vs text units
       const tokens = [];
       const tagRegex = /<[^>]+>/g;
       let lastIdx = 0;
       let match;
       while ((match = tagRegex.exec(formattedText)) !== null) {
-        // Text before this tag — each char is a token
         for (let i = lastIdx; i < match.index; i++) {
           tokens.push({ type: 'char', val: formattedText[i] });
         }
-        // The tag itself — output as a single block
+        // Emit HTML tags atomically so tags never break mid-stream
         tokens.push({ type: 'tag', val: match[0] });
         lastIdx = match.index + match[0].length;
       }
-      // Remaining text after last tag
       for (let i = lastIdx; i < formattedText.length; i++) {
         tokens.push({ type: 'char', val: formattedText[i] });
       }
 
       target.innerHTML = '';
       let i = 0;
-      // Speed: 8ms per char — feels like a fast, trained model
-      const BASE_DELAY = 8;
+      // High-speed smooth stream: 4 characters per chunk at 4ms interval (fast & responsive)
+      const CHUNK_SIZE = 4;
+      const CHUNK_INTERVAL_MS = 4;
 
       function typeNext() {
         if (i >= tokens.length) {
-          // Done — hide cursor
           if (cursor) cursor.style.display = 'none';
           return;
         }
-        const token = tokens[i++];
-        target.innerHTML += token.val;
-        // Scroll into view smoothly
+
+        let chunkHtml = '';
+        let charsAppended = 0;
+
+        while (i < tokens.length && charsAppended < CHUNK_SIZE) {
+          const tok = tokens[i++];
+          chunkHtml += tok.val;
+          if (tok.type === 'char') {
+            charsAppended++;
+          }
+        }
+
+        target.innerHTML += chunkHtml;
         target.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        // Tags are instant, chars have delay
-        const delay = token.type === 'tag' ? 0 : BASE_DELAY;
-        setTimeout(typeNext, delay);
+        setTimeout(typeNext, CHUNK_INTERVAL_MS);
       }
 
       typeNext();
@@ -1684,7 +1693,7 @@
             <div class="flex items-center gap-2 pb-2 border-b border-slate-100 text-xs font-bold ${headerColor} uppercase tracking-wider">
               <i class="fa-solid ${headerIcon}"></i>\u00a0${headerLabel}
             </div>
-            <div id="typewriter-target" class="prose max-w-none text-xs sm:text-sm text-slate-800 whitespace-pre-wrap"></div>
+            <div id="typewriter-target" class="prose max-w-none text-xs sm:text-sm text-slate-800"></div>
             <span id="typewriter-cursor" class="inline-block w-0.5 h-4 bg-[#004b87] animate-pulse ml-0.5 align-middle"></span>
           </div>
         `;
