@@ -141,8 +141,37 @@ EXTENDED_CIVIC_KB = {
             {"name": "Cancelled Cheque / Passbook Copy", "mandatory": True, "purpose": "Bank IFSC and account number verification"}
         ]
     },
+    "arrest_rights": {
+        "patterns": ["arrest rights", "rights if arrested", "arrested by police", "right after arrest",
+                     "giraftari ke adhikar", "giraftari", "rights when arrested", "police ne pakad",
+                     "illegal detention", "giraftar", "section 41", "habeas corpus",
+                     "\u0917\u093f\u0930\u092b\u094d\u0924\u093e\u0930\u0940", "\u0939\u093f\u0930\u093e\u0938\u0924", "\u0917\u093f\u0930\u092e\u095e\u094d\u0924\u093e\u0930"],
+        "title": "Fundamental Rights of a Person Arrested by Police (India)",
+        "department": "Ministry of Home Affairs / State Police / Judiciary / DLSA",
+        "portal_name": "National Human Rights Commission",
+        "portal_url": "https://nhrc.nic.in",
+        "act_name": "Bharatiya Nagarik Suraksha Sanhita (BNSS) 2023 / Article 20, 21, 22 Constitution / D.K. Basu Guidelines",
+        "sla_days": 24,
+        "fee": "Nil",
+        "summary": "Every person arrested in India has constitutionally guaranteed rights. Police CANNOT detain without immediately stating the reason, informing family, providing legal aid, and producing before a Magistrate within 24 hours.",
+        "steps": [
+            "RIGHT TO BE INFORMED: Police MUST immediately inform the arrested person of the GROUNDS of arrest in a language they understand (Article 22(1) Constitution / Sec 47 BNSS).",
+            "RIGHT TO INFORM RELATIVE: You have the absolute right to have ONE person of your choice (family, friend, or advocate) informed immediately of your arrest and detention location (D.K. Basu Guidelines / Sec 49 BNSS).",
+            "RIGHT TO FREE LEGAL AID: You are entitled to consult a lawyer at any stage. If you cannot afford one, DEMAND a free government lawyer from the District Legal Services Authority (DLSA) — this is a statutory right under Section 12 of the Legal Services Authorities Act.",
+            "RIGHT AGAINST SELF-INCRIMINATION: No person can be forced to testify against themselves (Article 20(3) Constitution). You may remain silent except when identifying yourself.",
+            "RIGHT TO MEDICAL EXAMINATION: You are entitled to a medical examination by a doctor on request (Sec 53 BNSS) — critical if you allege physical mistreatment or torture.",
+            "24-HOUR MAGISTRATE RULE: Police CANNOT hold you for more than 24 hours without producing you before a Judicial Magistrate (Article 22(2) / Sec 57 BNSS). Only the Magistrate can authorize further custody (judicial remand).",
+            "Section 41A NOTICE (for bailable / non-cognizable): Police must first issue a notice before arresting for bailable offenses. If arrested without notice, apply for bail immediately before the Magistrate.",
+            "IF RIGHTS ARE VIOLATED: File with State Human Rights Commission or National Human Rights Commission (nhrc.nic.in). File Habeas Corpus petition in Sessions Court / High Court if detained unlawfully."
+        ],
+        "documents": [
+            {"name": "Identity Proof (Aadhaar / Voter ID)", "mandatory": False, "purpose": "Verification upon police demand"},
+            {"name": "Legal Aid Application Form (DLSA)", "mandatory": False, "purpose": "For free legal representation"},
+            {"name": "Medical Examination Report (MLC)", "mandatory": False, "purpose": "Evidence if police brutality alleged"}
+        ]
+    },
     "police_fir": {
-        "patterns": ["police complaint", "zero fir", "fir rights", "police harassment", "arrest rights", "section 41a", "police fir", "police", "fir", "thana", "darj", "पुलिस", "एफआईआर", "थाना", "रपट"],
+        "patterns": ["police complaint", "zero fir", "fir rights", "police harassment", "police fir", "police", "fir", "thana", "darj", "पुलिस", "एफआईआर", "थाना", "रपट"],
         "title": "Police Complaint, FIR Registration & Citizen Safeguards",
         "department": "State Police Department / Ministry of Home Affairs",
         "portal_name": "State Citizen Police Portal / National Cyber Crime Portal",
@@ -537,6 +566,61 @@ EXTENDED_CIVIC_KB = {
             {"name": "Memorandum of Association (MoA) & By-Laws", "mandatory": True, "purpose": "Governing rules and aims"},
             {"name": "Aadhaar & PAN of all Governing Members", "mandatory": True, "purpose": "Trustee / member identity"},
             {"name": "Electricity Bill / Rent Agreement of Office", "mandatory": True, "purpose": "Registered office address proof"}
+        ]
+    },
+    "will_testament": {
+        "patterns": ["will", "testament", "will banane", "how to make a will", "wills act",
+                     "vasiyat", "vasiat", "succession planning", "nominee vs legal heir",
+                     "वसीयत", "उत्तराधिकार"],
+        "title": "How to Make a Valid Will (Vasiyat) in India",
+        "department": "Sub-Registrar Office / District Registrar (for registration) / No authority required for an unregistered Will",
+        "portal_name": "State Registration & Stamps Department / IGRS Portal",
+        "portal_url": "https://igrs.gov.in",
+        "act_name": "Indian Succession Act, 1925 / Hindu Succession Act, 1956 / Indian Registration Act, 1908",
+        "sla_days": 1,
+        "fee": "Nil (Unregistered Will) / Nominal stamp duty for registered Will",
+        "summary": "A Will (Vasiyat) is a legal document expressing a person\'s wishes for distributing property after death. While registration is optional (but strongly recommended), a Will must be signed by the testator and witnessed by 2 adults to be legally valid.",
+        "steps": [
+            "ELIGIBILITY: Any person of sound mind, aged 18+ years, owning property can make a Will (called the Testator). There is no mandatory government permission or format.",
+            "DRAFT THE WILL: Clearly state: (1) Your full name, address, Aadhaar; (2) Description of each asset (property, bank accounts, shares, FDs, jewelry); (3) Name and relationship of each beneficiary; (4) Appointment of an Executor (trusted person to implement the will).",
+            "SIGNATURE: Sign the Will in the presence of 2 adult witnesses who must also sign. Witnesses CANNOT be beneficiaries in the same Will.",
+            "OPTIONAL REGISTRATION (Highly Recommended): Visit the Sub-Registrar Office with the original Will, 2 witnesses, and Aadhaar. Pay nominal stamp duty. Registered Wills are harder to challenge and have strong evidentiary value.",
+            "SAFE CUSTODY: Store the original Will in a safe place. Inform the Executor of its location. You may also deposit it in court for safe custody under Section 42 of Indian Registration Act.",
+            "AFTER DEATH (Probate): For property in certain cities (Mumbai, Chennai, Kolkata) and Christians/Parsis nationwide, the executor must obtain Probate from the High Court. For most Hindus in other states, no probate is needed — the Will is directly acted upon."
+        ],
+        "documents": [
+            {"name": "Identity Proof of Testator (Aadhaar / PAN)", "mandatory": True, "purpose": "Testator identity for registered Will"},
+            {"name": "Property Documents (title deeds, bank passbooks)", "mandatory": False, "purpose": "Schedule of assets described in Will"},
+            {"name": "Identity of 2 Witnesses (Aadhaar)", "mandatory": True, "purpose": "Attestation requirement for registration"}
+        ]
+    },
+    "wrongful_termination": {
+        "patterns": ["wrongful termination", "wrongly terminated", "illegal dismissal", "government job termination",
+                     "naukri se nikala", "job terminated", "sacked wrongly", "industrial dispute",
+                     "reinstatement", "service matter", "central administrative tribunal",
+                     "नौकरी से निकाला", "सेवा विवाद"],
+        "title": "Wrongful Termination / Illegal Dismissal from Government or Private Job",
+        "department": "Central Administrative Tribunal (CAT) / State Administrative Tribunal / Labour Court / Industrial Tribunal",
+        "portal_name": "Central Administrative Tribunal / National Industrial Tribunal",
+        "portal_url": "https://www.cat.nic.in",
+        "act_name": "Industrial Disputes Act, 1947 / Central Civil Services (Classification, Control & Appeal) Rules, 1965 / Constitution Article 311",
+        "sla_days": 90,
+        "fee": "₹50 - ₹500 filing fee depending on the forum",
+        "summary": "No government or private sector employee can be dismissed without following due process. Government employees have Constitutional protection under Article 311. Private sector employees are protected under Industrial Disputes Act (ID Act) 1947.",
+        "steps": [
+            "GOVERNMENT JOB: Under Article 311 of the Constitution, no government employee can be dismissed without: (1) a Charge Sheet with specific allegations, (2) opportunity to show cause, (3) an inquiry by a competent officer. Dismissal without this process is unconstitutional.",
+            "File a Representation/Appeal to the next higher authority within the service rules timeline (typically 30-90 days from dismissal order).",
+            "GOVERNMENT EMPLOYEE: If internal appeals fail, approach the Central Administrative Tribunal (CAT) for central govt employees or State Administrative Tribunal (SAT) within 1 year of dismissal.",
+            "PRIVATE SECTOR EMPLOYEE (workman): Under Industrial Disputes Act, a 'workman' (non-managerial, salary below ₹10,000 basic) can raise an industrial dispute with the Labour Commissioner within 3 years. The Labour Court can order reinstatement with back wages.",
+            "PRIVATE SECTOR SENIOR/MANAGERIAL: Approach a Civil Court for damages, or file a complaint under Payment of Gratuity Act / EPF Act if those statutory dues were withheld.",
+            "EVIDENCE to PRESERVE: Appointment letter, pay slips, charge sheet (if any), show cause notice, dismissal order, service records, performance appraisals, any correspondence with management.",
+            "LEGAL AID: Approach the District Legal Services Authority (DLSA) for free legal representation if your income is below the threshold."
+        ],
+        "documents": [
+            {"name": "Appointment Letter & Service Records", "mandatory": True, "purpose": "Proof of employment and terms of service"},
+            {"name": "Dismissal / Termination Order Copy", "mandatory": True, "purpose": "Subject matter of the legal challenge"},
+            {"name": "Charge Sheet / Show Cause Notice (if any)", "mandatory": False, "purpose": "Evidence of procedure followed or violated"},
+            {"name": "Salary Slips (last 6 months)", "mandatory": True, "purpose": "Establishing nature of employment and salary"}
         ]
     },
     "caste_ews": {
