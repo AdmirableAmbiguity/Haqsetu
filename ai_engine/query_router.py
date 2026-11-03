@@ -418,7 +418,11 @@ class QueryRouter:
         # If citizen explicitly clicked Scheme Finder tab or query is SCHEME_DISCOVERY
         if section_override == "scheme_finder" or intent == "SCHEME_DISCOVERY":
             session.set_scheme(None)
-            return self._handle_scheme_finder(query, session, classification)
+            res = self._handle_scheme_finder(query, session, classification)
+            # If no schemes were found and query asks procedural or legal questions, fall through to HaqGuide
+            if len(res.get("matches", [])) == 0 and any(w in query.lower() for w in ["how to", "process", "procedure", "grievance", "complaint", "rights"]):
+                return self._handle_haqguide(query, session, classification)
+            return res
 
         # If query is clearly a general service, certificate, status, or greeting,
         # route to HaqGuide (even if a scheme was viewed earlier), unless citizen is explicitly pinned to scheme_expert
@@ -570,7 +574,11 @@ class QueryRouter:
         # Check for matched government service in KB
         service_key = None
         for k in GOVERNMENT_SERVICES_KB.keys():
-            if k in query.lower() or entities.get("certificate") == k or entities.get("service") == k:
+            # Use word boundary check so that words like "registration" don't falsely match "ration"
+            if re.search(r'\b' + re.escape(k) + r'\b', query.lower()) or entities.get("certificate") == k or entities.get("service") == k:
+                # Grievances against dealers, faulty bills, or refusals should go to OmniGovernanceEngine
+                if any(w in query.lower() for w in ["complaint", "shikayat", "refuse", "not giving", "nahi de raha", "dispute", "cut", "problem", "faulty"]):
+                    continue
                 service_key = k
                 break
 
@@ -644,32 +652,12 @@ class QueryRouter:
                 ]
             }
 
-        # Fallback to Sarvam-105B for general governance questions
-        ai_response = ""
-        try:
-            prompt = (
-                f"A citizen in India asks: '{query}'\n\n"
-                "You are HaqGuide, an expert Indian civic assistance assistant.\n"
-                "Provide a clear, factual, well-structured explanation in simple English with Hindi terminology.\n"
-                "Include:\n"
-                "1. Direct Answer & Procedural Overview\n"
-                "2. Responsible Government Department & Official Portal\n"
-                "3. Typical Steps & Required Documents\n"
-                "4. Citizen Rights under Right to Public Services Act (RTSA)\n\n"
-                "IMPORTANT: Do NOT recommend unrelated welfare schemes or scholarships unless explicitly requested."
-            )
-            ai_response = sarvam_client.chat(
-                messages=[{"role": "user", "content": prompt}],
-                system_prompt="You are HaqGuide, a trusted, factual Indian citizen rights assistant. Be concise, clear, and source-grounded.",
-                temperature=0.3,
-                max_tokens=600
-            )
-        except Exception as e:
-            logger.warning(f"Sarvam HaqGuide call error: {e}")
-            ai_response = (
-                f"To process your request regarding '{query}', please visit your State e-District portal "
-                f"or local citizen facilitation center (CSC). Ensure you carry your Aadhaar card and relevant identity records."
-            )
+        # OmniGovernanceEngine: Resolves EVERY possible civic, administrative, and legal query
+        from ai_engine.omni_ai import answer_domain_query
+        detected_state = entities.get("state") or intent_classifier._extract_state(query)
+        omni_result = answer_domain_query(query=query, state=detected_state, language="English")
+        ai_response = omni_result["response"]
+        structured_guide = omni_result.get("structured_guide")
 
         session.add_message("user", query, intent)
         session.add_message("assistant", ai_response, intent)
@@ -679,12 +667,12 @@ class QueryRouter:
             "section": "haqguide",
             "intent": intent,
             "response": ai_response,
-            "structured_guide": None,
+            "structured_guide": structured_guide,
             "matches": [],  # Clean: no scheme cards!
             "follow_ups": [
-                "Find schemes I am eligible for",
-                "How to apply for an Income Certificate?",
-                "How to apply for a Domicile Certificate?"
+                "Check document requirements on RejectShield",
+                "What is the statutory deadline under Right to Service Act?",
+                "Find government schemes I am eligible for"
             ]
         }
 
@@ -974,9 +962,11 @@ class QueryRouter:
 
         # Default fallback if still unknown
         if not target_scheme_obj:
-            # Default to PM-KISAN or NSP Scholarship
-            if "pm" in query.lower() or "kisan" in query.lower():
+            # Check scheme keywords using word boundaries
+            if re.search(r'\b(pm-?kisan|kisan|farmer)\b', query.lower()):
                 target_scheme_obj = registry.get_scheme_by_id("S01")
+            elif re.search(r'\b(ayushman|pm-?jay|golden card)\b', query.lower()):
+                target_scheme_obj = registry.get_scheme_by_id("S02")
             else:
                 target_scheme_obj = registry.get_scheme_by_id("S05")
 

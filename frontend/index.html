@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HaqSetu | Citizen Rights Assurance &amp; Statutory Public Services Portal</title>
+  <title>VachanSetu | Citizen Rights Assurance &amp; Statutory Public Services Portal</title>
   
   <!-- UX4G Design System (Government of India) -->
   <link rel="stylesheet" href="https://cdn.ux4g.gov.in/UX4G@3.0.18/index.css">
@@ -224,18 +224,12 @@
             <i class="fa-solid fa-fingerprint text-xl text-[#ff9933]"></i>
           </div>
           <div>
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center">
               <span class="text-2xl font-extrabold tracking-tight text-[#004b87]">
-                my<span class="text-[#d9531e]">HaqSetu</span>
+                Vachan<span class="text-[#d9531e]">Setu</span>
               </span>
-              <span class="text-slate-300 hidden sm:inline" aria-hidden="true">|</span>
-              <span class="text-xl font-bold tracking-tight text-[#003366]">
-                Vachan <span class="text-[#d9531e]">Setu</span>
-              </span>
-              <span class="text-[11px] px-2 py-0.5 rounded font-mono font-bold badge-official">Official Rule Engine</span>
-              <span class="text-[11px] px-2 py-0.5 rounded font-mono font-semibold badge-simulated hidden sm:inline">LOCAL DEV</span>
             </div>
-            <p class="text-xs text-[#4b5563] font-medium">Unique Citizen Identity, Document Assurance &amp; Statutory Deadlines Portal</p>
+            <p class="text-xs text-[#4b5563] font-medium">Citizen Rights Assurance, Document Verification &amp; Statutory Deadlines Portal</p>
           </div>
         </div>
 
@@ -357,7 +351,7 @@
           Citizen Digital Services &amp; Statutory Assurance
         </span>
         <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white mt-1.5">
-          Welcome to HaqSetu Resident Citizen Services
+          Welcome to VachanSetu Resident Citizen Services
         </h2>
         <p class="text-xs sm:text-sm text-slate-200">
           Deterministic statutory timelines, pre-submission document deficiency verification, and multilingual administrative guidance.
@@ -1118,7 +1112,7 @@
             <div class="w-7 h-7 rounded bg-[#004b87] flex items-center justify-center text-white" aria-hidden="true">
               <i class="fa-solid fa-fingerprint text-[#ff9933] text-sm"></i>
             </div>
-            <span class="text-white font-bold text-base">HaqSetu &amp; Vachan Setu</span>
+            <span class="text-white font-bold text-base">VachanSetu</span>
           </div>
           <p class="text-slate-300 text-xs leading-relaxed max-w-md">
             Digital Identity &amp; Statutory Citizen Assurance Platform. Designed in accordance with official Government of India UX4G Design Guidelines and National Public Portal standards.
@@ -1144,7 +1138,7 @@
         </div>
       </div>
       <div class="pt-5 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-slate-400">
-        <span>&copy; 2026 HaqSetu &amp; Vachan Setu &bull; Official Citizen Rights Assurance Platform</span>
+        <span>&copy; 2026 VachanSetu &bull; Official Citizen Rights Assurance Platform</span>
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-[#10b981] inline-block" aria-hidden="true"></span>
           <span class="text-slate-300">All Statutory Endpoints Operational</span>
@@ -1621,9 +1615,12 @@
       if (data.response && !data.structured_guide) {
         // Convert markdown headings and bold to html
         let formattedText = data.response
-          .replace(new RegExp('### (.*?)(?:\\r?\\n|$)', 'g'), '<h3 class="text-base font-bold text-slate-900 mt-2 mb-1.5">$1</h3>')
-          .replace(new RegExp('#### (.*?)(?:\\r?\\n|$)', 'g'), '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mt-2 mb-1">$1</h4>')
+          .replace(new RegExp('^# (.*?)(?:\\r?\\n|$)', 'gm'), '<h2 class="text-lg font-bold text-slate-900 mt-3 mb-2">$1</h2>')
+          .replace(new RegExp('^## (.*?)(?:\\r?\\n|$)', 'gm'), '<h3 class="text-base font-bold text-slate-900 mt-2.5 mb-1.5">$1</h3>')
+          .replace(new RegExp('^### (.*?)(?:\\r?\\n|$)', 'gm'), '<h4 class="text-sm font-bold text-slate-800 mt-2 mb-1">$1</h4>')
+          .replace(new RegExp('^#### (.*?)(?:\\r?\\n|$)', 'gm'), '<h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-1.5 mb-1">$1</h5>')
           .replace(new RegExp('\\*\\*(.*?)\\*\\*', 'g'), '<strong>$1</strong>')
+          .replace(new RegExp('^[•\\-\\*]\\s+(.*?)(?:\\r?\\n|$)', 'gm'), '<li class="ml-4 list-disc text-slate-700 leading-relaxed">$1</li>')
           .replace(new RegExp('\\r?\\n', 'g'), '<br>');
 
         html += `

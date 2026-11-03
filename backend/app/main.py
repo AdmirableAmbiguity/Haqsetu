@@ -19,7 +19,7 @@ from ai_engine.ocr import extract_text_from_bytes
 from ai_engine.haqguide import generate_checklist as get_checklist
 
 app = FastAPI(
-    title="HaqSetu AI + Vachan Setu",
+    title="VachanSetu",
     description="Citizen-Service Assurance Platform for Indian Government Schemes",
     version="1.2.0"
 )
@@ -128,7 +128,7 @@ class NoticeRequest(BaseModel):
 def health():
     return {
         "status": "healthy",
-        "app": "HaqSetu AI + Vachan Setu",
+        "app": "VachanSetu",
         "version": "1.2.0",
         "sarvam_ai_active": bool(os.environ.get("SARVAM_API_KEY")),
         "tesseract_ocr_active": True,

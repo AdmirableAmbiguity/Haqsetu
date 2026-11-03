@@ -57,12 +57,12 @@ KNOWN_SCHEMES = {
 
 # Known Certificate Types
 CERTIFICATE_TYPES = [
-    "domicile", "niwas", "residence", "resident",
-    "income", "aay", "income certificate",
-    "caste", "jati", "obc certificate", "sc certificate", "st certificate", "ews certificate",
-    "birth", "janam", "death", "mrityu",
-    "character", "charitra", "disability", "divyang",
-    "succession", "varisana", "khatauni"
+    "domicile", "niwas", "residence", "resident certificate", "domicile certificate",
+    "income certificate", "aay praman", "aay certificate", "income praman",
+    "caste certificate", "jati praman", "caste", "jati", "obc certificate", "sc certificate", "st certificate", "ews certificate",
+    "birth certificate", "janam praman", "birth", "janam", "death certificate", "mrityu praman", "death", "mrityu",
+    "character certificate", "charitra praman", "disability certificate", "divyang certificate",
+    "succession certificate", "varisana", "khatauni"
 ]
 
 class IntentClassifier:
@@ -110,7 +110,7 @@ class IntentClassifier:
 
         # 4. Specific Certificate Inquiries
         for cert in CERTIFICATE_TYPES:
-            if cert in q:
+            if re.search(r'\b' + re.escape(cert) + r'\b', q):
                 # If query is explicitly asking to find scholarships/schemes with an income cert, route to scheme discovery
                 if ("scholarship" in q or "yojana" in q or "scheme" in q or "find" in q) and any(kw in q for kw in ["find", "search", "eligible", "which scholarship", "what scholarship"]):
                     break  # Let it fall to Scheme Discovery
@@ -129,13 +129,13 @@ class IntentClassifier:
         # 5. Aadhaar, Voter, Passport, Driving License, Ration Card Procedures
         govt_services = {
             "aadhaar": ["aadhaar", "aadhar", "uidai", "aadhaar card", "update mobile"],
-            "ration_card": ["ration card", "rashan card", "ration", "fcs"],
-            "voter_id": ["voter id", "epic", "voter card", "nvsp", "eci"],
-            "driving_license": ["driving license", "dl", "driving licence", "sarathi", "parivahan", "learning license"],
+            "ration_card": ["ration card", "rashan card", "rashan", "ration dealer", "pds quota", "ration shop"],
+            "voter_id": ["voter id", "voter card", "epic card", "nvsp", "eci portal"],
+            "driving_license": ["driving license", "driving licence", "sarathi", "parivahan", "learning license"],
             "passport": ["passport", "passport seva", "tatkaal passport"]
         }
         for s_type, keywords in govt_services.items():
-            if any(k in q for k in keywords):
+            if any(re.search(r'\b' + re.escape(k) + r'\b', q) for k in keywords):
                 if not any(sw in q for sw in ["scheme", "yojana", "find scholarship", "subsidy"]):
                     return {
                         "intent": "GOVERNMENT_SERVICE_QUERY",
@@ -144,14 +144,23 @@ class IntentClassifier:
                         "requires_scheme_discovery": False
                     }
 
-        # 6. Application Status / Delay / Grievance / RTI
+        # 6. Procedural Registration / e-Shram / Portal queries
+        if ("how to register" in q or "how do i register" in q or "registration procedure" in q) and any(k in q for k in ["e-shram", "eshram", "worker", "portal", "card", "scheme"]):
+            return {
+                "intent": "GOVERNMENT_SERVICE_QUERY",
+                "confidence": 0.95,
+                "entities": {"service": "e_shram", "state": self._extract_state(q)},
+                "requires_scheme_discovery": False
+            }
+
+        # 7. Application Status / Delay / Grievance / RTI
         status_keywords = [
             "pending for", "pending since", "not received yet", "rejected without reason",
-            "statutory limit", "rtsa", "right to service", "file rti", "rti application",
-            "complaint against", "delay in application", "status check", "application track",
+            "statutory limit", "rtsa", "right to service", "delay in application", "status check", "application track",
             "din ho gaye", "kab tak aayega", "reject ho gaya"
         ]
-        if any(sk in q for sk in status_keywords):
+        # Only treat "complaint against" as application delay if it is directed at a government officer/department, not consumer merchants
+        if ("complaint against" in q and not any(ck in q for ck in ["company", "consumer", "seller", "merchant", "e-commerce", "product", "e-daakhil"])) or any(sk in q for sk in status_keywords):
             return {
                 "intent": "APPLICATION_STATUS",
                 "confidence": 0.95,
@@ -175,7 +184,7 @@ class IntentClassifier:
 
         # 8. Specific Scheme Deep Dive (Scheme Expert)
         for key, fullname in KNOWN_SCHEMES.items():
-            if key in q:
+            if re.search(r'\b' + re.escape(key) + r'\b', q):
                 # If citizen is explicitly asking to explain or query a known scheme:
                 if any(kw in q for kw in [
                     "explain", "what is", "about", "details", "documents for", "documents required",
@@ -294,6 +303,8 @@ class IntentClassifier:
                 # Safety check: do not trigger scheme discovery unless intent is SCHEME_DISCOVERY
                 requires_discovery = (intent == "SCHEME_DISCOVERY")
                 parsed["requires_scheme_discovery"] = requires_discovery
+                # Only broad unnamed certificate questions require clarification; prevent LLM hallucination
+                parsed["requires_clarification"] = False
                 return parsed
 
         except Exception as e:
