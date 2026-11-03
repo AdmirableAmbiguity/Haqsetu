@@ -338,29 +338,64 @@ GOVERNMENT_SERVICES_KB = {
         ]
     },
     "aadhaar": {
-        "title": "Aadhaar Demographic & Mobile Update (आधार कार्ड संशोधन)",
+        "title": "Aadhaar Update — Biometrics, Address, Name, Mobile (Complete Fee & Process Guide)",
         "department": "Unique Identification Authority of India (UIDAI)",
-        "portal_name": "myAadhaar Portal / Aadhaar Seva Kendra",
+        "portal_name": "myAadhaar Portal / appointments.uidai.gov.in",
         "portal_url": "https://myaadhaarbeta.uidai.gov.in",
         "sla_days": 3,
         "is_statutory": True,
-        "fee": "₹50 (Demographic / Mobile Update) / Free (Mandatory Biometric 5-15 yrs)",
-        "summary": "Mandatory process to update mobile number, address, name, or biometrics on Aadhaar. Note: Mobile update strictly requires in-person biometric verification.",
+        "fee": "BIOMETRIC UPDATE: FREE | Address/Name/DOB/Gender update: ₹50 at center or online | Mobile update: ₹50 at center",
+        "summary": (
+            "Complete UIDAI-mandated fee schedule and procedure for ALL Aadhaar update types:\n"
+            "• BIOMETRIC UPDATE (fingerprint/iris/photo): Completely FREE — visit any Aadhaar Enrollment Center.\n"
+            "• ADDRESS UPDATE ONLINE: ₹50 (via myAadhaar portal — requires linked mobile OTP).\n"
+            "• ADDRESS UPDATE OFFLINE (at center): ₹50 at Aadhaar Seva Kendra / Post Office.\n"
+            "• NAME / DOB / GENDER correction (at center): ₹50 per update.\n"
+            "• MOBILE NUMBER UPDATE (at center only): ₹50 — cannot be done online.\n"
+            "• MANDATORY BIOMETRIC UPDATE for children (5-15 yrs): FREE.\n"
+            "TO FIND NEAREST CENTER: Visit appointments.uidai.gov.in → 'Locate Enrollment Centre' → enter your Pincode."
+        ),
         "steps": [
-            "Locate nearest Aadhaar Seva Kendra (ASK) or Post Office Aadhaar counter via appointments.uidai.gov.in.",
-            "Book an online appointment (or walk in) for 'Mobile Number Update / Biometric Update'.",
-            "Visit the center with original Aadhaar card (no documents needed specifically for mobile update).",
-            "Operator collects live biometrics (fingerprint/iris) and updates your 10-digit mobile number.",
-            "Pay the standard ₹50 UIDAI fee and collect the 14-digit URN (Update Request Number) slip.",
-            "Update reflects in UIDAI database within 24 to 72 hours; verify status on myAadhaar."
+            "STEP 1 — IDENTIFY UPDATE TYPE & FEES: Biometric update (fingerprint/iris/photo) = FREE. "
+            "Address/Name/DOB/Mobile update at center = ₹50. Address update online via myAadhaar = ₹50.",
+
+            "STEP 2 — FIND YOUR NEAREST AADHAAR CENTER: "
+            "Visit https://appointments.uidai.gov.in/easearch.aspx and enter your Pincode. "
+            "For Naini area (Prayagraj, UP — Pincode 211008), common centers include: "
+            "Post Offices with Aadhaar facility, SBI/Bank of Baroda branches, Common Service Centers (CSC/Jan Seva Kendra). "
+            "You can also call UIDAI Toll-Free: 1947 (24x7) to get the nearest center address.",
+
+            "STEP 3 — BOOK APPOINTMENT (optional but recommended): "
+            "Visit https://appointments.uidai.gov.in → select 'Book Appointment' → choose your city → select service type → pick date/time slot. "
+            "Walk-in is also accepted at most centers.",
+
+            "STEP 4 — VISIT CENTER WITH DOCUMENTS: "
+            "Biometric update: Bring original Aadhaar card only (no other documents needed). "
+            "Address update: Bring original Aadhaar + valid address proof (Electricity bill/Bank passbook/Rent agreement/Voter ID). "
+            "Name/DOB update: Bring original Aadhaar + supporting document (PAN/10th Marksheet/Passport).",
+
+            "STEP 5 — SUBMIT & PAY: Operator will scan biometrics, fill the correction form. "
+            "Pay the applicable fee in CASH at the counter (₹50 for demographic update; FREE for biometric). "
+            "Collect the 14-digit URN (Update Request Number) from the printed acknowledgment slip.",
+
+            "STEP 6 — TRACK STATUS: Visit https://myaadhaarbeta.uidai.gov.in → 'Check Aadhaar Update Status' → enter your URN. "
+            "Updates reflect in UIDAI database within 24–90 days (biometrics: 48 hours; demographic: 30–90 days).",
+
+            "ONLINE OPTION for Address Update: If your mobile is already linked to Aadhaar, visit myAadhaar portal → "
+            "'Update Address Online' → enter OTP → upload address proof document → pay ₹50 online → get URN. "
+            "This avoids visiting a center."
         ],
         "documents": [
-            {"name": "Original Aadhaar Card", "mandatory": True, "purpose": "Biometric match (no other doc required for mobile update)"},
-            {"name": "Address Proof (if updating address)", "mandatory": False, "purpose": "Electricity bill / bank passbook / rent agreement"}
+            {"name": "Original Aadhaar Card", "mandatory": True, "purpose": "Identity verification at all update types"},
+            {"name": "Address Proof (Electricity Bill / Bank Passbook / Rent Agreement / Voter ID)", "mandatory": False,
+             "purpose": "Mandatory ONLY for address update — not needed for biometric/mobile update"},
+            {"name": "Name/DOB Proof (PAN / Marksheet / Passport)", "mandatory": False,
+             "purpose": "Required ONLY for name or date of birth correction"}
         ],
         "rejection_pitfalls": [
-            "Attempting to update mobile number online without existing linked mobile (UIDAI requires in-person biometric authentication).",
-            "Fingerprint biometric mismatch (use iris scan if fingerprints are faint)."
+            "Biometric mismatch at center: If fingerprints are worn/faint, ask operator to switch to iris scan.",
+            "Online address update fails: Mobile number must already be linked to your Aadhaar for OTP.",
+            "Name mismatch in document: Ensure document name exactly matches what you want on Aadhaar."
         ]
     },
     "ration_card": {
@@ -570,6 +605,71 @@ class QueryRouter:
                     "Check Service Health of UP Scholarship Portal"
                 ]
             }
+
+        # ── GROQ DIRECT ANSWER (Tier 1 — fires for EVERY question) ──────────────────
+        # Every question typed in HaqSetu goes directly to Groq first.
+        # Only if Groq fails do we fall back to KB templates or Sarvam.
+        try:
+            from ai_engine.omni_ai import get_groq_client
+            import os
+            groq_client = get_groq_client()
+            if groq_client is not None:
+                detected_state = entities.get("state") or intent_classifier._extract_state(query)
+                state_ctx = f"The citizen is from or asking about {detected_state}." if detected_state else "Provide applicable central/state guidance for India."
+                sys_prompt = (
+                    "You are the Lead Citizen Rights & Government Procedure Expert for VachanSetu, "
+                    "India's authoritative public service guidance platform.\n"
+                    "Answer EVERY citizen question with PRECISE, SPECIFIC, ACTIONABLE information.\n\n"
+                    "MANDATORY RULES:\n"
+                    "- State EXACT FEES in Rs. (e.g. 'Biometric update: FREE', 'Address update: Rs.50'). "
+                    "Never say 'nominal fee'.\n"
+                    "- For 'nearest center/office' queries: Give the exact URL to locate it "
+                    "(e.g. appointments.uidai.gov.in for Aadhaar, passportindia.gov.in for passport) "
+                    "AND the toll-free helpline number. If city/area is mentioned, name likely center types "
+                    "(Post Office, SBI branch, CSC/Jan Seva Kendra, district office).\n"
+                    "- Always include official portal URLs (.gov.in / .nic.in).\n"
+                    "- Always include toll-free helpline numbers where available.\n"
+                    "- For documents: clearly mark each as MANDATORY or OPTIONAL.\n"
+                    "- For timelines: give exact days, not vague terms.\n\n"
+                    "Structure EVERY response as:\n"
+                    "**Direct Answer** (1-2 lines answering the exact question)\n"
+                    "**Exact Fee / Cost** (in Rs., or FREE if applicable)\n"
+                    "**Official Portal & Nearest Center** (URL + helpline number)\n"
+                    "**Step-by-Step Procedure** (numbered steps)\n"
+                    "**Documents Required** (mandatory vs optional)\n"
+                    "**Helpline & Grievance** (what to do if things go wrong)"
+                )
+                completion = groq_client.chat.completions.create(
+                    model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
+                    messages=[
+                        {"role": "system", "content": sys_prompt},
+                        {"role": "user", "content": f"Citizen Question: {query}\n{state_ctx}"}
+                    ],
+                    temperature=0.2,
+                    max_tokens=1800,
+                )
+                groq_answer = completion.choices[0].message.content
+                if groq_answer and len(groq_answer.strip()) > 80:
+                    session.add_message("user", query, intent)
+                    session.add_message("assistant", groq_answer.strip(), intent)
+                    return {
+                        "session_id": session.session_id,
+                        "section": "haqguide",
+                        "intent": intent,
+                        "response": groq_answer.strip(),
+                        "structured_guide": None,
+                        "provider": "groq_llama",
+                        "matches": [],
+                        "follow_ups": [
+                            "Check document requirements on RejectShield",
+                            "Find government schemes I qualify for",
+                            "What is the appeal process if my application is rejected?"
+                        ]
+                    }
+        except Exception as _groq_err:
+            import logging
+            logging.getLogger(__name__).warning(f"Groq direct call failed, using KB fallback: {_groq_err}")
+        # ── END GROQ DIRECT ─────────────────────────────────────────────────────────
 
         # Check for matched government service in KB
         service_key = None
