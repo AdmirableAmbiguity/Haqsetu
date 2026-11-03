@@ -426,7 +426,7 @@
               <label for="matcherQuery" class="sr-only">Describe your public service or certificate need</label>
               <input id="matcherQuery" type="text" 
                 placeholder="e.g. How can I apply for a domicile certificate in Uttar Pradesh?" 
-                value="How can I apply for a domicile certificate in Uttar Pradesh?" 
+                value="" 
                 class="w-full pl-3.5 pr-10 py-2.5 rounded bg-white border border-[#9ca3af] text-[#111827] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004b87] text-sm font-medium">
               <button type="button" onclick="toggleVoiceInput()" class="absolute right-3 top-2.5 text-[#64748b] hover:text-[#004b87] p-1" aria-label="Use voice search in Hindi or English">
                 <i class="fa-solid fa-microphone text-base" aria-hidden="true"></i>
@@ -1446,62 +1446,63 @@
       if (!target) return;
 
       const formattedHtml = formatGovernanceMarkdown(rawText);
+      // Set the full validated HTML structure immediately so all styling, headings, cards, and tables exist
+      target.innerHTML = formattedHtml;
 
-      // DOM-safe Tree Streaming: Tokenize HTML preserving tags, entities, and Unicode graphemes
-      const tokens = [];
-      const tagOrEntityRegex = /<[^>]+>|&[a-zA-Z0-9#]+;/g;
-      let lastIdx = 0;
-      let match;
-      while ((match = tagOrEntityRegex.exec(formattedHtml)) !== null) {
-        if (match.index > lastIdx) {
-          const textChunk = formattedHtml.substring(lastIdx, match.index);
-          // Split Unicode graphemes safely (prevents breaking Hindi matras/ligatures)
-          const graphemes = Array.from(textChunk);
-          for (let g of graphemes) {
-            tokens.push({ type: 'char', val: g });
-          }
-        }
-        tokens.push({ type: 'tag', val: match[0] });
-        lastIdx = match.index + match[0].length;
-      }
-      if (lastIdx < formattedHtml.length) {
-        const textChunk = formattedHtml.substring(lastIdx);
-        const graphemes = Array.from(textChunk);
-        for (let g of graphemes) {
-          tokens.push({ type: 'char', val: g });
+      // Collect all text nodes in the rendered DOM tree
+      const textNodes = [];
+      const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue && node.nodeValue.trim().length > 0) {
+          textNodes.push({
+            node: node,
+            fullText: node.nodeValue,
+            chars: Array.from(node.nodeValue) // Unicode-safe grapheme cluster array (preserves Hindi matras)
+          });
+          // Blank out text content initially while keeping container elements & layout intact
+          node.nodeValue = '';
         }
       }
 
-      target.innerHTML = '';
-      let i = 0;
-      // High-speed smooth cadence: 8-10 graphemes per tick for snappy, fluid delivery
-      const CHUNK_SIZE = 8;
-      const CHUNK_INTERVAL_MS = 6;
+      if (textNodes.length === 0) {
+        if (cursor) cursor.style.display = 'none';
+        return;
+      }
 
-      function typeNext() {
-        if (i >= tokens.length) {
+      let nodeIndex = 0;
+      let charIndex = 0;
+      // High-speed smooth cadence (reveals 6 graphemes per 6ms)
+      const CHUNK_SIZE = 6;
+      const INTERVAL_MS = 6;
+
+      function streamNext() {
+        if (nodeIndex >= textNodes.length) {
           if (cursor) cursor.style.display = 'none';
-          target.innerHTML = formattedHtml; // Ensure 100% final perfection
+          // Ensure all nodes have their full pristine text
+          for (let tn of textNodes) {
+            tn.node.nodeValue = tn.fullText;
+          }
           return;
         }
 
-        let chunk = '';
-        let charsAppended = 0;
+        const current = textNodes[nodeIndex];
+        const nextCharIndex = Math.min(charIndex + CHUNK_SIZE, current.chars.length);
+        current.node.nodeValue = current.chars.slice(0, nextCharIndex).join('');
+        charIndex = nextCharIndex;
 
-        while (i < tokens.length && charsAppended < CHUNK_SIZE) {
-          const tok = tokens[i++];
-          chunk += tok.val;
-          if (tok.type === 'char') {
-            charsAppended++;
-          }
+        if (charIndex >= current.chars.length) {
+          // Finished this node, proceed to next
+          current.node.nodeValue = current.fullText;
+          nodeIndex++;
+          charIndex = 0;
         }
 
-        target.innerHTML += chunk;
         target.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        setTimeout(typeNext, CHUNK_INTERVAL_MS);
+        setTimeout(streamNext, INTERVAL_MS);
       }
 
-      typeNext();
+      streamNext();
     }
     // ── END TYPEWRITER ────────────────────────────────────────────────────────
 
@@ -2912,7 +2913,7 @@ You are required to submit rectification within 15 days, failing which the appli
     window.onload = () => {
       loadSchemeExpertCatalog();
       loadRejectShieldSchemes();
-      runMatch();
+      // Auto-query removed: waits for citizen to type their question
     };
   
     // --- ACCESSIBILITY: MODAL ESCAPE & FOCUS TRAP ---
